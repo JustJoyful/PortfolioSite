@@ -1,0 +1,75 @@
+import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+
+const SECTIONS = ['intro', 'about', 'work', 'contact'];
+
+export const LeftRail = () => {
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    const ids = ['hero', 'about', 'projects', 'contact'];
+    const observers = [];
+
+    ids.forEach((id, idx) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const obs = new IntersectionObserver(
+        ([entry]) => { if (entry.isIntersecting) setActive(idx); },
+        { threshold: 0.4 }
+      );
+      obs.observe(el);
+      observers.push(obs);
+    });
+
+    return () => observers.forEach(o => o.disconnect());
+  }, []);
+
+  return (
+    <motion.aside
+      initial={{ opacity: 0, x: -16 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: 3, duration: 1.2, ease: 'easeOut' }}
+      className="fixed left-0 top-0 h-full z-20 flex flex-col items-center justify-between py-12 px-4 pointer-events-none select-none hidden md:flex"
+      style={{ width: '64px' }}
+    >
+      {/* Vertical name */}
+      <div
+        className="text-white/30 tracking-[0.35em] uppercase"
+        style={{
+          writingMode: 'vertical-rl',
+          transform: 'rotate(180deg)',
+          fontSize: '10px',
+          letterSpacing: '0.35em',
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontWeight: 300,
+        }}
+      >
+        Joydeep Das
+      </div>
+
+      {/* Section dots */}
+      <div className="flex flex-col items-center gap-3">
+        {SECTIONS.map((_, idx) => (
+          <div
+            key={idx}
+            className="transition-all duration-500"
+            style={{
+              width: active === idx ? '2px' : '2px',
+              height: active === idx ? '24px' : '6px',
+              borderRadius: '2px',
+              background: active === idx
+                ? 'rgba(255,255,255,0.7)'
+                : 'rgba(255,255,255,0.2)',
+              transition: 'height 0.4s ease, background 0.4s ease',
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Bottom thin line */}
+      <div className="text-white/15 tracking-[0.3em]" style={{ fontSize: '9px', writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>
+        ©2025
+      </div>
+    </motion.aside>
+  );
+};
