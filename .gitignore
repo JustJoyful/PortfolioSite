@@ -24,6 +24,9 @@ Thumbs.db
 *.sln
 *.sw?
 CLAUDE.md
+.copilot-instructions*
+.github/copilot-instructions.md
+.cursorrules
 # Environment files
 .env
 .env*.local

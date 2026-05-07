@@ -14,7 +14,7 @@ function App() {
 
   useEffect(() => {
     const vh = window.innerHeight;
-    const TARGET_X = -27.5;
+    const TARGET_X = -31; // vw units (exactly centers in the 38vw left space)
 
     const onScroll = () => {
       const scrollY = window.scrollY;

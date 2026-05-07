@@ -45,6 +45,16 @@ export const createSketch = (onReady) => {
     let wilt = 0;
     let _lastWilt = -1;
 
+    // Atmospheric effects
+    let particles = [];
+    const PARTICLE_MAX = 100;
+    let ripples = [];
+    let glowIntensity = 0;
+    let targetGlowIntensity = 0;
+    let prevMouseX = 0, prevMouseY = 0;
+    let mouseSpeed = 0;
+    let particleSpawnAccum = 0;
+
     const easeInOutCubic = (x) => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
     const easeOutQuart = (x) => 1 - Math.pow(1 - x, 4);
 
@@ -72,6 +82,14 @@ export const createSketch = (onReady) => {
       ];
 
       startElement(0);
+      particles = [];
+      ripples = [];
+      glowIntensity = 0;
+      targetGlowIntensity = 0;
+      prevMouseX = p.mouseX;
+      prevMouseY = p.mouseY;
+      mouseSpeed = 0;
+      particleSpawnAccum = 0;
     };
 
     function startElement(idx) {
@@ -88,6 +106,9 @@ export const createSketch = (onReady) => {
       densDir = 1;
       densTimer = 0;
       modeT = 1;
+      particles = [];
+      ripples = [];
+      particleSpawnAccum = 0;
     }
 
     // @ts-ignore
@@ -125,6 +146,22 @@ export const createSketch = (onReady) => {
 
       p.background(0);
       t += 0.016;
+
+      // Mouse speed tracking
+      const rawSpeed = p.dist(p.mouseX, p.mouseY, prevMouseX, prevMouseY);
+      mouseSpeed += (rawSpeed - mouseSpeed) * 0.25;
+      prevMouseX = p.mouseX;
+      prevMouseY = p.mouseY;
+
+      // Mouse-reactive glow with subtle breath pulse
+      const mouseDist = p.dist(p.mouseX, p.mouseY, p.width / 2, p.height / 2);
+      const maxDist = Math.max(p.width, p.height) * 0.5;
+      targetGlowIntensity = p.constrain(1.0 - mouseDist / maxDist, 0.05, 1.0);
+      glowIntensity += (targetGlowIntensity - glowIntensity) * dt * 2.2;
+      const breathPulse = 1 + Math.sin(t * 0.47) * 0.12;
+      const activeGlow = glowIntensity * breathPulse;
+
+      drawBackgroundAtmosphere(f, activeGlow);
 
       rotEaseIn = p.min(1, rotEaseIn + dt * 0.08);
       const re = easeInOutCubic(rotEaseIn);
@@ -194,6 +231,9 @@ export const createSketch = (onReady) => {
         mInfY *= 0.95;
       }
 
+      updateParticles(dt, f);
+      updateRipples(dt);
+
       drawFlowerToBuffer(f, bloom, wilt);
 
       glitchTimer -= dt;
@@ -204,6 +244,8 @@ export const createSketch = (onReady) => {
 
       renderToScreen();
       drawGlitchOverlay();
+      drawParticles();
+      drawRipples();
       drawFPS();
     };
 
@@ -533,6 +575,116 @@ export const createSketch = (onReady) => {
       }
     }
 
+    function drawBackgroundAtmosphere(f, gi) {
+      const ctx = p.drawingContext;
+      if (!ctx) return;
+      const cx = p.width / 2 + mInfX;
+      const cy = p.height / 2 + mInfY;
+      const r = Math.max(p.width, p.height) * 0.55;
+      try {
+        const grad = ctx.createRadialGradient(cx, cy, r * 0.06, cx, cy, r);
+        const alpha = gi * 0.045;
+        grad.addColorStop(0, 'rgba(' + f.c1[0] + ',' + Math.floor(f.c1[1] * 0.65) + ',' + Math.floor(f.c1[2] * 0.75) + ',' + alpha + ')');
+        grad.addColorStop(0.45, 'rgba(' + Math.floor(f.c1[0] * 0.35) + ',' + Math.floor(f.c1[1] * 0.25) + ',' + Math.floor(f.c1[2] * 0.25) + ',' + alpha * 0.25 + ')');
+        grad.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, p.width, p.height);
+      } catch (e) { /* ignore */ }
+    }
+
+    function updateParticles(dt, f) {
+      const cx = p.width / 2 + mInfX;
+      const cy = p.height / 2 + mInfY;
+      const spawnRate = 10 + mouseSpeed * 0.15 + glowIntensity * 6;
+      particleSpawnAccum += spawnRate * dt;
+
+      while (particleSpawnAccum > 1 && particles.length < PARTICLE_MAX) {
+        particleSpawnAccum -= 1;
+        const angle = p.random(p.TWO_PI);
+        const dist = p.random(30, 160);
+        const sx = cx + Math.cos(angle) * dist;
+        const sy = cy + Math.sin(angle) * dist * 0.8;
+        const vx = Math.cos(angle) * p.random(0.08, 0.35);
+        const vy = p.random(-0.5, -0.05);
+        const life = p.random(0.6, 1.6);
+        const size = p.random(1, 3.2);
+        const colKey = p.random() < 0.55 ? 'c1' : 'c2';
+        const col = f[colKey];
+        particles.push({
+          x: sx, y: sy, vx, vy, life, maxLife: life, size,
+          r: p.constrain(col[0] + p.random(-25, 25), 0, 255),
+          g: p.constrain(col[1] + p.random(-25, 25), 0, 255),
+          b: p.constrain(col[2] + p.random(-25, 25), 0, 255),
+          sparkle: p.random() < 0.1,
+        });
+      }
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const pt = particles[i];
+        pt.life -= dt * 0.55;
+        if (pt.life <= 0) { particles.splice(i, 1); continue; }
+
+        const mdx = p.mouseX - pt.x;
+        const mdy = p.mouseY - pt.y;
+        const md = Math.sqrt(mdx * mdx + mdy * mdy);
+        if (md < 160 && md > 0.5) {
+          const force = (1 - md / 160) * 0.25;
+          pt.vx += (mdx / md) * force * dt;
+          pt.vy += (mdy / md) * force * dt;
+        }
+
+        pt.vx *= 0.985;
+        pt.vy *= 0.985;
+        pt.vy -= 0.015 * dt;
+        pt.x += pt.vx;
+        pt.y += pt.vy;
+      }
+    }
+
+    function drawParticles() {
+      p.noStroke();
+      for (const pt of particles) {
+        if (pt.life <= 0) continue;
+        const alpha = (pt.life / pt.maxLife) * 255;
+        if (alpha < 2) continue;
+        if (pt.sparkle) {
+          p.fill(pt.r, pt.g, pt.b, p.min(255, alpha * 1.4));
+          p.ellipse(pt.x, pt.y, pt.size * 1.5, pt.size * 1.5);
+          p.fill(pt.r, pt.g, pt.b, alpha * 0.25);
+          p.ellipse(pt.x, pt.y, pt.size * 3.5, pt.size * 3.5);
+        } else {
+          p.fill(pt.r, pt.g, pt.b, alpha);
+          p.ellipse(pt.x, pt.y, pt.size, pt.size);
+        }
+      }
+    }
+
+    function updateRipples(dt) {
+      for (let i = ripples.length - 1; i >= 0; i--) {
+        const rp = ripples[i];
+        rp.life -= dt * 2.2;
+        rp.radius += (rp.maxRadius - rp.radius) * 0.08;
+        if (rp.life <= 0) ripples.splice(i, 1);
+      }
+    }
+
+    function drawRipples() {
+      if (!ripples.length) return;
+      const ctx = p.drawingContext;
+      if (!ctx) return;
+      for (const rp of ripples) {
+        if (rp.life <= 0) continue;
+        const alpha = rp.life * 0.3;
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(rp.x, rp.y, rp.radius, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255,195,210,' + alpha + ')';
+        ctx.lineWidth = 1.2 * rp.life;
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+
     function renderToScreen() {
       // @ts-ignore
       const px = buf.pixels;
@@ -602,6 +754,10 @@ export const createSketch = (onReady) => {
     p.mousePressed = function () {
       if (loadingPhase) return;
       triggerGlitch();
+      ripples.push({
+        x: p.mouseX, y: p.mouseY,
+        radius: 0, maxRadius: p.random(80, 200), life: 1,
+      });
     };
 
     p.keyPressed = function () {
