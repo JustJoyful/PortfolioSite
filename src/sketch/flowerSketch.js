@@ -3,6 +3,8 @@ import p5 from "p5";
 export const createSketch = (onReady) => {
   return function (p) {
     const BUF_W = 400, BUF_H = 400;
+    const SCREEN_SAFE_SCALE = 0.82;
+    const FLOWER_BUFFER_SCALE = 0.48; // Keep < 0.5 to preserve side margins and avoid petal clipping.
     let buf;
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*'.split('');
     let ctx;
@@ -264,7 +266,7 @@ export const createSketch = (onReady) => {
       const speedFactor = p.constrain(mouseSpeed / 20, 0, 1);
       glitchIntensity = p.random(0.15 + speedFactor * 0.2, 0.45 + speedFactor * 0.45);
       glitchSlices = [];
-      const scaleF = p.min(p.width / BUF_W, p.height / BUF_H) * 0.85;
+      const scaleF = p.min(p.width / BUF_W, p.height / BUF_H) * SCREEN_SAFE_SCALE;
       const rW = BUF_W * scaleF, rH = BUF_H * scaleF;
       const fOx = (p.width - rW) / 2 + mInfX;
       const fOy = (p.height - rH) / 2 + mInfY;
@@ -324,7 +326,7 @@ export const createSketch = (onReady) => {
       buf.push();
       // The math assumes an 800x800 space, but our optimized buffer is 400x400.
       // Scale it down so it fits perfectly without clipping.
-      buf.scale(0.5);
+      buf.scale(FLOWER_BUFFER_SCALE);
 
       const virtualCX = 800 / 2;
       const virtualCY = 800 * 0.48 + wiltDroop;
@@ -512,7 +514,12 @@ export const createSketch = (onReady) => {
             gr = p.lerp(gr, gr * 0.28 + 22, wf);
             b = p.lerp(b, b * 0.12 + 6, wf);
           }
-          items.push({ rz, tp: 'p', sx, sy, sa: viewAngle, pl, pw, rPhase, rAmt, r, gr, b, cup: cupFactor });
+          const hR = p.constrain(p.lerp(r, f.c2[0], 0.55) + 16 * lightMod, 0, 255);
+          const hG = p.constrain(p.lerp(gr, f.c2[1], 0.55) + 10 * lightMod, 0, 255);
+          const hB = p.constrain(p.lerp(b, f.c2[2], 0.55) + 8 * lightMod, 0, 255);
+          const hA = p.constrain((40 + innerBoost * 45 + (1 - faceVis) * 30) * (1 - wl), 0, 120);
+          const gA = p.constrain((10 + innerBoost * 35 + lightMod * 12) * (1 - wl), 0, 80);
+          items.push({ rz, tp: 'p', sx, sy, sa: viewAngle, pl, pw, rPhase, rAmt, r, gr, b, cup: cupFactor, hR, hG, hB, hA, gA });
         }
       }
 
@@ -582,6 +589,39 @@ export const createSketch = (onReady) => {
             }
           }
           g.endShape(p.CLOSE);
+
+          // Petal sheen: a narrow top highlight + soft inner wash to make the flower feel less flat.
+          g.noFill();
+          g.stroke(it.hR, it.hG, it.hB, it.hA);
+          g.strokeWeight(p.max(0.4, it.pw * 0.055));
+          g.beginShape();
+          for (let tt = 0.08; tt <= 0.98; tt += 0.09) {
+            const px = tt * it.pl;
+            const bW = p.sin(tt * p.PI) * it.pw;
+            const cup = p.sin(tt * p.PI) * (it.cup || 0) * it.pw * 0.55;
+            const ruf = p.sin(tt * 8 + it.rPhase) * it.rAmt * tt;
+            g.vertex(px, bW + ruf + cup - it.pw * 0.08);
+          }
+          g.endShape();
+
+          g.noStroke();
+          g.fill(it.hR, it.hG, it.hB, it.gA);
+          g.beginShape();
+          for (let tt = 0.06; tt <= 0.98; tt += 0.1) {
+            const px = tt * it.pl;
+            const bW = p.sin(tt * p.PI) * it.pw * 0.72;
+            const cup = p.sin(tt * p.PI) * (it.cup || 0) * it.pw * 0.45;
+            const ruf = p.sin(tt * 8 + it.rPhase + 0.55) * it.rAmt * tt * 0.45;
+            g.vertex(px, bW + ruf + cup);
+          }
+          for (let tt = 0.98; tt >= 0.06; tt -= 0.1) {
+            const px = tt * it.pl;
+            const bW = p.sin(tt * p.PI) * it.pw * 0.28;
+            const cup = p.sin(tt * p.PI) * (it.cup || 0) * it.pw * 0.2;
+            const ruf = p.sin(tt * 8 + it.rPhase + p.PI + 0.55) * it.rAmt * tt * 0.2;
+            g.vertex(px, -bW + ruf - cup);
+          }
+          g.endShape(p.CLOSE);
           g.pop();
         }
       }
@@ -594,12 +634,25 @@ export const createSketch = (onReady) => {
       const cy = p.height / 2 + mInfY;
       const r = Math.max(p.width, p.height) * 0.55;
       try {
-        const grad = ctx.createRadialGradient(cx, cy, r * 0.06, cx, cy, r);
-        const alpha = gi * 0.18; // was 0.045 — boosted to be visually present
-        grad.addColorStop(0, 'rgba(' + f.c1[0] + ',' + Math.floor(f.c1[1] * 0.65) + ',' + Math.floor(f.c1[2] * 0.75) + ',' + alpha + ')');
-        grad.addColorStop(0.45, 'rgba(' + Math.floor(f.c1[0] * 0.35) + ',' + Math.floor(f.c1[1] * 0.25) + ',' + Math.floor(f.c1[2] * 0.25) + ',' + alpha * 0.25 + ')');
-        grad.addColorStop(1, 'rgba(0,0,0,0)');
-        ctx.fillStyle = grad;
+        const alpha = gi * 0.18;
+        const core = ctx.createRadialGradient(cx, cy, r * 0.04, cx, cy, r * 0.75);
+        core.addColorStop(0, 'rgba(' + f.c2[0] + ',' + Math.floor(f.c2[1] * 0.72) + ',' + Math.floor(f.c2[2] * 0.78) + ',' + (alpha * 0.75) + ')');
+        core.addColorStop(0.32, 'rgba(' + f.c1[0] + ',' + Math.floor(f.c1[1] * 0.6) + ',' + Math.floor(f.c1[2] * 0.7) + ',' + (alpha * 0.42) + ')');
+        core.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = core;
+        ctx.fillRect(0, 0, p.width, p.height);
+
+        const halo = ctx.createRadialGradient(cx, cy, r * 0.28, cx, cy, r);
+        halo.addColorStop(0, 'rgba(' + Math.floor(f.c3[0] * 0.8) + ',' + Math.floor(f.c3[1] * 0.6) + ',' + Math.floor(f.c3[2] * 0.7) + ',' + (alpha * 0.22) + ')');
+        halo.addColorStop(0.65, 'rgba(' + Math.floor(f.c1[0] * 0.28) + ',' + Math.floor(f.c1[1] * 0.22) + ',' + Math.floor(f.c1[2] * 0.24) + ',' + (alpha * 0.08) + ')');
+        halo.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = halo;
+        ctx.fillRect(0, 0, p.width, p.height);
+
+        const vignette = ctx.createRadialGradient(cx, cy, r * 0.45, cx, cy, r * 1.25);
+        vignette.addColorStop(0, 'rgba(0,0,0,0)');
+        vignette.addColorStop(1, 'rgba(0,0,0,0.25)');
+        ctx.fillStyle = vignette;
         ctx.fillRect(0, 0, p.width, p.height);
       } catch (e) { /* ignore */ }
     }
@@ -612,7 +665,7 @@ export const createSketch = (onReady) => {
 
       // Scale spawn radius to actual flower screen size so particles hug petals.
       // Buffer is 400px drawn at 0.5x scale, then composited at scaleF.
-      const scaleF = Math.min(p.width / BUF_W, p.height / BUF_H) * 0.85;
+      const scaleF = Math.min(p.width / BUF_W, p.height / BUF_H) * SCREEN_SAFE_SCALE;
       const flowerScreenR = (f.maxRadius / 800) * BUF_W * scaleF * bloom;
       const innerR = Math.max(8, flowerScreenR * 0.12);
       const outerR = Math.max(24, flowerScreenR * 1.05);
@@ -713,7 +766,7 @@ export const createSketch = (onReady) => {
       const px = buf.pixels;
       const g = p.max(4, p.round(grid));
       const asciiG = p.max(g, 6);
-      const scaleF = p.min(p.width / BUF_W, p.height / BUF_H) * 0.85;
+      const scaleF = p.min(p.width / BUF_W, p.height / BUF_H) * SCREEN_SAFE_SCALE;
       const invScale = 1 / scaleF;
       const renderW = BUF_W * scaleF, renderH = BUF_H * scaleF;
       const ox = (p.width - renderW) / 2 + mInfX;
