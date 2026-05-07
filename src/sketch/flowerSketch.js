@@ -153,10 +153,12 @@ export const createSketch = (onReady) => {
       prevMouseX = p.mouseX;
       prevMouseY = p.mouseY;
 
-      // Mouse-reactive glow with subtle breath pulse
+      // Mouse-reactive glow: proximity + speed additive, with breath pulse
       const mouseDist = p.dist(p.mouseX, p.mouseY, p.width / 2, p.height / 2);
       const maxDist = Math.max(p.width, p.height) * 0.5;
-      targetGlowIntensity = p.constrain(1.0 - mouseDist / maxDist, 0.05, 1.0);
+      const proximity = p.constrain(1.0 - mouseDist / maxDist, 0.1, 1.0);
+      const speedBoost = p.constrain(mouseSpeed * 0.04, 0, 0.5);
+      targetGlowIntensity = p.constrain(proximity + speedBoost, 0.1, 1.0);
       glowIntensity += (targetGlowIntensity - glowIntensity) * dt * 2.2;
       const breathPulse = 1 + Math.sin(t * 0.47) * 0.12;
       const activeGlow = glowIntensity * breathPulse;
@@ -186,9 +188,12 @@ export const createSketch = (onReady) => {
       }
 
       densTimer += dt;
-      if (densTimer > 0.8) {
+      // Speed-responsive interval: idle = slow/calm, fast mouse = rapid cycling
+      const modeInterval = Math.max(0.5, 2.5 - mouseSpeed * 0.06);
+      if (densTimer > modeInterval) {
         densTimer = 0;
-        triggerGlitch();
+        // 45% base chance at idle (~every 5-6s), scales up with mouse speed
+        if (p.random() < 0.50 + mouseSpeed * 0.035) triggerGlitch();
         prevMode = renderMode;
         renderMode = (renderMode + 1) % 3;
         modeT = 0;
@@ -234,12 +239,16 @@ export const createSketch = (onReady) => {
       updateParticles(dt, f);
       updateRipples(dt);
 
-      drawFlowerToBuffer(f, bloom, wilt);
+      drawFlowerToBuffer(f, bloom, wilt, glowIntensity);
 
       glitchTimer -= dt;
       if (glitchTimer <= 0 && !glitchActive) {
-        glitchTimer = p.random(3, 7);
-        if (p.random() < 0.4) triggerGlitch();
+        // Longer intervals: 8–18s idle, shorter when moving fast
+        const idleInterval = Math.max(4, 18 - mouseSpeed * 0.5);
+        glitchTimer = p.random(idleInterval * 0.6, idleInterval);
+        // 12% base chance, rises to 40% only during fast mouse movement
+        const glitchChance = p.constrain(0.12 + mouseSpeed * 0.015, 0.12, 0.4);
+        if (p.random() < glitchChance) triggerGlitch();
       }
 
       renderToScreen();
@@ -251,21 +260,24 @@ export const createSketch = (onReady) => {
 
     function triggerGlitch() {
       glitchActive = true;
-      glitchIntensity = p.random(0.4, 1.0);
+      // Intensity and slice count scale with mouse speed — subtle at idle, sharp when provoked
+      const speedFactor = p.constrain(mouseSpeed / 20, 0, 1);
+      glitchIntensity = p.random(0.15 + speedFactor * 0.2, 0.45 + speedFactor * 0.45);
       glitchSlices = [];
       const scaleF = p.min(p.width / BUF_W, p.height / BUF_H) * 0.85;
       const rW = BUF_W * scaleF, rH = BUF_H * scaleF;
       const fOx = (p.width - rW) / 2 + mInfX;
       const fOy = (p.height - rH) / 2 + mInfY;
-      const numSlices = p.floor(p.random(3, 10));
+      // Fewer slices at idle (1–3), more when shaking the mouse (2–7)
+      const numSlices = p.floor(p.random(1 + speedFactor * 1, 3 + speedFactor * 4));
       for (let i = 0; i < numSlices; i++) {
         const sy = p.random(fOy, fOy + rH);
-        const sh = p.min(p.random(2, rH * 0.08), fOy + rH - sy);
+        const sh = p.min(p.random(2, rH * 0.06), fOy + rH - sy);
         glitchSlices.push({
           y: sy, h: sh, fx: fOx, fw: rW,
-          offset: p.random(-80, 80) * glitchIntensity,
-          colorShift: p.random() < 0.4,
-          duration: p.random(0.08, 0.3)
+          offset: p.random(-50, 50) * glitchIntensity,
+          colorShift: p.random() < 0.25,
+          duration: p.random(0.06, 0.18)
         });
       }
     }
@@ -301,25 +313,25 @@ export const createSketch = (onReady) => {
       }
     }
 
-    function drawFlowerToBuffer(f, bl, wl) {
+    function drawFlowerToBuffer(f, bl, wl, brightBoost = 0) {
       buf.background(0);
       buf.noStroke();
       wl = wl || 0;
       const stemProgress = p.constrain(bl * 3, 0, 1);
       const flowerBloom = p.constrain((bl - 0.15) / 0.85, 0, 1);
       const wiltDroop = wl * 55;
-      
+
       buf.push();
       // The math assumes an 800x800 space, but our optimized buffer is 400x400.
       // Scale it down so it fits perfectly without clipping.
       buf.scale(0.5);
-      
+
       const virtualCX = 800 / 2;
       const virtualCY = 800 * 0.48 + wiltDroop;
-      
+
       drawStem(buf, f, stemProgress, wl, virtualCX, virtualCY);
-      drawPeony3D(buf, f, flowerBloom, wl, virtualCX, virtualCY);
-      
+      drawPeony3D(buf, f, flowerBloom, wl, virtualCX, virtualCY, brightBoost);
+
       buf.pop();
       buf.loadPixels();
     }
@@ -409,7 +421,7 @@ export const createSketch = (onReady) => {
       return [fx, fy, rz2];
     }
 
-    function drawPeony3D(g, f, bl, wl, cx, cy) {
+    function drawPeony3D(g, f, bl, wl, cx, cy, brightBoost = 0) {
       wl = wl || 0;
       const focal = 420;
       const wiltTilt = wl * 0.18;
@@ -480,7 +492,7 @@ export const createSketch = (onReady) => {
           const nx3 = p.cos(angle) * cosTilt, ny3 = -sinTilt, nz3 = p.sin(angle) * cosTilt;
           const [, , lnz] = rot3D(nx3, ny3, nz3);
           const lightDot = p.constrain(-lnz, -1, 1);
-          const lightMod = p.map(lightDot, -1, 1, 0.32, 1.25);
+          const lightMod = p.map(lightDot, -1, 1, 0.32, 1.25 + brightBoost * 0.4);
           const cupFactor = (1 - lr) * (1 - ebl * 0.5) * 0.35;
           const pl = baseR * (0.2 + 0.8 * ebl) * (1.15 + innerBoost * 0.3) * shrink * ps;
           let pw = baseR * (0.15 + 0.85 * ebl) * 0.55 * shrink * ps * faceVis;
@@ -583,7 +595,7 @@ export const createSketch = (onReady) => {
       const r = Math.max(p.width, p.height) * 0.55;
       try {
         const grad = ctx.createRadialGradient(cx, cy, r * 0.06, cx, cy, r);
-        const alpha = gi * 0.045;
+        const alpha = gi * 0.18; // was 0.045 — boosted to be visually present
         grad.addColorStop(0, 'rgba(' + f.c1[0] + ',' + Math.floor(f.c1[1] * 0.65) + ',' + Math.floor(f.c1[2] * 0.75) + ',' + alpha + ')');
         grad.addColorStop(0.45, 'rgba(' + Math.floor(f.c1[0] * 0.35) + ',' + Math.floor(f.c1[1] * 0.25) + ',' + Math.floor(f.c1[2] * 0.25) + ',' + alpha * 0.25 + ')');
         grad.addColorStop(1, 'rgba(0,0,0,0)');
@@ -598,15 +610,24 @@ export const createSketch = (onReady) => {
       const spawnRate = 10 + mouseSpeed * 0.15 + glowIntensity * 6;
       particleSpawnAccum += spawnRate * dt;
 
+      // Scale spawn radius to actual flower screen size so particles hug petals.
+      // Buffer is 400px drawn at 0.5x scale, then composited at scaleF.
+      const scaleF = Math.min(p.width / BUF_W, p.height / BUF_H) * 0.85;
+      const flowerScreenR = (f.maxRadius / 800) * BUF_W * scaleF * bloom;
+      const innerR = Math.max(8, flowerScreenR * 0.12);
+      const outerR = Math.max(24, flowerScreenR * 1.05);
+
       while (particleSpawnAccum > 1 && particles.length < PARTICLE_MAX) {
         particleSpawnAccum -= 1;
         const angle = p.random(p.TWO_PI);
-        const dist = p.random(30, 160);
+        const dist = p.random(innerR, outerR);
         const sx = cx + Math.cos(angle) * dist;
         const sy = cy + Math.sin(angle) * dist * 0.8;
-        const vx = Math.cos(angle) * p.random(0.08, 0.35);
-        const vy = p.random(-0.5, -0.05);
-        const life = p.random(0.6, 1.6);
+        // Radially outward velocity — embers off petals
+        const speed = p.random(0.08, 0.4);
+        const vx = Math.cos(angle) * speed;
+        const vy = Math.sin(angle) * speed * 0.6 - p.random(0.05, 0.25);
+        const life = p.random(0.7, 1.8);
         const size = p.random(1, 3.2);
         const colKey = p.random() < 0.55 ? 'c1' : 'c2';
         const col = f[colKey];
@@ -662,8 +683,10 @@ export const createSketch = (onReady) => {
     function updateRipples(dt) {
       for (let i = ripples.length - 1; i >= 0; i--) {
         const rp = ripples[i];
-        rp.life -= dt * 2.2;
-        rp.radius += (rp.maxRadius - rp.radius) * 0.08;
+        rp.life -= dt * 0.8; // was 2.2 — now lasts ~1.25s so ripple fully expands
+        // Linear expansion instead of lerp — reaches maxRadius before dying
+        const expandSpeed = rp.maxRadius * dt * 1.1;
+        rp.radius = Math.min(rp.radius + expandSpeed, rp.maxRadius);
         if (rp.life <= 0) ripples.splice(i, 1);
       }
     }
