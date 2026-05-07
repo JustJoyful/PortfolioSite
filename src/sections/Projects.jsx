@@ -14,8 +14,8 @@ const fadeUp = {
 
 const Label = ({ children }) => (
   <p
-    className="text-white/55 uppercase mb-6"
-    style={{ fontSize: '9px', letterSpacing: '0.45em', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 400 }}
+    className="text-white/70 uppercase mb-6 tracking-[0.3em]"
+    style={{ fontSize: 'clamp(11px, 1.3vw, 14px)', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 500 }}
   >
     {children}
   </p>
@@ -31,7 +31,7 @@ const GithubIcon = (props) => (
 const ComingSoonCard = () => (
   <div className="border-l border-white/10 pl-6 py-4">
     <div className="flex items-center gap-3 mb-4">
-      <div className="w-6 h-6 rounded border border-white/15 flex items-center justify-center">
+      <div className="w-6 h-6 border border-white/15 flex items-center justify-center">
         <span className="text-white/20" style={{ fontSize: '10px' }}>✦</span>
       </div>
       <p
@@ -43,7 +43,7 @@ const ComingSoonCard = () => (
     </div>
     <p
       className="text-white/20 leading-relaxed"
-      style={{ fontSize: '13px', fontWeight: 300 }}
+      style={{ fontSize: '13px', fontWeight: 300, fontFamily: "'Courier New', monospace" }}
     >
       Currently cooking. Check back soon or follow on GitHub to stay updated.
     </p>
@@ -51,8 +51,8 @@ const ComingSoonCard = () => (
       {['In progress', 'Stay tuned'].map(t => (
         <span
           key={t}
-          className="px-2.5 py-1 rounded-full border border-dashed border-white/10 text-white/25"
-          style={{ fontSize: '10px', letterSpacing: '0.1em', fontFamily: 'monospace' }}
+          className="inline-block px-2.5 py-1 border border-dashed border-white/10 text-white/25"
+          style={{ fontSize: '10px', letterSpacing: '0.1em', fontFamily: "'Courier New', monospace" }}
         >
           {t}
         </span>
@@ -79,8 +79,8 @@ export const Projects = () => {
       className="min-h-screen w-full flex items-center pointer-events-none py-28"
     >
       <div
-        className="pointer-events-auto w-full pr-10 md:pr-20"
-        style={{ paddingLeft: 'clamp(1.5rem, 45vw, 52vw)' }}
+        className="pointer-events-auto w-full pr-8 md:pr-16"
+        style={{ paddingLeft: 'clamp(1.5rem, 38vw, 48vw)' }}
       >
         {/* Header row: label + nav arrows */}
         <motion.div
@@ -96,7 +96,7 @@ export const Projects = () => {
             <button
               onClick={prev}
               disabled={page === 0}
-              className="w-7 h-7 rounded border border-white/20 flex items-center justify-center text-white/50 hover:text-white hover:border-white/50 disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-200"
+              className="w-7 h-7 border border-white/20 flex items-center justify-center text-white/50 hover:text-white hover:border-white/50 disabled:opacity-20 disabled:cursor-not-allowed"
               style={{ fontSize: '12px' }}
               aria-label="Previous project"
             >
@@ -111,7 +111,7 @@ export const Projects = () => {
             <button
               onClick={next}
               disabled={page === TOTAL - 1}
-              className="w-7 h-7 rounded border border-white/20 flex items-center justify-center text-white/50 hover:text-white hover:border-white/50 disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-200"
+              className="w-7 h-7 border border-white/20 flex items-center justify-center text-white/50 hover:text-white hover:border-white/50 disabled:opacity-20 disabled:cursor-not-allowed"
               style={{ fontSize: '12px' }}
               aria-label="Next project"
             >
@@ -124,10 +124,10 @@ export const Projects = () => {
         <AnimatePresence mode="wait">
           <motion.div
             key={page}
-            initial={{ opacity: 0, x: 16, filter: 'blur(6px)' }}
-            animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
-            exit={{ opacity: 0, x: -16, filter: 'blur(6px)' }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, x: 12 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -12 }}
+            transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
           >
             {project ? (
               <div className="group border-l border-white/20 pl-6 hover:border-white/50 transition-colors duration-500">
@@ -153,8 +153,8 @@ export const Projects = () => {
                 </div>
 
                 <p
-                  className="text-white/75 leading-relaxed mb-5"
-                  style={{ fontSize: '14px', fontWeight: 300 }}
+                  className="text-white/75 leading-loose mb-5"
+                  style={{ fontSize: '14px', fontWeight: 300, fontFamily: "'Courier New', monospace" }}
                 >
                   {project.description}
                 </p>
@@ -163,8 +163,8 @@ export const Projects = () => {
                   {project.tags.map(tag => (
                     <span
                       key={tag}
-                      className="px-2.5 py-1 rounded-full border border-white/20 text-white/60"
-                      style={{ fontSize: '10px', letterSpacing: '0.12em', fontFamily: 'monospace' }}
+                      className="inline-block px-2.5 py-1 border border-white/20 text-white/60 hover:bg-white hover:text-black hover:border-white cursor-default"
+                      style={{ fontSize: '10px', letterSpacing: '0.12em', fontFamily: "'Courier New', monospace" }}
                     >
                       {tag}
                     </span>

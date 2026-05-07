@@ -3,7 +3,7 @@ import p5 from 'p5';
 import { createSketch } from '../sketch/flowerSketch';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export const BackgroundSketch = () => {
+export const BackgroundSketch = ({ paused = false }) => {
   const containerRef = useRef(null);
   const p5Instance = useRef(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -19,6 +19,12 @@ export const BackgroundSketch = () => {
       if (p5Instance.current) p5Instance.current.remove();
     };
   }, []);
+
+  useEffect(() => {
+    if (p5Instance.current && p5Instance.current.setActive) {
+      p5Instance.current.setActive(!paused);
+    }
+  }, [paused]);
 
   return (
     <>
@@ -42,7 +48,7 @@ export const BackgroundSketch = () => {
               <motion.div
                 animate={{ scale: [1, 1.6, 1], opacity: [0.4, 0, 0.4] }}
                 transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-                className="absolute w-14 h-14 rounded-full border border-white/20"
+                className="absolute w-14 h-14 border border-white/20"
               />
               <span
                 className="text-white/60 tracking-[0.6em] uppercase pl-[0.6em]"

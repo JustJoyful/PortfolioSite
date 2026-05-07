@@ -13,8 +13,8 @@ const fadeUp = {
 
 const Label = ({ children }) => (
   <p
-    className="text-white/55 uppercase mb-6"
-    style={{ fontSize: '9px', letterSpacing: '0.45em', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 400 }}
+    className="text-white/70 uppercase mb-6 tracking-[0.3em]"
+    style={{ fontSize: 'clamp(11px, 1.3vw, 14px)', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 500 }}
   >
     {children}
   </p>
@@ -39,8 +39,8 @@ const ContactRow = ({ label, value, href, delay }) => (
       href={href}
       target={href.startsWith('http') ? '_blank' : undefined}
       rel="noopener noreferrer"
-      className="text-white/75 hover:text-white transition-colors duration-300 truncate"
-      style={{ fontSize: '13px', fontWeight: 300 }}
+      className="text-white/75 hover:bg-white hover:text-black hover:border-white truncate"
+      style={{ fontSize: '13px', fontWeight: 300, fontFamily: "'Courier New', monospace" }}
     >
       {value}
     </a>
@@ -56,8 +56,8 @@ export const Contact = () => {
       className="min-h-screen w-full flex items-center pointer-events-none py-28"
     >
       <div
-        className="pointer-events-auto w-full pr-10 md:pr-20"
-        style={{ paddingLeft: 'clamp(1.5rem, 45vw, 52vw)' }}
+        className="pointer-events-auto w-full pr-8 md:pr-16"
+        style={{ paddingLeft: 'clamp(1.5rem, 38vw, 48vw)' }}
       >
         <motion.div
           initial="hidden"
@@ -74,8 +74,8 @@ export const Contact = () => {
           whileInView="visible"
           viewport={{ once: true }}
           variants={fadeUp}
-          className="text-white/85 font-light mb-12"
-          style={{ fontSize: 'clamp(24px, 3.5vw, 36px)', letterSpacing: '-0.01em' }}
+          className="text-white/85 font-light mb-12 tracking-tight"
+          style={{ fontSize: 'clamp(24px, 3.5vw, 36px)' }}
         >
           Let's build something.
         </motion.h2>

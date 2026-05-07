@@ -46,7 +46,7 @@ export const Hero = () => {
         <motion.div
           animate={{ height: [20, 44, 20], opacity: [0.2, 0.55, 0.2] }}
           transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut' }}
-          className="w-[1px] bg-gradient-to-b from-white/60 to-transparent rounded-full"
+          className="w-[1px] bg-gradient-to-b from-white/60 to-transparent"
         />
       </motion.div>
     </section>

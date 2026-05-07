@@ -23,7 +23,7 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
-
+CLAUDE.md
 # Environment files
 .env
 .env*.local

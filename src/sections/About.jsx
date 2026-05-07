@@ -13,8 +13,8 @@ const fadeUp = {
 
 const Label = ({ children }) => (
   <p
-    className="text-white/55 uppercase mb-4"
-    style={{ fontSize: '9px', letterSpacing: '0.45em', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 400 }}
+    className="text-white/70 uppercase mb-5 tracking-[0.3em]"
+    style={{ fontSize: 'clamp(11px, 1.3vw, 14px)', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 500 }}
   >
     {children}
   </p>
@@ -22,8 +22,8 @@ const Label = ({ children }) => (
 
 const Tag = ({ children }) => (
   <span
-    className="px-3 py-1 rounded-full border border-white/25 text-white/80"
-    style={{ fontSize: '11px', letterSpacing: '0.08em', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 300 }}
+    className="inline-block px-3 py-1 border border-white/25 text-white/80 hover:bg-white hover:text-black hover:border-white cursor-default"
+    style={{ fontSize: '11px', letterSpacing: '0.1em', fontFamily: "'Courier New', monospace", fontWeight: 400 }}
   >
     {children}
   </span>
@@ -41,8 +41,8 @@ export const About = () => {
       className="min-h-screen w-full flex items-center pointer-events-none py-28"
     >
       <div
-        className="pointer-events-auto w-full pr-10 md:pr-20"
-        style={{ paddingLeft: 'clamp(1.5rem, 45vw, 52vw)' }}
+        className="pointer-events-auto w-full pr-8 md:pr-16"
+        style={{ paddingLeft: 'clamp(1.5rem, 38vw, 48vw)' }}
       >
         {/* Section label — first */}
         <motion.div
@@ -65,7 +65,7 @@ export const About = () => {
         >
           {/* Portrait card */}
           <div
-            className="rounded-2xl overflow-hidden border border-white/15 mb-5"
+            className="overflow-hidden border border-white/15 mb-5"
             style={{ width: '160px', height: '213px', background: 'rgba(255,255,255,0.04)' }}
           >
             {PORTFOLIO_DATA.about.portrait ? (
@@ -87,8 +87,8 @@ export const About = () => {
 
           {/* Name + subtitle below portrait */}
           <h1
-            className="text-white/90 font-light"
-            style={{ fontSize: 'clamp(22px, 3vw, 36px)', letterSpacing: '-0.01em', lineHeight: 1.1 }}
+            className="text-white/90 font-light tracking-tight"
+            style={{ fontSize: 'clamp(22px, 3vw, 36px)', lineHeight: 1.1 }}
           >
             Joydeep Das
           </h1>
@@ -110,8 +110,8 @@ export const About = () => {
               whileInView="visible"
               viewport={{ once: true, margin: '-60px' }}
               variants={fadeUp}
-              className="text-white/85 leading-relaxed"
-              style={{ fontSize: '15px', fontWeight: 300 }}
+              className="text-white/85 leading-loose"
+              style={{ fontSize: '15px', fontWeight: 300, fontFamily: "'Courier New', monospace" }}
             >
               {para}
             </motion.p>

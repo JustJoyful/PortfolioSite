@@ -2,7 +2,7 @@ import p5 from "p5";
 
 export const createSketch = (onReady) => {
   return function (p) {
-    const BUF_W = 800, BUF_H = 800;
+    const BUF_W = 400, BUF_H = 400;
     let buf;
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*'.split('');
     let ctx;
@@ -32,6 +32,7 @@ export const createSketch = (onReady) => {
     let targetMouseRotX = 0, targetMouseRotY = 0;
     let rotEaseIn = 0;
 
+    let active = true;
     let loadingPhase = true;
     let warmFrames = 0;
     const WARM_TARGET = 60;
@@ -94,8 +95,19 @@ export const createSketch = (onReady) => {
       loadingPhase = false;
     };
 
+    p.setActive = function (a) {
+      if (a === active) return;
+      active = a;
+      if (a) {
+        p.loop();
+      } else {
+        p.noLoop();
+      }
+    };
+
     p.draw = function () {
-      const dt = (p.deltaTime || 16) / 1000;
+      if (!active && !loadingPhase) return;
+      const dt = Math.min((p.deltaTime || 16) / 1000, 0.1);
       const f = elements[curEl];
 
       if (loadingPhase) {
@@ -254,17 +266,26 @@ export const createSketch = (onReady) => {
       const stemProgress = p.constrain(bl * 3, 0, 1);
       const flowerBloom = p.constrain((bl - 0.15) / 0.85, 0, 1);
       const wiltDroop = wl * 55;
-      const flowerCX = BUF_W / 2;
-      const flowerCY = BUF_H * 0.48 + wiltDroop;
-      drawStem(buf, f, stemProgress, wl, flowerCX, flowerCY);
-      drawPeony3D(buf, f, flowerBloom, wl, flowerCX, flowerCY);
+      
+      buf.push();
+      // The math assumes an 800x800 space, but our optimized buffer is 400x400.
+      // Scale it down so it fits perfectly without clipping.
+      buf.scale(0.5);
+      
+      const virtualCX = 800 / 2;
+      const virtualCY = 800 * 0.48 + wiltDroop;
+      
+      drawStem(buf, f, stemProgress, wl, virtualCX, virtualCY);
+      drawPeony3D(buf, f, flowerBloom, wl, virtualCX, virtualCY);
+      
+      buf.pop();
       buf.loadPixels();
     }
 
     function drawStem(g, f, progress, wl, _cx, cy) {
       wl = wl || 0;
-      const stemLen = BUF_H * 0.42;
-      const stemX = BUF_W / 2;
+      const stemLen = 800 * 0.42; // Math uses virtual 800 height
+      const stemX = 800 / 2;      // Math uses virtual 800 width
       const stemTop = cy;
       const stemBot = stemTop + stemLen;
       const visibleLen = stemLen * easeOutQuart(progress);
@@ -587,8 +608,12 @@ export const createSketch = (onReady) => {
       if (p.key === 'g' || p.key === 'G') triggerGlitch();
     };
 
+    let _resizeTimeout;
     p.windowResized = function () {
-      p.resizeCanvas(p.windowWidth, p.windowHeight);
+      clearTimeout(_resizeTimeout);
+      _resizeTimeout = setTimeout(() => {
+        p.resizeCanvas(p.windowWidth, p.windowHeight);
+      }, 200);
     };
   };
 };
