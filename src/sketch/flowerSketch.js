@@ -39,6 +39,10 @@ export const createSketch = (onReady) => {
     let warmFrames = 0;
     const WARM_TARGET = 60;
 
+    // Adaptive quality tier: 0=high, 1=low. Measured from warm-up FPS.
+    let qualityTier = 0;
+    let _fpsSum = 0, _fpsSamples = 0;
+
     let glitchTimer = 0;
     let glitchActive = false;
     let glitchIntensity = 0;
@@ -46,16 +50,37 @@ export const createSketch = (onReady) => {
 
     let wilt = 0;
     let _lastWilt = -1;
+    let _lastGlow = -1;
 
     // Atmospheric effects
     let particles = [];
-    const PARTICLE_MAX = 100;
+    let PARTICLE_MAX = 100; // may be halved on low-end
     let ripples = [];
     let glowIntensity = 0;
     let targetGlowIntensity = 0;
     let prevMouseX = 0, prevMouseY = 0;
     let mouseSpeed = 0;
     let particleSpawnAccum = 0;
+
+    // Cinematic bloom: 3 phases — slow unfurl, mid burst, final settle
+    // bloomCurve(t) returns 0→1 with a deliberate S that feels majestic
+    function bloomCurve(t) {
+      if (t < 0.45) {
+        // Phase 1: slow, breath-like unfurl (easeInOutQuad)
+        const u = t / 0.45;
+        return 0.18 * (u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2);
+      } else if (t < 0.75) {
+        // Phase 2: accelerating burst — petals snap open
+        const u = (t - 0.45) / 0.30;
+        return 0.18 + 0.62 * (1 - Math.pow(1 - u, 3));
+      } else {
+        // Phase 3: gentle settle to full bloom
+        const u = (t - 0.75) / 0.25;
+        return 0.80 + 0.20 * (u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2);
+      }
+    }
+    let bloomT = 0; // raw time driver for the curve (seconds)
+    const BLOOM_DURATION = 5.0; // total seconds for full bloom — feels cinematic, not rushed
 
     const easeInOutCubic = (x) => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
     const easeOutQuart = (x) => 1 - Math.pow(1 - x, 4);
@@ -92,12 +117,15 @@ export const createSketch = (onReady) => {
       prevMouseY = p.mouseY;
       mouseSpeed = 0;
       particleSpawnAccum = 0;
+      _fpsSum = 0;
+      _fpsSamples = 0;
     };
 
     function startElement(idx) {
       curEl = idx;
       bloom = 0;
       bloomTarget = 1;
+      bloomT = 0;
       _lastBloom = -1;
       _lastWilt = -1;
       wilt = 0;
@@ -137,8 +165,17 @@ export const createSketch = (onReady) => {
         p.background(0);
         bloom = p.min(0.5, warmFrames / WARM_TARGET * 0.5);
         drawFlowerToBuffer(f, bloom, 0);
+        // Sample FPS during warm-up to decide quality tier
+        if (p.frameRate && p.frameRate() > 0) {
+          _fpsSum += p.frameRate();
+          _fpsSamples++;
+        }
         warmFrames++;
         if (warmFrames >= WARM_TARGET) {
+          // If median warm-up FPS < 40, switch to low-end mode
+          const avgFps = _fpsSamples > 0 ? _fpsSum / _fpsSamples : 60;
+          qualityTier = avgFps < 40 ? 1 : 0;
+          if (qualityTier === 1) PARTICLE_MAX = 50;
           onReady();
           // @ts-ignore
           p.startExperience();
@@ -184,9 +221,11 @@ export const createSketch = (onReady) => {
       rotZ = autoRotZ;
 
       if (phase === 'growing') {
-        bloom += (bloomTarget - bloom) * 0.006;
+        bloomT += dt;
+        const tNorm = Math.min(bloomT / BLOOM_DURATION, 1);
+        bloom = bloomCurve(tNorm);
         phaseT += dt;
-        if (bloom > 0.98) { bloom = 1; phase = 'interactive'; phaseT = 0; }
+        if (tNorm >= 1) { bloom = 1; phase = 'interactive'; phaseT = 0; }
       }
 
       densTimer += dt;
@@ -457,7 +496,10 @@ export const createSketch = (onReady) => {
       const cAlpha = p.constrain((bl - 0.45) / 0.3, 0, 1) * (1 - wl);
       if (cAlpha > 0) items.push({ rz: 0, tp: 'c', sx: 0, sy: 0, sa: 0, alpha: cAlpha });
 
-      for (let layer = f.layers; layer >= 0; layer--) {
+      // Low-end: skip innermost layers (heavily occluded, barely visible, high petal count)
+      const layerStart = f.layers;
+      const layerEnd   = qualityTier === 1 ? Math.min(4, Math.floor(f.layers * 0.28)) : 0;
+      for (let layer = layerStart; layer >= layerEnd; layer--) {
         const lr = layer / f.layers;
         const layerDelay = (1 - lr) * 0.35;
         const layerBl = p.constrain((bl - layerDelay) / (1 - layerDelay), 0, 1);
@@ -590,38 +632,42 @@ export const createSketch = (onReady) => {
           }
           g.endShape(p.CLOSE);
 
-          // Petal sheen: a narrow top highlight + soft inner wash to make the flower feel less flat.
-          g.noFill();
-          g.stroke(it.hR, it.hG, it.hB, it.hA);
-          g.strokeWeight(p.max(0.4, it.pw * 0.055));
-          g.beginShape();
-          for (let tt = 0.08; tt <= 0.98; tt += 0.09) {
-            const px = tt * it.pl;
-            const bW = p.sin(tt * p.PI) * it.pw;
-            const cup = p.sin(tt * p.PI) * (it.cup || 0) * it.pw * 0.55;
-            const ruf = p.sin(tt * 8 + it.rPhase) * it.rAmt * tt;
-            g.vertex(px, bW + ruf + cup - it.pw * 0.08);
-          }
-          g.endShape();
+          // Petal sheen: skip entirely on low-end devices to save draw calls
+          if (qualityTier === 0) {
+            // Narrow top highlight
+            g.noFill();
+            g.stroke(it.hR, it.hG, it.hB, it.hA);
+            g.strokeWeight(p.max(0.4, it.pw * 0.055));
+            g.beginShape();
+            for (let tt = 0.08; tt <= 0.98; tt += 0.09) {
+              const px = tt * it.pl;
+              const bW = p.sin(tt * p.PI) * it.pw;
+              const cup = p.sin(tt * p.PI) * (it.cup || 0) * it.pw * 0.55;
+              const ruf = p.sin(tt * 8 + it.rPhase) * it.rAmt * tt;
+              g.vertex(px, bW + ruf + cup - it.pw * 0.08);
+            }
+            g.endShape();
 
-          g.noStroke();
-          g.fill(it.hR, it.hG, it.hB, it.gA);
-          g.beginShape();
-          for (let tt = 0.06; tt <= 0.98; tt += 0.1) {
-            const px = tt * it.pl;
-            const bW = p.sin(tt * p.PI) * it.pw * 0.72;
-            const cup = p.sin(tt * p.PI) * (it.cup || 0) * it.pw * 0.45;
-            const ruf = p.sin(tt * 8 + it.rPhase + 0.55) * it.rAmt * tt * 0.45;
-            g.vertex(px, bW + ruf + cup);
+            // Inner glow wash
+            g.noStroke();
+            g.fill(it.hR, it.hG, it.hB, it.gA);
+            g.beginShape();
+            for (let tt = 0.06; tt <= 0.98; tt += 0.1) {
+              const px = tt * it.pl;
+              const bW = p.sin(tt * p.PI) * it.pw * 0.72;
+              const cup = p.sin(tt * p.PI) * (it.cup || 0) * it.pw * 0.45;
+              const ruf = p.sin(tt * 8 + it.rPhase + 0.55) * it.rAmt * tt * 0.45;
+              g.vertex(px, bW + ruf + cup);
+            }
+            for (let tt = 0.98; tt >= 0.06; tt -= 0.1) {
+              const px = tt * it.pl;
+              const bW = p.sin(tt * p.PI) * it.pw * 0.28;
+              const cup = p.sin(tt * p.PI) * (it.cup || 0) * it.pw * 0.2;
+              const ruf = p.sin(tt * 8 + it.rPhase + p.PI + 0.55) * it.rAmt * tt * 0.2;
+              g.vertex(px, -bW + ruf - cup);
+            }
+            g.endShape(p.CLOSE);
           }
-          for (let tt = 0.98; tt >= 0.06; tt -= 0.1) {
-            const px = tt * it.pl;
-            const bW = p.sin(tt * p.PI) * it.pw * 0.28;
-            const cup = p.sin(tt * p.PI) * (it.cup || 0) * it.pw * 0.2;
-            const ruf = p.sin(tt * 8 + it.rPhase + p.PI + 0.55) * it.rAmt * tt * 0.2;
-            g.vertex(px, -bW + ruf - cup);
-          }
-          g.endShape(p.CLOSE);
           g.pop();
         }
       }
@@ -649,18 +695,22 @@ export const createSketch = (onReady) => {
         ctx.fillStyle = halo;
         ctx.fillRect(0, 0, p.width, p.height);
 
-        const vignette = ctx.createRadialGradient(cx, cy, r * 0.45, cx, cy, r * 1.25);
-        vignette.addColorStop(0, 'rgba(0,0,0,0)');
-        vignette.addColorStop(1, 'rgba(0,0,0,0.25)');
-        ctx.fillStyle = vignette;
-        ctx.fillRect(0, 0, p.width, p.height);
+        // Vignette is purely aesthetic — skip on low-end to save a fillRect pass
+        if (qualityTier === 0) {
+          const vignette = ctx.createRadialGradient(cx, cy, r * 0.45, cx, cy, r * 1.25);
+          vignette.addColorStop(0, 'rgba(0,0,0,0)');
+          vignette.addColorStop(1, 'rgba(0,0,0,0.25)');
+          ctx.fillStyle = vignette;
+          ctx.fillRect(0, 0, p.width, p.height);
+        }
       } catch (e) { /* ignore */ }
     }
 
     function updateParticles(dt, f) {
       const cx = p.width / 2 + mInfX;
       const cy = p.height / 2 + mInfY;
-      const spawnRate = 10 + mouseSpeed * 0.15 + glowIntensity * 6;
+      // Low-end: halve spawn rate to keep particle count in check
+      const spawnRate = (10 + mouseSpeed * 0.15 + glowIntensity * 6) * (qualityTier === 0 ? 1 : 0.5);
       particleSpawnAccum += spawnRate * dt;
 
       // Scale spawn radius to actual flower screen size so particles hug petals.
@@ -776,13 +826,14 @@ export const createSketch = (onReady) => {
       const useNative = (curM === 0) || (!transitionDone && prevM === 0);
       if (useNative) { ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; }
       const gEff = (curM === 0 && transitionDone) ? asciiG : g;
-      const halfG = gEff * 0.5;
+      // Remove the renderStep doubling — it made motion look coarser.
+      const halfStep = gEff * 0.5;
       const yStart = p.max(0, p.floor(oy / gEff) * gEff);
-      const yEnd = p.min(p.height, oy + renderH);
+      const yEnd   = p.min(p.height, oy + renderH);
       const xStart = p.max(0, p.floor(ox / gEff) * gEff);
-      const xEnd = p.min(p.width, ox + renderW);
+      const xEnd   = p.min(p.width,  ox + renderW);
       const asciiSize = gEff * 1.1;
-      let lastFontStr = '';
+      let lastFontStr = ''
 
       for (let sy = yStart; sy < yEnd; sy += gEff) {
         const byBase = p.floor((sy - oy) * invScale);
@@ -795,7 +846,7 @@ export const createSketch = (onReady) => {
           const r = px[idx], gr = px[idx + 1], b = px[idx + 2];
           if ((r + gr + b) < 12) continue;
           const bright = r * 0.299 + gr * 0.587 + b * 0.114;
-          const cx = sx + halfG, cy = sy + halfG;
+          const cx = sx + halfStep, cy = sy + halfStep;
           let mode;
           if (transitionDone) {
             mode = curM;
