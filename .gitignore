@@ -39,3 +39,8 @@ get_logs.cjs
 # Build and Tooling
 .eslintcache
 .vite
+
+# Local measurement output
+.measure/
+.parity/
+.taste-skill/

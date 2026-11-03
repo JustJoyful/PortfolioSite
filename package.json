@@ -7,7 +7,11 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "node --test \"tests/unit/**/*.test.js\"",
+    "test:e2e": "vite build && node --test --test-concurrency=1 \"tests/e2e/**/*.test.js\"",
+    "budget": "vite build && node scripts/check-budget.mjs",
+    "measure": "vite build && node scripts/measure.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",

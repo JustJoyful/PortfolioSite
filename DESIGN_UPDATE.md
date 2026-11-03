@@ -402,15 +402,15 @@ Suggested order: 0 → 1 → 2 → 3 → 4 → 5. Phase 0 alone already fixes mo
 
 | Metric | Before (Phase 0 measures) | Target |
 |---|---|---|
-| Initial JS (gz) | _TBD_ (p5 alone ≈ 250 KB+ gz est.) | **< 120 KB** |
-| Total transfer, first load | _TBD_ (≥ 1.5 MB, portrait is 1.2 MB) | **< 350 KB** |
-| LCP (mobile, 4G, mid-tier) | _TBD_ (gated ≥ 1 s by loader) | **< 1.5 s** |
-| CLS | _TBD_ | **< 0.02** |
-| TBT (mobile) | _TBD_ | **< 150 ms** |
-| Animation, desktop 1080p | _TBD_ | **60 fps, < 4 ms main thread/frame** |
-| Animation, low-end Android | _TBD_ | **≥ 30 fps** |
-| Lighthouse perf mobile / desktop | _TBD_ | **≥ 90 / ≥ 98** |
-| Lighthouse a11y | _TBD_ | **100** |
+| Initial JS (gz) | 351.2 KB | **< 120 KB** |
+| Total transfer, first load | 1,575 KiB (Lighthouse total byte weight) | **< 350 KB** |
+| LCP (mobile, 4G, mid-tier) | 3.6 s (Lighthouse mobile; desktop 1.0 s) | **< 1.5 s** |
+| CLS | 0 | **< 0.02** |
+| TBT (mobile) | 300 ms | **< 150 ms** |
+| Animation, desktop 1080p | 34.6 fps at 1440x900, headless software GL; main thread/frame not measured | **60 fps, < 4 ms main thread/frame** |
+| Animation, low-end Android | 18.6 fps (390 px, 4x CPU throttle, desktop Chromium proxy) | **≥ 30 fps** |
+| Lighthouse perf mobile / desktop | 77 / 98 | **≥ 90 / ≥ 98** |
+| Lighthouse a11y | 93 (mobile and desktop) | **100** |
 
 ---
 
