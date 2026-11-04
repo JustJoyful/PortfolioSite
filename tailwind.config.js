@@ -14,7 +14,6 @@ export default {
       },
       fontFamily: {
         sans: ['Space Grotesk', 'sans-serif'],
-        cursive: ['Dancing Script', 'cursive'],
         mono: ['Courier New', 'monospace'],
       },
       animation: {

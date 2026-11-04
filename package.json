@@ -14,13 +14,10 @@
     "measure": "vite build && node scripts/measure.mjs"
   },
   "dependencies": {
-    "clsx": "^2.1.1",
     "framer-motion": "^12.38.0",
-    "lucide-react": "^1.14.0",
     "p5": "^1.9.3",
     "react": "^19.2.5",
-    "react-dom": "^19.2.5",
-    "tailwind-merge": "^3.5.0"
+    "react-dom": "^19.2.5"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
