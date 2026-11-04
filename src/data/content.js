@@ -4,7 +4,14 @@ export const PORTFOLIO_DATA = {
     subtitle: "Think. Then Build.",
   },
   about: {
-    portrait: '/potrait.png', // Set to '/portrait.jpg' once you add your photo to the public/ folder
+    portrait: {
+      avif: '/portrait-320.avif 320w, /portrait-640.avif 640w',
+      webp: '/portrait-320.webp 320w, /portrait-640.webp 640w',
+      src: '/portrait-640.webp',
+      width: 320,
+      height: 426,
+      alt: 'Portrait of Joydeep Das',
+    },
     bio: [
       "I am a student at Netaji Subhash Engineering College (2025-29), currently in my 2nd semester.",
       "I like to tinker with stuff and have a deep interest in hardware, gaming, electronics, and Linux."

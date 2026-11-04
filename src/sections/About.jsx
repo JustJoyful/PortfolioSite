@@ -69,11 +69,17 @@ export const About = () => {
             style={{ width: '160px', height: '213px', background: 'rgba(255,255,255,0.04)' }}
           >
             {PORTFOLIO_DATA.about.portrait ? (
-              <img
-                src={PORTFOLIO_DATA.about.portrait}
-                alt="Joydeep Das"
-                className="w-full h-full object-cover object-top"
-              />
+              <picture>
+                <source type="image/avif" srcSet={PORTFOLIO_DATA.about.portrait.avif} sizes="160px" />
+                <source type="image/webp" srcSet={PORTFOLIO_DATA.about.portrait.webp} sizes="160px" />
+                <img
+                  src={PORTFOLIO_DATA.about.portrait.src}
+                  width={PORTFOLIO_DATA.about.portrait.width}
+                  height={PORTFOLIO_DATA.about.portrait.height}
+                  alt={PORTFOLIO_DATA.about.portrait.alt}
+                  className="w-full h-full object-cover object-top"
+                />
+              </picture>
             ) : (
               <div className="w-full h-full flex flex-col items-center justify-center gap-2">
                 <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="1">
