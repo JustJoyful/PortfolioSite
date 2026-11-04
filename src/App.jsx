@@ -62,7 +62,7 @@ function App() {
       {/* Layer 2 — Fixed left rail (desktop only) */}
       <LeftRail />
 
-      {/* Layer 3 — Scrollable content with mobile glassmorphism backdrop */}
+      {/* Layer 3 — Scrollable content (dim backdrop below lg, no blur) */}
       <div className="relative z-10 w-full flex flex-col bg-black/40 lg:bg-transparent">
         <Hero />
         <About />

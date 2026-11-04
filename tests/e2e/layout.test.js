@@ -17,7 +17,9 @@ for (const width of [320, 390, 768]) {
         const blurred = [col, ...col.querySelectorAll('*')].filter(
           (e) => getComputedStyle(e).backdropFilter !== 'none',
         ).length;
+        const rail = document.querySelector('aside');
         return {
+          railDisplay: rail && getComputedStyle(rail).display,
           scrollW: document.documentElement.scrollWidth,
           iw: innerWidth,
           boxes,
@@ -29,6 +31,7 @@ for (const width of [320, 390, 768]) {
         assert.ok(b.left <= 48, `${b.id} left ${b.left}`);
         assert.ok(b.width >= r.iw - 96, `${b.id} width ${b.width}`);
       }
+      assert.equal(r.railDisplay, 'none', 'left rail hidden below lg');
       assert.equal(r.blurred, 0, 'no backdrop blur');
     } finally {
       await browser.close();

@@ -29,7 +29,7 @@ export const LeftRail = () => {
       initial={{ opacity: 0, x: -16 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: 3, duration: 1.2, ease: 'easeOut' }}
-      className="fixed left-0 top-0 h-full z-20 flex flex-col items-center justify-between py-12 px-4 pointer-events-none select-none hidden md:flex"
+      className="fixed left-0 top-0 h-full z-20 flex flex-col items-center justify-between py-12 px-4 pointer-events-none select-none hidden lg:flex"
       style={{ width: '64px' }}
     >
       {/* Vertical name */}
