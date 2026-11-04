@@ -76,11 +76,10 @@ export const Projects = () => {
   return (
     <section
       id="projects"
-      className="min-h-screen w-full flex items-center pointer-events-none py-28"
+      className="lg:min-h-screen w-full flex items-center pointer-events-none py-28"
     >
       <div
-        className="pointer-events-auto w-full pr-8 md:pr-16"
-        style={{ paddingLeft: 'clamp(1.5rem, 38vw, 48vw)' }}
+        className="pointer-events-auto w-full px-5 md:px-12 lg:pl-[38vw] lg:pr-12"
       >
         {/* Header row: label + nav arrows */}
         <motion.div

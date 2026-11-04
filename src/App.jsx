@@ -22,8 +22,8 @@ function App() {
       // Pause p5 when scrolled deep past ~2.8 viewports — saves GPU/battery
       setSketchPaused(scrollY > vh * 2.8);
 
-      // Disable flower translation on mobile (< 768px)
-      if (window.innerWidth < 768) return;
+      // Disable flower translation below lg (< 1024px)
+      if (window.innerWidth < 1024) return;
 
       const progress = Math.min(1, scrollY / vh);
       const eased = progress < 0.5
@@ -50,7 +50,7 @@ function App() {
       {/* Layer 0 — P5.js flower animation (scroll-shifted on desktop, static/dimmed on mobile) */}
       <div
         ref={flowerContainerRef}
-        className="fixed inset-0 pointer-events-auto z-0 md:z-0 -z-10 md:opacity-100 opacity-30"
+        className="fixed inset-0 pointer-events-auto z-0 md:z-0 -z-10 lg:opacity-100 opacity-30"
         style={{ transition: 'transform 0.65s cubic-bezier(0.16, 1, 0.3, 1)', willChange: 'transform' }}
       >
         <BackgroundSketch paused={sketchPaused} />
@@ -63,7 +63,7 @@ function App() {
       <LeftRail />
 
       {/* Layer 3 — Scrollable content with mobile glassmorphism backdrop */}
-      <div className="relative z-10 w-full flex flex-col md:bg-transparent bg-black/40 backdrop-blur-md md:backdrop-blur-none">
+      <div className="relative z-10 w-full flex flex-col bg-black/40 lg:bg-transparent">
         <Hero />
         <About />
         <Projects />
