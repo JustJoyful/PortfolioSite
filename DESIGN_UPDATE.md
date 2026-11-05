@@ -400,17 +400,17 @@ Suggested order: 0 → 1 → 2 → 3 → 4 → 5. Phase 0 alone already fixes mo
 
 ## 9. Budgets & measurements
 
-| Metric | Before (Phase 0 measures) | Target |
-|---|---|---|
-| Initial JS (gz) | 351.2 KB | **< 120 KB** |
-| Total transfer, first load | 1,575 KiB (Lighthouse total byte weight) | **< 350 KB** |
-| LCP (mobile, 4G, mid-tier) | 3.6 s (Lighthouse mobile; desktop 1.0 s) | **< 1.5 s** |
-| CLS | 0 | **< 0.02** |
-| TBT (mobile) | 300 ms | **< 150 ms** |
-| Animation, desktop 1080p | 34.6 fps at 1440x900, headless software GL; main thread/frame not measured | **60 fps, < 4 ms main thread/frame** |
-| Animation, low-end Android | 18.6 fps (390 px, 4x CPU throttle, desktop Chromium proxy) | **≥ 30 fps** |
-| Lighthouse perf mobile / desktop | 77 / 98 | **≥ 90 / ≥ 98** |
-| Lighthouse a11y | 93 (mobile and desktop) | **100** |
+| Metric | Before (Phase 0 measures) | After Phase 1 | Target |
+|---|---|---|---|
+| Initial JS (gz) | 351.2 KB | not measured | **< 120 KB** |
+| Total transfer, first load | 1,575 KiB (Lighthouse total byte weight) | not measured | **< 350 KB** |
+| LCP (mobile, 4G, mid-tier) | 3.6 s (Lighthouse mobile; desktop 1.0 s) | not measured | **< 1.5 s** |
+| CLS | 0 | not measured | **< 0.02** |
+| TBT (mobile) | 300 ms | not measured | **< 150 ms** |
+| Animation, desktop 1080p | 34.6 fps at 1440x900, headless software GL; main thread/frame not measured | 12 fps at 1440x900, headless software GL (SwiftShader), tier high; main thread/frame not measured | **60 fps, < 4 ms main thread/frame** |
+| Animation, low-end Android | 18.6 fps (390 px, 4x CPU throttle, desktop Chromium proxy) | 34.8 fps at 390 px, 4x CPU throttle; 20 fps, tier low, at 390 px 6x throttle (6× CPU-throttled Chromium, not a real device) | **≥ 30 fps** |
+| Lighthouse perf mobile / desktop | 77 / 98 | not measured | **≥ 90 / ≥ 98** |
+| Lighthouse a11y | 93 (mobile and desktop) | not measured | **100** |
 
 ---
 
