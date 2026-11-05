@@ -2,14 +2,31 @@ import React, { useEffect, useRef, useState } from 'react';
 import p5 from 'p5';
 import { createSketch } from '../sketch/flowerSketch';
 import { motion, AnimatePresence } from 'framer-motion';
+import { createBloom } from '../engine';
+
+const params = new URLSearchParams(window.location.search);
+const USE_BLOOM = params.get('engine') === 'bloom'; // temporary route until the engine becomes the default
 
 export const BackgroundSketch = ({ paused = false }) => {
   const containerRef = useRef(null);
   const p5Instance = useRef(null);
+  const bloomRef = useRef(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!USE_BLOOM || !containerRef.current) return;
+    const canvas = document.createElement('canvas');
+    canvas.className = 'absolute inset-0 w-full h-full block';
+    containerRef.current.appendChild(canvas);
+    const seed = params.get('seed');
+    const engine = createBloom(canvas, { seed: seed == null ? undefined : Number(seed), onReady: () => setIsLoaded(true) });
+    bloomRef.current = engine;
+    if (params.has('debug')) window.__bloom = engine;
+    return () => { engine.destroy(); canvas.remove(); bloomRef.current = null; };
+  }, []);
+
+  useEffect(() => {
+    if (USE_BLOOM || !containerRef.current) return;
     if (p5Instance.current) p5Instance.current.remove();
 
     const sketch = createSketch(() => setIsLoaded(true));
@@ -21,6 +38,7 @@ export const BackgroundSketch = ({ paused = false }) => {
   }, []);
 
   useEffect(() => {
+    bloomRef.current?.setActive(!paused);
     if (p5Instance.current && p5Instance.current.setActive) {
       p5Instance.current.setActive(!paused);
     }
