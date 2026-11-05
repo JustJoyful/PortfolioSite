@@ -19,7 +19,7 @@ export const BackgroundSketch = ({ paused = false }) => {
     canvas.className = 'absolute inset-0 w-full h-full block';
     containerRef.current.appendChild(canvas);
     const seed = params.get('seed');
-    const engine = createBloom(canvas, { seed: seed == null ? undefined : Number(seed), onReady: () => setIsLoaded(true) });
+    const engine = createBloom(canvas, { seed: seed == null ? undefined : Number(seed), breakShader: params.has('breakshader'), tier: params.get('tier') ?? undefined, onReady: () => setIsLoaded(true) });
     bloomRef.current = engine;
     if (params.has('debug')) window.__bloom = engine;
     return () => { engine.destroy(); canvas.remove(); bloomRef.current = null; };

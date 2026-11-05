@@ -18,7 +18,7 @@ export function createParticles(canvas, rand) {
       while (acc > 1 && list.length < f.max) {
         acc -= 1;
         const angle = random(rand, 0, Math.PI * 2);
-        const dist = random(innerR, outerR);
+        const dist = random(rand, innerR, outerR);
         const speed = random(rand, 0.08, 0.4);
         const life = random(rand, 0.7, 1.8);
         const col = f.variant[rand() < 0.55 ? 'c1' : 'c2'];

@@ -6,15 +6,18 @@ let server;
 before(async () => { server = await startPreview(); });
 after(async () => { await server.close(); });
 
-const URL = () => `${server.url}?engine=bloom&debug&seed=7`;
+const URL = (extra = '') => `${server.url}?engine=bloom&debug&seed=7${extra}`;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const stats = (page) => page.evaluate(() => window.__bloom.stats());
 
-async function withPage(opts, fn) {
-  const { page, browser } = await openPage(URL(), opts);
+async function withPage(opts, fn, extra) {
+  const { page, browser } = await openPage(URL(extra), opts);
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(e.message));
   try {
     await page.waitForFunction(() => window.__bloom);
     await fn(page);
+    assert.deepEqual(errors, []);
   } finally { await browser.close(); }
 }
 
@@ -71,4 +74,26 @@ test('rotation re-sizes', () => withPage({ width: 390, height: 844 }, async (pag
   const bad = await page.evaluate(() => window.__bloom.getAnchors()
     .filter((a) => a.visible && (a.x < 0 || a.x > innerWidth || a.y < 0 || a.y > innerHeight)));
   assert.deepEqual(bad, []);
+}));
+
+test('shader compile failure falls back to canvas2d', async () => {
+  const errors = [];
+  const { page, browser } = await openPage(URL('&breakshader&tier=medium'), { width: 1440 });
+  page.on('pageerror', (e) => errors.push(e.message));
+  try {
+    await page.waitForFunction(() => window.__bloom);
+    await sleep(300);
+    const a = await stats(page);
+    assert.equal(a.backend, 'canvas2d');
+    await sleep(500);
+    assert.ok((await stats(page)).frames > a.frames);
+    assert.deepEqual(errors, []);
+  } finally { await browser.close(); }
+});
+
+test('returning to hero dissolves immediately', () => withPage({ width: 1440 }, async (page) => {
+  await page.evaluate(() => window.__bloom.setSection('about'));
+  await page.waitForFunction(() => window.__bloom.stats().modeT === 1, null, { timeout: 1500 });
+  const t = await page.evaluate(() => { window.__bloom.setSection('hero'); return window.__bloom.stats().modeT; });
+  assert.ok(t < 1, `modeT ${t}`);
 }));

@@ -21,7 +21,7 @@ export function createBloom(canvas, opts = {}) {
   const rand = opts.seed != null ? rng(opts.seed) : Math.random;
   const coarse = mq('(pointer: coarse)');
 
-  let post = createPost(canvas);
+  let post = createPost(canvas, opts.breakShader ? { frag: 'void main(){' } : undefined); // breakShader: test hook
   let tierName = opts.tier ?? initialTier({
     coarse,
     cores: navigator.hardwareConcurrency ?? 4,
@@ -44,7 +44,7 @@ export function createBloom(canvas, opts = {}) {
     }
     ctx2d = (fbCanvas ?? canvas).getContext('2d');
   };
-  if (post) canvas.dataset.bloomGl = '1'; else useFallback();
+  if (!post) useFallback();
 
   const bufCanvas = document.createElement('canvas');
   const bufCtx = bufCanvas.getContext('2d');
@@ -272,7 +272,7 @@ export function createBloom(canvas, opts = {}) {
       const x = ox + (p.x / bufCanvas.width) * s, y = oy + (p.y / bufCanvas.width) * s;
       a.x = first ? x : lerp(a.x, x, 0.15);
       a.y = first ? y : lerp(a.y, y, 0.15);
-      a.visible = p.z <= 0 && a.x >= 0 && a.x <= W && a.y >= 0 && a.y <= H;
+      a.visible = p.z <= 0;
     }
     anchorsInit = true;
   }
@@ -390,7 +390,7 @@ export function createBloom(canvas, opts = {}) {
   const onRestored = () => {
     const p = createPost(canvas);
     if (!p) return;
-    post = p; bindPost();
+    post = p; bindPost(); lastBuf = -1e9;
     fbCanvas?.remove(); fbCanvas = null; canvas.style.display = '';
     ctx2d = null;
     post.uploadAtlas(atlas);
@@ -426,8 +426,9 @@ export function createBloom(canvas, opts = {}) {
       if (!SECTION_NAMES.includes(name) || name === section) return;
       section = name;
       sec = sectionState(section, { desktop: W >= 1024 });
-      if (sec.mode !== 'cycle' && !isStatic()) {
-        prevMode = renderMode; renderMode = MODE_OF[sec.mode]; modeT = 0;
+      if (!isStatic()) {
+        prevMode = renderMode; modeT = 0; // every section change dissolves
+        if (sec.mode !== 'cycle') renderMode = MODE_OF[sec.mode];
       }
       triggerGlitch(true);
       if (isStatic()) renderStatic();
@@ -442,7 +443,7 @@ export function createBloom(canvas, opts = {}) {
     },
     stats: () => ({
       backend: post ? post.backend : 'canvas2d', tier: tierName, frames, fps: Math.round(fps),
-      mode: post ? MODE_NAMES[renderMode] : 'pixels', phase, width: W, height: H,
+      mode: post ? MODE_NAMES[renderMode] : 'pixels', phase, width: W, height: H, modeT,
     }),
     destroy() {
       destroyed = true; sync();

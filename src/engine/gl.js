@@ -4,12 +4,13 @@ import frag from './post.frag?raw';
 
 const FLOATS = ['grid', 'mode', 'prevMode', 'modeT', 'glitchCount', 'glow', 'time', 'presence', 'falloffX', 'scrim', 'stars'];
 
-export function createPost(canvas) {
+export function createPost(canvas, { frag: fragSrc = frag } = {}) {
   const opts = { alpha: false, antialias: false, depth: false, stencil: false, powerPreference: 'high-performance' };
   let gl = canvas.getContext('webgl2', opts);
   let backend = 'webgl2';
   if (!gl) { gl = canvas.getContext('webgl', opts) || canvas.getContext('experimental-webgl', opts); backend = 'webgl'; }
   if (!gl) return null;
+  canvas.dataset.bloomGl = '1'; // the canvas can no longer take a 2d context
 
   const compile = (type, src) => {
     const s = gl.createShader(type);
@@ -21,7 +22,7 @@ export function createPost(canvas) {
   try {
     prog = gl.createProgram();
     gl.attachShader(prog, compile(gl.VERTEX_SHADER, vert));
-    gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, frag));
+    gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, fragSrc));
     gl.linkProgram(prog);
     if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
   } catch (e) {
