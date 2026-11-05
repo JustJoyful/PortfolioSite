@@ -1,34 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useActiveSection } from '../hooks/useActiveSection';
 import { motion } from 'framer-motion';
 
-const SECTIONS = ['intro', 'about', 'work', 'contact'];
+const IDS = ['hero', 'about', 'work', 'contact'];
 
 export const LeftRail = () => {
-  const [active, setActive] = useState(0);
-
-  useEffect(() => {
-    const ids = ['hero', 'about', 'projects', 'contact'];
-    const observers = [];
-
-    ids.forEach((id, idx) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const obs = new IntersectionObserver(
-        ([entry]) => { if (entry.isIntersecting) setActive(idx); },
-        { threshold: 0.4 }
-      );
-      obs.observe(el);
-      observers.push(obs);
-    });
-
-    return () => observers.forEach(o => o.disconnect());
-  }, []);
+  const activeId = useActiveSection(IDS);
+  const active = IDS.indexOf(activeId);
 
   return (
     <motion.aside
       initial={{ opacity: 0, x: -16 }}
       animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: 3, duration: 1.2, ease: 'easeOut' }}
+      transition={{ duration: 1.2, ease: 'easeOut' }}
       className="fixed left-0 top-0 h-full z-20 flex flex-col items-center justify-between py-12 px-4 pointer-events-none select-none hidden lg:flex"
       style={{ width: '64px' }}
     >
@@ -49,7 +32,7 @@ export const LeftRail = () => {
 
       {/* Section dots */}
       <div className="flex flex-col items-center gap-3">
-        {SECTIONS.map((_, idx) => (
+        {IDS.map((_, idx) => (
           <div
             key={idx}
             className="transition-all duration-500"

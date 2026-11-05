@@ -6,7 +6,7 @@ let server;
 before(async () => { server = await startPreview(); });
 after(async () => { await server.close(); });
 
-const URL = (extra = '') => `${server.url}?engine=bloom&debug&seed=7${extra}`;
+const URL = (extra = '') => `${server.url}?debug&seed=7${extra}`;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const stats = (page) => page.evaluate(() => window.__bloom.stats());
 
@@ -49,7 +49,8 @@ test('reduced motion is static', () => withPage({ width: 1440, reducedMotion: tr
   await sleep(1000);
   const s = await stats(page);
   assert.equal(s.tier, 'static');
-  assert.ok(s.frames <= 2, `frames ${s.frames}`);
+  await sleep(500);
+  assert.equal((await stats(page)).frames, s.frames, 'no animation loop'); // setLayout/setSection each repaint once
 }));
 
 test('context loss falls back and recovers', () => withPage({ width: 1440 }, async (page) => {

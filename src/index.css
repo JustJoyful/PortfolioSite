@@ -32,3 +32,23 @@
 ::-webkit-scrollbar-thumb {
   background: #1a1a1a;
 }
+
+/* Scroll choreography: slide left (>=1024 only) plus 12px parallax per 100vh. */
+@supports (animation-timeline: scroll()) {
+  @keyframes flower-scroll {
+    from { transform: translate(0, 0); }
+    to { transform: translate(var(--flower-dx, 0), -12px); }
+  }
+  #flower {
+    animation: flower-scroll linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 100vh;
+    animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  @media (min-width: 1024px) {
+    #flower { --flower-dx: -31vw; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #flower { animation: none; }
+  }
+}

@@ -75,7 +75,7 @@ export const Projects = () => {
 
   return (
     <section
-      id="projects"
+      id="work"
       className="lg:min-h-screen w-full flex items-center pointer-events-none py-28"
     >
       <div

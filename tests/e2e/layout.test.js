@@ -7,9 +7,9 @@ for (const width of [320, 390, 768]) {
     const srv = await startPreview();
     const { page, browser } = await openPage(srv.url, { width });
     try {
-      await page.waitForTimeout(2500); // loader gone
+      await page.waitForTimeout(500);
       const r = await page.evaluate(() => {
-        const boxes = ['about', 'projects', 'contact'].map((id) => {
+        const boxes = ['about', 'work', 'contact'].map((id) => {
           const b = document.querySelector(`#${id}`).firstElementChild.getBoundingClientRect();
           return { id, left: b.left, width: b.width };
         });

@@ -1,76 +1,50 @@
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useRef } from 'react';
+
+const fine = () => window.matchMedia('(pointer: fine)').matches;
 
 export const CustomCursor = () => {
-  const [pos, setPos] = useState({ x: -100, y: -100 });
-  const [hovering, setHovering] = useState(false);
-  const visibleRef = useRef(false);
-  const rafRef = useRef(null);
-  const targetRef = useRef({ x: -100, y: -100 });
-  const currentRef = useRef({ x: -100, y: -100 });
-
-  const lerp = useCallback(() => {
-    currentRef.current.x += (targetRef.current.x - currentRef.current.x) * 0.45;
-    currentRef.current.y += (targetRef.current.y - currentRef.current.y) * 0.45;
-    setPos({ x: currentRef.current.x, y: currentRef.current.y });
-  }, []);
+  const ref = useRef(null);
+  const mount = fine();
 
   useEffect(() => {
-    const onMove = (e) => {
-      targetRef.current.x = e.clientX;
-      targetRef.current.y = e.clientY;
-      if (!visibleRef.current) {
-        visibleRef.current = true;
-        currentRef.current.x = e.clientX;
-        currentRef.current.y = e.clientY;
-      }
+    const el = ref.current;
+    if (!el) return;
+    const t = { x: -100, y: -100 }, c = { x: -100, y: -100 };
+    let raf = 0, seen = false, size = 7;
+    const draw = () => {
+      el.style.transform = `translate3d(${c.x}px,${c.y}px,0) translate(-50%,-50%) scale(${size / 7})`;
     };
-
-    const onOver = (e) => {
-      const el = e.target.closest('a, button, [data-cursor-hover]');
-      setHovering(!!el);
-    };
-
-    const onLeave = () => setHovering(false);
-
-    window.addEventListener('mousemove', onMove, { passive: true });
-    document.addEventListener('mouseover', onOver);
-    document.addEventListener('mouseout', onLeave);
-
     const tick = () => {
-      lerp();
-      rafRef.current = requestAnimationFrame(tick);
+      c.x += (t.x - c.x) * 0.45; c.y += (t.y - c.y) * 0.45;
+      const settled = Math.abs(t.x - c.x) < 0.1 && Math.abs(t.y - c.y) < 0.1;
+      if (settled) { c.x = t.x; c.y = t.y; }
+      draw();
+      raf = settled ? 0 : requestAnimationFrame(tick);
     };
-    rafRef.current = requestAnimationFrame(tick);
-
+    const onMove = (e) => {
+      t.x = e.clientX; t.y = e.clientY;
+      if (!seen) { seen = true; c.x = t.x; c.y = t.y; }
+      if (!raf) raf = requestAnimationFrame(tick);
+    };
+    const onOver = (e) => {
+      size = e.target.closest?.('a, button, [data-cursor-hover]') ? 36 : 7;
+      draw();
+    };
+    window.addEventListener('pointermove', onMove, { passive: true });
+    document.addEventListener('pointerover', onOver);
     return () => {
-      window.removeEventListener('mousemove', onMove);
-      document.removeEventListener('mouseover', onOver);
-      document.removeEventListener('mouseout', onLeave);
-      cancelAnimationFrame(rafRef.current);
+      window.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerover', onOver);
+      cancelAnimationFrame(raf);
     };
-  }, [lerp]);
+  }, []);
 
+  if (!mount) return null;
   return (
-    <>
-      <div
-        className="custom-cursor fixed pointer-events-none z-[9999]"
-        style={{
-          left: pos.x,
-          top: pos.y,
-          transform: 'translate(-50%, -50%)',
-          width: hovering ? '36px' : '7px',
-          height: hovering ? '36px' : '7px',
-          borderRadius: '50%',
-          background: 'white',
-          mixBlendMode: 'difference',
-          willChange: 'left, top, width, height',
-        }}
-      />
-      <style>{`
-        @media (max-width: 768px), (pointer: coarse) {
-          .custom-cursor { display: none !important; }
-        }
-      `}</style>
-    </>
+    <div
+      ref={ref}
+      className="custom-cursor fixed left-0 top-0 pointer-events-none z-[9999]"
+      style={{ width: 7, height: 7, borderRadius: '50%', background: 'white', mixBlendMode: 'difference', transform: 'translate3d(-100px,-100px,0)', willChange: 'transform', transition: 'none' }}
+    />
   );
 };

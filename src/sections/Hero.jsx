@@ -19,9 +19,6 @@ export const Hero = () => {
       {/* Tagline — lower third, above vignette */}
       <motion.div
         className="text-center z-10 px-4 mb-4"
-        initial={{ opacity: 0, y: 12, filter: 'blur(8px)' }}
-        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-        transition={{ delay: 2.4, duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
       >
         <p
           className="text-white/50 uppercase"
@@ -41,7 +38,7 @@ export const Hero = () => {
         className="absolute bottom-7 left-1/2 -translate-x-1/2 flex flex-col items-center gap-0 z-10"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 4, duration: 1 }}
+        transition={{ duration: 1 }}
       >
         <motion.div
           animate={{ height: [20, 44, 20], opacity: [0.2, 0.55, 0.2] }}
