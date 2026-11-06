@@ -2,7 +2,7 @@
 
 export const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*';
 
-// Legacy formula from flowerSketch.js renderToScreen (~line 862)
+// Legacy formula from p5 sketch renderToScreen (removed in Task 1.9)
 export const glyphIndex = (bright, sx, sy) =>
   ((bright >> 2) + ((sx * 7 + sy * 13) >> 3)) % GLYPHS.length;
 

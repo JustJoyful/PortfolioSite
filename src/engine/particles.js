@@ -1,4 +1,4 @@
-// Ember particles on a DPR-1 overlay canvas. Ported from flowerSketch.js updateParticles/drawParticles.
+// Ember particles on a DPR-1 overlay canvas. Ported from the original p5 sketch (updateParticles/drawParticles).
 import { random, constrain } from './math.js';
 
 export function createParticles(canvas, rand) {
@@ -33,7 +33,7 @@ export function createParticles(canvas, rand) {
         });
       }
       if (list.length > f.max) list.length = f.max;
-      // 60 fps-equivalent steps: legacy velocities are per frame
+      // 60 fps-equivalent steps: original p5 velocities are per frame
       const k = dt * 60;
       for (let i = list.length - 1; i >= 0; i--) {
         const p = list[i];

@@ -1,4 +1,4 @@
-// Peony geometry ported from p5 (flowerSketch.js:106-675) to raw Canvas2D. No DOM at import time.
+// Peony geometry ported from the original p5 sketch (removed in Task 1.9) to raw Canvas2D. No DOM at import time.
 import { lerp, map, constrain, easeInOutCubic, easeOutQuart } from './math.js';
 
 const { sin, cos, PI, atan2, abs, max, min, floor } = Math;
@@ -94,7 +94,7 @@ function drawStem(ctx, f, progress, wl, cy) {
   }
 }
 
-// One petal's projected state (legacy items.push 'p'), or null if culled. Shared by drawing and projectAnchor.
+// One petal's projected state (original p5 items.push 'p'), or null if culled. Shared by drawing and projectAnchor.
 function petalAt(f, s, layer, i, bl, wl, brightBoost) {
   const lr = layer / f.layers;
   const layerDelay = (1 - lr) * 0.35;

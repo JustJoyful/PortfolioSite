@@ -48,14 +48,16 @@ test('p5 not in initial bundle', async () => {
   } finally { await browser.close(); await srv.close(); }
 });
 
-test('legacy route still works', async () => {
+test('?engine=legacy falls back to bloom', async () => {
   const srv = await startPreview();
   const errors = [];
-  const { page, browser } = await openPage('about:blank', { width: 1440 });
+  const { page, browser } = await openPage(`${srv.url}?engine=legacy&debug`, { width: 1440 });
   try {
     page.on('pageerror', (e) => errors.push(String(e)));
-    await page.goto(`${srv.url}?engine=legacy`);
-    await page.waitForTimeout(5000);
+    await page.waitForFunction(() => window.__bloom?.stats?.().backend, null, { timeout: 10000 });
+    const backend = await page.evaluate(() => window.__bloom.stats().backend);
+    assert.ok(['webgl2', 'webgl'].includes(backend), `backend was ${backend}`);
+    await page.waitForTimeout(3000);
     assert.deepEqual(errors, []);
   } finally { await browser.close(); await srv.close(); }
 });

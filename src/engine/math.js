@@ -16,13 +16,13 @@ export const lerp = (a, b, t) => a + (b - a) * t;
 export const map = (v, a1, b1, a2, b2) => a2 + ((v - a1) / (b1 - a1)) * (b2 - a2);
 export const constrain = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 
-// Cell hash used for per-cell jitter in the legacy renderer (flowerSketch.js:854)
+// Cell hash used for per-cell jitter in the original p5 renderer
 export const cellHash = (sx, sy) => ((sx * 73 + sy * 137) & 0xFF) * 0.00392;
 
 export const easeInOutCubic = (x) => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
 export const easeOutQuart = (x) => 1 - Math.pow(1 - x, 4);
 
-// Cinematic bloom: 3 phases (flowerSketch.js:67-80), ported verbatim
+// Cinematic bloom: 3 phases, ported verbatim from the original p5 sketch
 export function bloomCurve(t) {
   if (t < 0.45) {
     // Phase 1: slow, breath-like unfurl (easeInOutQuad)
