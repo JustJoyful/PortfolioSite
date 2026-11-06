@@ -1,33 +1,7 @@
-import { motion } from 'framer-motion';
 import { PORTFOLIO_DATA } from '../data/content';
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 28, filter: 'blur(8px)' },
-  visible: (i = 0) => ({
-    opacity: 1,
-    y: 0,
-    filter: 'blur(0px)',
-    transition: { delay: i * 0.12, duration: 0.9, ease: [0.16, 1, 0.3, 1] },
-  }),
-};
-
-const Label = ({ children }) => (
-  <p
-    className="text-white/70 uppercase mb-5 tracking-[0.3em]"
-    style={{ fontSize: 'clamp(11px, 1.3vw, 14px)', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 500 }}
-  >
-    {children}
-  </p>
-);
-
-const Tag = ({ children }) => (
-  <span
-    className="inline-block px-3 py-1 border border-white/25 text-white/80 hover:bg-white hover:text-black hover:border-white cursor-default"
-    style={{ fontSize: '11px', letterSpacing: '0.1em', fontFamily: "'Courier New', monospace", fontWeight: 400 }}
-  >
-    {children}
-  </span>
-);
+import { Reveal } from '../components/ui/Reveal';
+import { SectionHeading } from '../components/ui/SectionHeading';
+import { Chip } from '../components/ui/Chip';
 
 export const About = () => {
   const allTags = [
@@ -38,29 +12,17 @@ export const About = () => {
   return (
     <section
       id="about"
+      aria-labelledby="about-title"
       className="lg:min-h-screen w-full flex items-center pointer-events-none py-28"
     >
       <div
         className="pointer-events-auto w-full px-5 md:px-12 lg:pl-[38vw] lg:pr-12"
       >
         {/* Section label — first */}
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-60px' }}
-          variants={fadeUp}
-        >
-          <Label>01 — About</Label>
-        </motion.div>
+        <SectionHeading id="about-title" title="About" className="mb-5" />
 
         {/* Portrait + Name */}
-        <motion.div
-          custom={0.5}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-60px' }}
-          variants={fadeUp}
-          className="mb-10"
+        <Reveal stagger={1} className="mb-10"
         >
           {/* Portrait card */}
           <div
@@ -103,65 +65,37 @@ export const About = () => {
           >
             NSEC · CSE 2025–29
           </p>
-        </motion.div>
+        </Reveal>
 
         {/* Bio */}
         <div className="space-y-5 mb-10">
           {PORTFOLIO_DATA.about.bio.map((para, idx) => (
-            <motion.p
+            <Reveal
+              as="p"
               key={idx}
-              custom={idx + 2}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-60px' }}
-              variants={fadeUp}
+              stagger={idx + 2}
               className="text-white/85 leading-loose"
               style={{ fontSize: '15px', fontWeight: 300, fontFamily: "'Courier New', monospace" }}
             >
               {para}
-            </motion.p>
+            </Reveal>
           ))}
         </div>
 
         {/* Stack */}
-        <motion.div
-          custom={4}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-60px' }}
-          variants={fadeUp}
-          className="mb-3"
-        >
-          <Label>Stack</Label>
-        </motion.div>
+        <Reveal as="h3" className="text-sm text-text-muted mb-3">Stack</Reveal>
         <div className="flex flex-wrap gap-2 mb-8">
           {allTags.map((tag, i) => (
-            <motion.div
-              key={tag}
-              custom={4 + i * 0.3}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeUp}
-            >
-              <Tag>{tag}</Tag>
-            </motion.div>
+            <Reveal key={tag} stagger={Math.min(i, 8)}>
+              <Chip>{tag}</Chip>
+            </Reveal>
           ))}
         </div>
 
         {/* Spoken */}
-        <motion.div
-          custom={6}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={fadeUp}
-          className="mb-3"
-        >
-          <Label>Spoken</Label>
-        </motion.div>
+        <Reveal as="h3" className="text-sm text-text-muted mb-3">Spoken</Reveal>
         <div className="flex flex-wrap gap-2">
-          {PORTFOLIO_DATA.skills.spoken.map(lang => <Tag key={lang}>{lang}</Tag>)}
+          {PORTFOLIO_DATA.skills.spoken.map(lang => <Chip key={lang}>{lang}</Chip>)}
         </div>
       </div>
     </section>

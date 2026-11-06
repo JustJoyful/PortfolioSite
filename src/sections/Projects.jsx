@@ -1,25 +1,10 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PORTFOLIO_DATA } from '../data/content';
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 28, filter: 'blur(8px)' },
-  visible: (i = 0) => ({
-    opacity: 1,
-    y: 0,
-    filter: 'blur(0px)',
-    transition: { delay: i * 0.1, duration: 0.9, ease: [0.16, 1, 0.3, 1] },
-  }),
-};
-
-const Label = ({ children }) => (
-  <p
-    className="text-white/70 uppercase mb-6 tracking-[0.3em]"
-    style={{ fontSize: 'clamp(11px, 1.3vw, 14px)', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 500 }}
-  >
-    {children}
-  </p>
-);
+import { Reveal } from '../components/ui/Reveal';
+import { SectionHeading } from '../components/ui/SectionHeading';
+import { Chip } from '../components/ui/Chip';
+import { ExternalLink } from '../components/ui/ExternalLink';
 
 const GithubIcon = (props) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
@@ -76,20 +61,15 @@ export const Projects = () => {
   return (
     <section
       id="work"
+      aria-labelledby="work-title"
       className="lg:min-h-screen w-full flex items-center pointer-events-none py-28"
     >
       <div
         className="pointer-events-auto w-full px-5 md:px-12 lg:pl-[38vw] lg:pr-12"
       >
         {/* Header row: label + nav arrows */}
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-80px' }}
-          variants={fadeUp}
-          className="flex items-center justify-between mb-6"
-        >
-          <Label>02 — Projects</Label>
+        <Reveal className="flex items-center justify-between mb-6">
+          <SectionHeading id="work-title" title="Work" />
 
           <div className="flex items-center gap-2 mb-6">
             <button
@@ -117,7 +97,7 @@ export const Projects = () => {
               ›
             </button>
           </div>
-        </motion.div>
+        </Reveal>
 
         {/* Project card — animated slide on page change */}
         <AnimatePresence mode="wait">
@@ -138,16 +118,14 @@ export const Projects = () => {
                     {project.title}
                   </h3>
                   {project.repo && (
-                    <a
+                    <ExternalLink
                       href={project.repo}
-                      target="_blank"
-                      rel="noopener noreferrer"
                       className="flex items-center gap-1.5 text-white/40 hover:text-white/80 transition-colors duration-300"
                       style={{ fontSize: '10px', letterSpacing: '0.1em' }}
                     >
                       <GithubIcon />
                       <span>Source</span>
-                    </a>
+                    </ExternalLink>
                   )}
                 </div>
 
@@ -160,13 +138,7 @@ export const Projects = () => {
 
                 <div className="flex flex-wrap gap-1.5">
                   {project.tags.map(tag => (
-                    <span
-                      key={tag}
-                      className="inline-block px-2.5 py-1 border border-white/20 text-white/60 hover:bg-white hover:text-black hover:border-white cursor-default"
-                      style={{ fontSize: '10px', letterSpacing: '0.12em', fontFamily: "'Courier New', monospace" }}
-                    >
-                      {tag}
-                    </span>
+                    <Chip key={tag}>{tag}</Chip>
                   ))}
                 </div>
               </div>

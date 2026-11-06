@@ -1,5 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  // The default `transition` utility animates filter; our own CSS words trigger its scan.
+  blocklist: ['transition'],
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
