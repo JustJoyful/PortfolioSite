@@ -70,17 +70,20 @@ vec3 scene(vec2 p) {
 void main() {
   vec2 p = vec2(gl_FragCoord.x, res.y * dpr - gl_FragCoord.y) / dpr;
 
-  // glitch: shift the flower layer inside a slice
-  float off = 0.0, cs = 0.0;
-  for (int i = 0; i < 8; i++) {
-    if (float(i) < glitchCount && p.y >= glitch[i].x && p.y < glitch[i].x + glitch[i].y) {
-      off = glitch[i].z; cs = glitch[i].w;
+  // glitch: shift the flower layer inside a slice. Fragments well outside the flower rect
+  // (margin covers a cell plus the max glitch offset) skip all cell work.
+  vec3 col = vec3(0.0);
+  vec4 pad = vec4(rect.xy - 64.0, rect.xy + rect.zw + 64.0);
+  if (p.x > pad.x && p.y > pad.y && p.x < pad.z && p.y < pad.w) {
+    float off = 0.0, cs = 0.0;
+    for (int i = 0; i < 8; i++) {
+      if (float(i) >= glitchCount) break;
+      if (p.y >= glitch[i].x && p.y < glitch[i].x + glitch[i].y) { off = glitch[i].z; cs = glitch[i].w; }
     }
+    if (off == 0.0) col = scene(p);
+    else if (cs < 0.5) col = scene(p - vec2(off, 0.0));
+    else col = scene(p) + 0.7 * scene(p - vec2(off * 1.5, 0.0)) + 0.45 * scene(p + vec2(off, 0.0));
   }
-  vec3 col;
-  if (off == 0.0) col = scene(p);
-  else if (cs < 0.5) col = scene(p - vec2(off, 0.0));
-  else col = scene(p) + 0.7 * scene(p - vec2(off * 1.5, 0.0)) + 0.45 * scene(p + vec2(off, 0.0));
 
   // presence, radial falloff to the content column, vertical scrim
   vec2 centre = rect.xy + 0.5 * rect.zw;
@@ -107,7 +110,8 @@ void main() {
   // ripples
   for (int i = 0; i < 4; i++) {
     vec4 r = ripples[i];
-    if (r.w > 0.0) {
+    if (r.w <= 0.0) break; // packed from index 0
+    {
       float w = max(1.2 * r.w, 0.6);
       float ring = 1.0 - smoothstep(w * 0.5, w * 0.5 + 0.75 / dpr, abs(length(p - r.xy) - r.z));
       col += vec3(1.0, 0.765, 0.824) * ring * r.w * 0.3;

@@ -1,7 +1,7 @@
 // Quality tiers and the frame-time governor. Pure: time comes in as arguments.
 
 export const TIERS = {
-  high: { buffer: 400, bufferFps: 30, screenFps: 60, gridMin: 4, particles: 100, dpr: 2, budgetMs: 10 },
+  high: { buffer: 400, bufferFps: 20, screenFps: 60, gridMin: 4, particles: 100, dpr: 2, budgetMs: 10 },
   medium: { buffer: 320, bufferFps: 30, screenFps: 60, gridMin: 6, particles: 60, dpr: 1.5, budgetMs: 16.7 },
   low: { buffer: 256, bufferFps: 20, screenFps: 30, gridMin: 8, particles: 30, dpr: 1, budgetMs: 33.3 },
   static: { buffer: 256, bufferFps: 0, screenFps: 0, gridMin: 8, particles: 0, dpr: 1 },

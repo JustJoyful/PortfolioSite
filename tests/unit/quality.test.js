@@ -5,7 +5,7 @@ import { TIERS, initialTier, createGovernor } from '../../src/engine/quality.js'
 const capable = { coarse: false, cores: 8, memory: 8, reducedMotion: false, saveData: false, webgl: true };
 
 test('TIERS match the brief', () => {
-  assert.deepEqual(TIERS.high, { buffer: 400, bufferFps: 30, screenFps: 60, gridMin: 4, particles: 100, dpr: 2, budgetMs: 10 });
+  assert.deepEqual(TIERS.high, { buffer: 400, bufferFps: 20, screenFps: 60, gridMin: 4, particles: 100, dpr: 2, budgetMs: 10 });
   assert.deepEqual(TIERS.medium, { buffer: 320, bufferFps: 30, screenFps: 60, gridMin: 6, particles: 60, dpr: 1.5, budgetMs: 16.7 });
   assert.deepEqual(TIERS.low, { buffer: 256, bufferFps: 20, screenFps: 30, gridMin: 8, particles: 30, dpr: 1, budgetMs: 33.3 });
   assert.deepEqual(TIERS.static, { buffer: 256, bufferFps: 0, screenFps: 0, gridMin: 8, particles: 0, dpr: 1 });

@@ -98,3 +98,12 @@ test('returning to hero dissolves immediately', () => withPage({ width: 1440 }, 
   const t = await page.evaluate(() => { window.__bloom.setSection('hero'); return window.__bloom.stats().modeT; });
   assert.ok(t < 1, `modeT ${t}`);
 }));
+
+test('mobile hero is not dimmed by CSS', async () => {
+  const { page, browser } = await openPage(`${server.url}?debug&seed=7`, { width: 390, height: 844, mobile: true });
+  try {
+    await page.waitForFunction(() => window.__bloom);
+    assert.equal(await page.$eval('#flower', (el) => getComputedStyle(el).opacity), '1');
+    assert.equal((await stats(page)).presence, 1);
+  } finally { await browser.close(); }
+});

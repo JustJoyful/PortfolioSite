@@ -72,6 +72,7 @@ export function createBloom(canvas, opts = {}) {
   let grid = 4, gridTarget = 4, densDir = 1, densTimer = 0;
   let t = 0;
   let autoRotX = 0, autoRotY = 0, autoRotZ = 0, mouseRotX = 0, mouseRotY = 0, rotEaseIn = 0;
+  let pointerSeen = false;
   let px = 0, py = 0, prevPx = 0, prevPy = 0, mouseSpeed = 0, lastInput = -1e9;
   let mInfX = 0, mInfY = 0;
   let glowIntensity = 0;
@@ -171,7 +172,7 @@ export function createBloom(canvas, opts = {}) {
     prevPx = px; prevPy = py;
 
     const proximity = constrain(1 - Math.hypot(px - W / 2, py - H / 2) / (Math.max(W, H) * 0.5), 0.1, 1);
-    const target = constrain(proximity + constrain(mouseSpeed * 0.04, 0, 0.5), 0.1, 1);
+    const target = pointerSeen ? constrain(proximity + constrain(mouseSpeed * 0.04, 0, 0.5), 0.1, 1) : 0.1;
     glowIntensity += (target - glowIntensity) * dt * 2.2;
 
     rotEaseIn = Math.min(1, rotEaseIn + dt * 0.08);
@@ -371,7 +372,7 @@ export function createBloom(canvas, opts = {}) {
   };
 
   function setPointer(x, y, { down = false } = {}) {
-    px = x; py = y; lastInput = performance.now();
+    px = x; py = y; lastInput = performance.now(); pointerSeen = true;
     if (down && !isStatic()) {
       triggerGlitch();
       ripples.push({ x, y, radius: 0, maxRadius: random(rand, 80, 200), life: 1 });
@@ -443,7 +444,7 @@ export function createBloom(canvas, opts = {}) {
     },
     stats: () => ({
       backend: post ? post.backend : 'canvas2d', tier: tierName, frames, fps: Math.round(fps),
-      mode: post ? MODE_NAMES[renderMode] : 'pixels', phase, width: W, height: H, modeT,
+      mode: post ? MODE_NAMES[renderMode] : 'pixels', phase, width: W, height: H, modeT, presence: sec.presence,
     }),
     destroy() {
       destroyed = true; sync();

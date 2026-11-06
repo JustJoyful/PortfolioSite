@@ -46,7 +46,7 @@ function App() {
       {/* Layer 0 — bloom engine (slid left on desktop via CSS scroll timeline, see index.css) */}
       <div
         id="flower"
-        className="fixed inset-0 pointer-events-auto z-0 -z-10 lg:opacity-100 opacity-30"
+        className="fixed inset-0 pointer-events-auto z-0"
         style={{ willChange: 'transform' }}
       >
         <BackgroundSketch />
