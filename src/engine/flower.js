@@ -12,6 +12,9 @@ export const VARIANTS = [
   { c1: [200, 100, 180], c2: [245, 185, 225], c3: [150, 45, 110], stemC: [50, 80, 38], layers: 13, petalsPerLayer: 9, maxRadius: 158, ruffleAmt: 13, sepals: 5 },
 ];
 
+// UI accent: per-channel mean of the variant's two main petal colours.
+export const accentFor = (v) => `rgb(${v.c1.map((x, i) => Math.round((x + v.c2[i]) / 2)).join(' ')})`;
+
 // Outer-layer petals facing the viewer (z <= 0 at zero rotation) in every variant, spread around the bloom.
 // layer is absolute: 13 and 12 are within the outer three layers of all variants.
 export const ANCHORS = {
