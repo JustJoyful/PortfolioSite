@@ -38,11 +38,12 @@ test('p5 not in initial bundle', async () => {
   const srv = await startPreview();
   const { page, browser } = await openPage('about:blank', { width: 1440 });
   try {
-    const bodies = [];
-    page.on('response', async (r) => {
-      if (r.request().resourceType() === 'script') bodies.push(await r.text().catch(() => ''));
+    const pending = [];
+    page.on('response', (r) => {
+      if (r.request().resourceType() === 'script') pending.push(r.text().catch(() => ''));
     });
     await page.goto(srv.url, { waitUntil: 'load' });
+    const bodies = await Promise.all(pending);
     assert.ok(bodies.length > 0);
     assert.ok(bodies.every((b) => !b.includes('p5.js')), 'p5 leaked into initial JS');
   } finally { await browser.close(); await srv.close(); }

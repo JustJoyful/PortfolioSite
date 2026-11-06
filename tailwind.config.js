@@ -7,29 +7,31 @@ export default {
   theme: {
     extend: {
       colors: {
-        'glass': 'rgba(20, 20, 20, 0.45)',
-        'glass-border': 'rgba(255, 255, 255, 0.08)',
-        'accent-pink': '#e9b',
-        'accent-red': '#c77',
+        bg: 'var(--bg)',
+        surface: 'var(--surface)',
+        line: 'var(--line)',
+        text: 'var(--text)',
+        'text-muted': 'var(--text-muted)',
+        'text-faint': 'var(--text-faint)',
+        bloom: 'var(--bloom)',
+        'bloom-deep': 'var(--bloom-deep)',
+        stem: 'var(--stem)',
+        ember: 'var(--ember)',
       },
       fontFamily: {
-        sans: ['Space Grotesk', 'sans-serif'],
-        mono: ['Courier New', 'monospace'],
+        display: ['"Instrument Serif"', '"Instrument Serif Fallback"', 'Georgia', 'serif'],
+        sans: ['Geist', '"Geist Fallback"', 'Arial', 'sans-serif'],
+        mono: ['"Geist Mono"', 'ui-monospace', 'monospace'],
       },
-      animation: {
-        'fade-in': 'fadeIn 1s ease-out forwards',
-        'slide-up': 'slideUp 0.8s ease-out forwards',
+      fontSize: {
+        xs: ['12px', { lineHeight: '1.5' }],
+        sm: ['14px', { lineHeight: '1.5' }],
+        base: ['16px', { lineHeight: '1.5' }],
+        lg: ['20px', { lineHeight: '1.5' }],
+        xl: ['28px', { lineHeight: '1.5' }],
+        '2xl': ['40px', { lineHeight: '1.5' }],
+        display: ['clamp(48px, 9vw, 120px)', { lineHeight: '0.95' }],
       },
-      keyframes: {
-        fadeIn: {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' },
-        },
-        slideUp: {
-          '0%': { opacity: '0', transform: 'translateY(20px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
-        }
-      }
     },
   },
   plugins: [],

@@ -1,0 +1,21 @@
+@font-face { font-family: 'Instrument Serif'; font-weight: 400; font-style: normal; font-display: swap; src: url('/fonts/instrument-serif-400.woff2') format('woff2'); }
+@font-face { font-family: 'Geist'; font-weight: 400; font-style: normal; font-display: swap; src: url('/fonts/geist-400.woff2') format('woff2'); }
+@font-face { font-family: 'Geist'; font-weight: 500; font-style: normal; font-display: swap; src: url('/fonts/geist-500.woff2') format('woff2'); }
+@font-face { font-family: 'Geist Mono'; font-weight: 400; font-style: normal; font-display: swap; src: url('/fonts/geist-mono-400.woff2') format('woff2'); }
+
+/* Metric-matched fallbacks: size-adjust = web avg lowercase advance / local avg; overrides = web metric / size-adjust. */
+@font-face { font-family: 'Instrument Serif Fallback'; src: local('Georgia'); size-adjust: 79.6%; ascent-override: 124.4%; descent-override: 38.9%; line-gap-override: 0%; }
+@font-face { font-family: 'Geist Fallback'; src: local('Arial'); size-adjust: 109%; ascent-override: 92.2%; descent-override: 27.1%; line-gap-override: 0%; }
+
+:root {
+  --bg: #000;
+  --surface: #0b0a0b;
+  --line: rgb(255 255 255 / 0.12);
+  --text: rgb(255 255 255 / 0.92);
+  --text-muted: rgb(255 255 255 / 0.64);
+  --text-faint: rgb(255 255 255 / 0.45);
+  --bloom: #ee99bb;
+  --bloom-deep: #cc7777;
+  --stem: #5a8a46;
+  --ember: #ffd2eb;
+}
