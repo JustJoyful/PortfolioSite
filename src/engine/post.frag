@@ -71,9 +71,9 @@ void main() {
   vec2 p = vec2(gl_FragCoord.x, res.y * dpr - gl_FragCoord.y) / dpr;
 
   // glitch: shift the flower layer inside a slice. Fragments well outside the flower rect
-  // (margin covers a cell plus the max glitch offset) skip all cell work.
+  // (margin covers a cell plus the max colour-shift sample distance (67.5 px)) skip all cell work.
   vec3 col = vec3(0.0);
-  vec4 pad = vec4(rect.xy - 64.0, rect.xy + rect.zw + 64.0);
+  vec4 pad = vec4(rect.xy - 80.0, rect.xy + rect.zw + 80.0);
   if (p.x > pad.x && p.y > pad.y && p.x < pad.z && p.y < pad.w) {
     float off = 0.0, cs = 0.0;
     for (int i = 0; i < 8; i++) {

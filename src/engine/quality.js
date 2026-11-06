@@ -1,6 +1,7 @@
 // Quality tiers and the frame-time governor. Pure: time comes in as arguments.
 
 export const TIERS = {
+  // high.bufferFps 20 < medium 30 is deliberate: the Canvas2D buffer redraw was the iGPU bottleneck.
   high: { buffer: 400, bufferFps: 20, screenFps: 60, gridMin: 4, particles: 100, dpr: 2, budgetMs: 10 },
   medium: { buffer: 320, bufferFps: 30, screenFps: 60, gridMin: 6, particles: 60, dpr: 1.5, budgetMs: 16.7 },
   low: { buffer: 256, bufferFps: 20, screenFps: 30, gridMin: 8, particles: 30, dpr: 1, budgetMs: 33.3 },

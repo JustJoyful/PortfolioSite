@@ -54,7 +54,7 @@ function App() {
 
       <LeftRail />
 
-      <div className="relative z-10 w-full flex flex-col bg-black/40 lg:bg-transparent">
+      <div className="relative z-10 w-full flex flex-col">
         <Hero />
         <About />
         <Projects />

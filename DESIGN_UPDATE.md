@@ -407,7 +407,7 @@ Suggested order: 0 → 1 → 2 → 3 → 4 → 5. Phase 0 alone already fixes mo
 | LCP (mobile, 4G, mid-tier) | 3.6 s (Lighthouse mobile; desktop 1.0 s) | not measured | **< 1.5 s** |
 | CLS | 0 | not measured | **< 0.02** |
 | TBT (mobile) | 300 ms | not measured | **< 150 ms** |
-| Animation, desktop 1080p | 34.6 fps at 1440x900, headless software GL; main thread/frame not measured | 12 fps at 1440x900, headless software GL (SwiftShader), tier high; main thread/frame not measured | **60 fps, < 4 ms main thread/frame** |
+| Animation, desktop 1080p | 34.6 fps at 1440x900, headless software GL; main thread/frame not measured | Real GPU (Chromium `--use-angle=gl`, 1440x900): Intel UHD GT0.5 bloom 57.4–60.2 fps, 2.7–3.4 ms main thread/frame (after bufferFps 20) vs legacy 48.4 fps / 20 ms; RTX 3050 bloom 60.6 fps / 3.0 ms vs legacy 49.8 fps / 20.2 ms (measured before the 1.8b fixes). Headless SwiftShader (software GL only, not the desktop figure): 12 fps | **60 fps, < 4 ms main thread/frame** |
 | Animation, low-end Android | 18.6 fps (390 px, 4x CPU throttle, desktop Chromium proxy) | 34.8 fps at 390 px, 4x CPU throttle; 20 fps, tier low, at 390 px 6x throttle (6× CPU-throttled Chromium, not a real device) | **≥ 30 fps** |
 | Lighthouse perf mobile / desktop | 77 / 98 | not measured | **≥ 90 / ≥ 98** |
 | Lighthouse a11y | 93 (mobile and desktop) | not measured | **100** |

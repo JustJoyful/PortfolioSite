@@ -105,6 +105,7 @@ test('mobile hero is not dimmed by CSS', async () => {
     await page.waitForFunction(() => window.__bloom);
     assert.equal(await page.$eval('#flower', (el) => getComputedStyle(el).opacity), '1');
     assert.equal((await stats(page)).presence, 1);
+    assert.equal(await page.$eval('#about', (el) => getComputedStyle(el.parentElement).backgroundColor), 'rgba(0, 0, 0, 0)');
   } finally { await browser.close(); }
 });
 
