@@ -330,6 +330,8 @@ export function createBloom(canvas, opts = {}) {
   }
 
   // ---- loop
+  // spec 3.2: ambient buffer rate after the hero is 15 fps desktop / 10 fps mobile
+  const bufferFps = () => (section === 'hero' ? tier.bufferFps : Math.min(tier.bufferFps, coarse ? 10 : 15));
   function tick(now) {
     rafId = requestAnimationFrame(tick);
     const interval = 1000 / tier.screenFps;
@@ -340,7 +342,7 @@ export function createBloom(canvas, opts = {}) {
     lastScreen = now;
 
     update(dt, now);
-    const bufInterval = 1000 / (tier.bufferFps * (section === 'hero' ? 1 : 0.5));
+    const bufInterval = 1000 / bufferFps();
     if (now - lastBuf >= bufInterval - 2) { lastBuf = now; drawBuffer(); }
     render();
 
@@ -444,7 +446,7 @@ export function createBloom(canvas, opts = {}) {
     },
     stats: () => ({
       backend: post ? post.backend : 'canvas2d', tier: tierName, frames, fps: Math.round(fps),
-      mode: post ? MODE_NAMES[renderMode] : 'pixels', phase, width: W, height: H, modeT, presence: sec.presence,
+      mode: post ? MODE_NAMES[renderMode] : 'pixels', phase, width: W, height: H, modeT, presence: sec.presence, bufferFps: bufferFps(),
     }),
     destroy() {
       destroyed = true; sync();

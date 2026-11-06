@@ -107,3 +107,14 @@ test('mobile hero is not dimmed by CSS', async () => {
     assert.equal((await stats(page)).presence, 1);
   } finally { await browser.close(); }
 });
+
+test('ambient buffer rate: 15 fps desktop, 10 mobile', async () => {
+  for (const [opts, want] of [[{ width: 1440 }, 15], [{ width: 390, height: 844, mobile: true }, 10]]) {
+    const { page, browser } = await openPage(`${server.url}?debug&seed=7&tier=high`, opts);
+    try {
+      await page.waitForFunction(() => window.__bloom);
+      await page.evaluate(() => window.__bloom.setSection('about'));
+      assert.equal((await stats(page)).bufferFps, want);
+    } finally { await browser.close(); }
+  }
+});
