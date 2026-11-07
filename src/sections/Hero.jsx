@@ -21,13 +21,7 @@ export const Hero = () => {
         className="text-center z-10 px-4 mb-4"
       >
         <p
-          className="text-white/50 uppercase"
-          style={{
-            fontSize: '11px',
-            letterSpacing: '0.6em',
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontWeight: 300,
-          }}
+          className="text-sm text-text-muted"
         >
           {PORTFOLIO_DATA.hero.subtitle}
         </p>

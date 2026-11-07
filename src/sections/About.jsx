@@ -26,8 +26,8 @@ export const About = () => {
         >
           {/* Portrait card */}
           <div
-            className="overflow-hidden border border-white/15 mb-5"
-            style={{ width: '160px', height: '213px', background: 'rgba(255,255,255,0.04)' }}
+            className="overflow-hidden bg-surface mb-5"
+            style={{ width: '160px', height: '213px' }}
           >
             {PORTFOLIO_DATA.about.portrait ? (
               <picture>
@@ -43,25 +43,23 @@ export const About = () => {
               </picture>
             ) : (
               <div className="w-full h-full flex flex-col items-center justify-center gap-2">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="1">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-text-faint" strokeWidth="1">
                   <circle cx="12" cy="8" r="4" />
                   <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
                 </svg>
-                <span style={{ fontSize: '9px', letterSpacing: '0.2em', color: 'rgba(255,255,255,0.15)', fontFamily: 'monospace' }}>PHOTO</span>
+                <span className="text-xs text-text-faint">Photo</span>
               </div>
             )}
           </div>
 
           {/* Name + subtitle below portrait */}
           <h1
-            className="text-white/90 font-light tracking-tight"
-            style={{ fontSize: 'clamp(22px, 3vw, 36px)', lineHeight: 1.1 }}
+            className="font-display text-2xl text-text"
           >
             Joydeep Das
           </h1>
           <p
-            className="text-white/35 mt-1"
-            style={{ fontSize: '10px', letterSpacing: '0.25em', fontFamily: 'monospace' }}
+            className="text-xs text-text-faint mt-1 tabular-nums"
           >
             NSEC · CSE 2025–29
           </p>
@@ -74,8 +72,7 @@ export const About = () => {
               as="p"
               key={idx}
               stagger={idx + 2}
-              className="text-white/85 leading-loose"
-              style={{ fontSize: '15px', fontWeight: 300, fontFamily: "'Courier New', monospace" }}
+              className="text-base text-text leading-loose"
             >
               {para}
             </Reveal>
@@ -83,7 +80,7 @@ export const About = () => {
         </div>
 
         {/* Stack */}
-        <Reveal as="h3" className="text-sm text-text-muted mb-3">Stack</Reveal>
+        <Reveal as="p" className="text-sm text-text-muted mb-3">Stack</Reveal>
         <div className="flex flex-wrap gap-2 mb-8">
           {allTags.map((tag, i) => (
             <Reveal key={tag} stagger={Math.min(i, 8)}>
@@ -93,7 +90,7 @@ export const About = () => {
         </div>
 
         {/* Spoken */}
-        <Reveal as="h3" className="text-sm text-text-muted mb-3">Spoken</Reveal>
+        <Reveal as="p" className="text-sm text-text-muted mb-3">Spoken</Reveal>
         <div className="flex flex-wrap gap-2">
           {PORTFOLIO_DATA.skills.spoken.map(lang => <Chip key={lang}>{lang}</Chip>)}
         </div>

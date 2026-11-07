@@ -17,15 +17,8 @@ export const LeftRail = () => {
     >
       {/* Vertical name */}
       <div
-        className="text-white/30 tracking-[0.35em] uppercase"
-        style={{
-          writingMode: 'vertical-rl',
-          transform: 'rotate(180deg)',
-          fontSize: '10px',
-          letterSpacing: '0.35em',
-          fontFamily: "'Space Grotesk', sans-serif",
-          fontWeight: 300,
-        }}
+        className="text-xs text-text-faint"
+        style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
       >
         Joydeep Das
       </div>
@@ -50,7 +43,7 @@ export const LeftRail = () => {
       </div>
 
       {/* Bottom thin line */}
-      <div className="text-white/15 tracking-[0.3em]" style={{ fontSize: '9px', writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>
+      <div className="text-xs text-text-faint" style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>
         ©2025
       </div>
     </motion.aside>

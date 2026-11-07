@@ -418,7 +418,7 @@ Suggested order: 0 → 1 → 2 → 3 → 4 → 5. Phase 0 alone already fixes mo
 
 | # | Topic | Decision |
 |---|---|---|
-| 1 | Type | Instrument Serif (display) + Geist (body) + Geist Mono (metadata). Confirmed from a specimen page in Phase 2 (§2.2). |
+| 1 | Type | Instrument Serif (display) + Geist (body) + Geist Mono (metadata). Confirmed from a specimen page in Phase 2 (§2.2). Confirmed from the specimen (Task 2.4): Instrument Serif display + Geist; Geist Mono only for ASCII placeholders and the glyph atlas (R2). |
 | 2 | Hero wording | Name → "AI Engineering · ML Research" → degree line → one factual sentence. Approved. |
 | 3 | Featured | AxiomLM featured, Testcard as the research card. Approved. |
 | 4 | Tagline | "Think. Then Build." dropped. |

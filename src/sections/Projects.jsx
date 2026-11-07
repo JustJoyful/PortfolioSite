@@ -14,21 +14,19 @@ const GithubIcon = (props) => (
 
 // Placeholder card shown when there are no more real projects
 const ComingSoonCard = () => (
-  <div className="border-l border-white/10 pl-6 py-4">
+  <div className="border-l border-line pl-6 py-4">
     <div className="flex items-center gap-3 mb-4">
-      <div className="w-6 h-6 border border-white/15 flex items-center justify-center">
-        <span className="text-white/20" style={{ fontSize: '10px' }}>✦</span>
+      <div className="w-6 h-6 bg-surface flex items-center justify-center">
+        <span className="text-xs text-text-faint" aria-hidden="true">✦</span>
       </div>
       <p
-        className="text-white/30 font-light"
-        style={{ fontSize: '18px', letterSpacing: '-0.01em' }}
+        className="text-lg text-text-muted"
       >
         More coming soon
       </p>
     </div>
     <p
-      className="text-white/20 leading-relaxed"
-      style={{ fontSize: '13px', fontWeight: 300, fontFamily: "'Courier New', monospace" }}
+      className="text-sm text-text-muted leading-relaxed"
     >
       Currently cooking. Check back soon or follow on GitHub to stay updated.
     </p>
@@ -36,8 +34,7 @@ const ComingSoonCard = () => (
       {['In progress', 'Stay tuned'].map(t => (
         <span
           key={t}
-          className="inline-block px-2.5 py-1 border border-dashed border-white/10 text-white/25"
-          style={{ fontSize: '10px', letterSpacing: '0.1em', fontFamily: "'Courier New', monospace" }}
+          className="inline-block px-3 py-1 bg-surface text-text-faint text-xs"
         >
           {t}
         </span>
@@ -75,23 +72,20 @@ export const Projects = () => {
             <button
               onClick={prev}
               disabled={page === 0}
-              className="w-7 h-7 border border-white/20 flex items-center justify-center text-white/50 hover:text-white hover:border-white/50 disabled:opacity-20 disabled:cursor-not-allowed"
-              style={{ fontSize: '12px' }}
+              className="w-11 h-11 bg-surface flex items-center justify-center text-sm text-text-muted hover:text-text disabled:opacity-40 disabled:cursor-not-allowed"
               aria-label="Previous project"
             >
               ‹
             </button>
             <span
-              className="text-white/25 tabular-nums"
-              style={{ fontSize: '9px', letterSpacing: '0.2em', fontFamily: 'monospace', minWidth: '3rem', textAlign: 'center' }}
+              className="text-xs text-text-faint tabular-nums min-w-12 text-center"
             >
               {page + 1} / {TOTAL}
             </span>
             <button
               onClick={next}
               disabled={page === TOTAL - 1}
-              className="w-7 h-7 border border-white/20 flex items-center justify-center text-white/50 hover:text-white hover:border-white/50 disabled:opacity-20 disabled:cursor-not-allowed"
-              style={{ fontSize: '12px' }}
+              className="w-11 h-11 bg-surface flex items-center justify-center text-sm text-text-muted hover:text-text disabled:opacity-40 disabled:cursor-not-allowed"
               aria-label="Next project"
             >
               ›
@@ -109,19 +103,17 @@ export const Projects = () => {
             transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
           >
             {project ? (
-              <div className="group border-l border-white/20 pl-6 hover:border-white/50 transition-colors duration-500">
+              <div className="group border-l border-line pl-6 hover:border-text-faint transition-colors duration-500">
                 <div className="flex items-baseline justify-between mb-3">
                   <h3
-                    className="text-white/95 font-light"
-                    style={{ fontSize: 'clamp(20px, 3vw, 28px)', letterSpacing: '-0.01em' }}
+                    className="text-xl text-text"
                   >
                     {project.title}
                   </h3>
                   {project.repo && (
                     <ExternalLink
                       href={project.repo}
-                      className="flex items-center gap-1.5 text-white/40 hover:text-white/80 transition-colors duration-300"
-                      style={{ fontSize: '10px', letterSpacing: '0.1em' }}
+                      className="flex items-center gap-1.5 text-sm text-text-muted hover:text-text transition-colors duration-300"
                     >
                       <GithubIcon />
                       <span>Source</span>
@@ -130,8 +122,7 @@ export const Projects = () => {
                 </div>
 
                 <p
-                  className="text-white/75 leading-loose mb-5"
-                  style={{ fontSize: '14px', fontWeight: 300, fontFamily: "'Courier New', monospace" }}
+                  className="text-base text-text-muted leading-loose mb-5"
                 >
                   {project.description}
                 </p>

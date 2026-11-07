@@ -8,15 +8,13 @@ const ContactRow = ({ label, value, href, delay }) => {
   return (
   <Reveal stagger={delay} className="flex items-baseline gap-5 group">
     <span
-      className="text-white/45 shrink-0"
-      style={{ fontSize: '9px', letterSpacing: '0.25em', fontFamily: 'monospace', width: '4rem' }}
+      className="text-xs text-text-faint shrink-0 w-16"
     >
       {label}
     </span>
     <Link
       href={href}
-      className="text-white/75 hover:bg-white hover:text-black hover:border-white truncate"
-      style={{ fontSize: '13px', fontWeight: 300, fontFamily: "'Courier New', monospace" }}
+      className="text-sm text-text-muted hover:bg-text hover:text-bg truncate"
     >
       {value}
     </Link>
@@ -41,8 +39,7 @@ export const Contact = () => {
         <Reveal
           as="p"
           stagger={1}
-          className="text-white/85 font-light mb-12 tracking-tight"
-          style={{ fontSize: 'clamp(24px, 3.5vw, 36px)' }}
+          className="font-display text-2xl text-text mb-12"
         >
           Let's build something.
         </Reveal>
@@ -56,13 +53,12 @@ export const Contact = () => {
 
         <Reveal
           stagger={7}
-          className="mt-20 pt-8 border-t border-white/15"
+          className="mt-20 pt-8 border-t border-line"
         >
           <p
-            className="text-white/50"
-            style={{ fontSize: '9px', letterSpacing: '0.3em', fontFamily: 'monospace' }}
+            className="text-xs text-text-faint"
           >
-            JOYDEEP DAS — NSEC CSE 2025–29
+            Joydeep Das — NSEC CSE 2025–29
           </p>
         </Reveal>
       </div>
