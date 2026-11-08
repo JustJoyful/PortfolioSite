@@ -71,7 +71,7 @@ export const PORTFOLIO_DATA = {
       id: 'testcard',
       title: 'Testcard',
       oneLiner: 'Controlled study of where video-quality signal lives: backbone features or temporal head.',
-      result: 'DINOv2 block-6 features: SRCC 0.824 (KoNViD-1k), 0.727 cross-dataset (LIVE-VQC).',
+      result: 'Deployed ResNet-50 ridge: SRCC 0.644 on LIVE-VQC. Post-hoc, DINOv2 block-6 features reached 0.824 on KoNViD-1k and 0.727 on LIVE-VQC.',
       details: [
         'Frozen ResNet-50 / DINOv2 features, parameter-matched mean-pool, Bi-GRU, Transformer and Mamba heads; KoNViD-1k 5-fold × 5 seeds, cross-dataset on LIVE-VQC.',
         'Paired bootstrap CIs, Holm-adjusted tests against a predeclared margin.',

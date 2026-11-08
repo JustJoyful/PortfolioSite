@@ -63,3 +63,8 @@ test('no removed copy or personal contact details', () => {
 test('no résumé link yet', () => {
   assert.equal(PORTFOLIO_DATA.resumeUrl, null);
 });
+
+test('Testcard result labels the 0.644 baseline and the post-hoc DINOv2 numbers', () => {
+  const testcard = projects.find((p) => p.id === 'testcard');
+  for (const s of ['ResNet-50', '0.644', 'Post-hoc']) assert.ok(testcard.result.includes(s), s);
+});
