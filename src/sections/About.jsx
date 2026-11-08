@@ -4,10 +4,9 @@ import { SectionHeading } from '../components/ui/SectionHeading';
 import { Chip } from '../components/ui/Chip';
 
 export const About = () => {
-  const allTags = [
-    ...PORTFOLIO_DATA.skills.languages,
-    ...PORTFOLIO_DATA.skills.markup,
-  ];
+  const groups = PORTFOLIO_DATA.about.skills;
+  const allTags = groups.filter(g => g.label !== 'Spoken').flatMap(g => g.items);
+  const spoken = groups.find(g => g.label === 'Spoken').items;
 
   return (
     <section
@@ -67,16 +66,9 @@ export const About = () => {
 
         {/* Bio */}
         <div className="space-y-5 mb-10">
-          {PORTFOLIO_DATA.about.bio.map((para, idx) => (
-            <Reveal
-              as="p"
-              key={idx}
-              stagger={idx + 2}
-              className="text-base text-text leading-loose"
-            >
-              {para}
-            </Reveal>
-          ))}
+          <Reveal as="p" stagger={2} className="text-base text-text leading-loose">
+            {PORTFOLIO_DATA.about.bio}
+          </Reveal>
         </div>
 
         {/* Stack */}
@@ -92,7 +84,7 @@ export const About = () => {
         {/* Spoken */}
         <Reveal as="p" className="text-sm text-text-muted mb-3">Spoken</Reveal>
         <div className="flex flex-wrap gap-2">
-          {PORTFOLIO_DATA.skills.spoken.map(lang => <Chip key={lang}>{lang}</Chip>)}
+          {spoken.map(lang => <Chip key={lang}>{lang}</Chip>)}
         </div>
       </div>
     </section>

@@ -110,9 +110,9 @@ export const Projects = () => {
                   >
                     {project.title}
                   </h3>
-                  {project.repo && (
+                  {project.links.source && (
                     <ExternalLink
-                      href={project.repo}
+                      href={project.links.source}
                       className="flex items-center gap-1.5 text-sm text-text-muted hover:text-text transition-colors duration-300"
                     >
                       <GithubIcon />
@@ -124,11 +124,11 @@ export const Projects = () => {
                 <p
                   className="text-base text-text-muted leading-loose mb-5"
                 >
-                  {project.description}
+                  {project.oneLiner}
                 </p>
 
                 <div className="flex flex-wrap gap-1.5">
-                  {project.tags.map(tag => (
+                  {project.stack.map(tag => (
                     <Chip key={tag}>{tag}</Chip>
                   ))}
                 </div>

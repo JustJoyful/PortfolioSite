@@ -23,7 +23,7 @@ export const Hero = () => {
         <p
           className="text-sm text-text-muted"
         >
-          {PORTFOLIO_DATA.hero.subtitle}
+          {PORTFOLIO_DATA.hero.role}
         </p>
       </motion.div>
 
