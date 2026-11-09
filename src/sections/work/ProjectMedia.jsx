@@ -15,7 +15,7 @@ const derive = (title) => {
 };
 
 // Box is a fixed 16:10 so the ASCII, the image and a failed load all occupy the same height.
-export const ProjectMedia = ({ project, className = '' }) => {
+export const ProjectMedia = ({ project, show = true, className = '' }) => {
   const { id, title, image, links } = project;
   const [loaded, setLoaded] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -36,7 +36,7 @@ export const ProjectMedia = ({ project, className = '' }) => {
       >
         {ascii}
       </pre>
-      {image && !failed && (
+      {image && show && !failed && (
         <img
           src={image.src}
           width={image.width}

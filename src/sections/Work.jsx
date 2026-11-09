@@ -22,7 +22,7 @@ export const Work = () => {
         <div className="lg:max-w-[48rem] flex flex-col gap-6">
           <SectionHeading id="work-title" title="Work" className="mb-2" />
           <Reveal><FeaturedCard projects={projects} shownId={hovered ?? featured.id} /></Reveal>
-          {research && <Reveal><ResearchCard project={research} /></Reveal>}
+          {research && <Reveal><ResearchCard project={research} hidden={(hovered ?? featured.id) === research.id} /></Reveal>}
           <Reveal className="mt-6"><ProjectTable projects={projects} shownId={hovered ?? featured.id} onShow={setHovered} /></Reveal>
         </div>
       </div>

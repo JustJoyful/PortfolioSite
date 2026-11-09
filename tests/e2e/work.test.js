@@ -23,12 +23,19 @@ test('table has four rows', () => run({ width: 1440 }, async (page) => {
 test('keyboard swaps featured', () => run({ width: 1440 }, async (page) => {
   const head = page.locator('[data-featured] article:not([inert]) [data-featured-title]');
   assert.equal((await head.innerText()).trim(), 'AxiomLM');
+  await page.evaluate(() => { window.__ev = []; addEventListener('annotation:project', (e) => window.__ev.push(e.detail)); });
   await page.locator('[data-work-row]').nth(1).focus();
   assert.equal((await head.innerText()).trim(), 'Testcard');
+  assert.equal(await page.locator('#work article:not([inert]) h3', { hasText: /^Testcard$/ }).count(), 1);
+  const w = await page.locator('[data-figure]').evaluate((i) => i.getBoundingClientRect().width);
+  assert.ok(w >= 0.95 * 710, `figure ${w}`);
   await page.locator('[data-work-row]').nth(0).focus();
   await page.locator('body').click({ position: { x: 5, y: 5 } });
   await page.locator('[data-work-row]').nth(1).blur();
   assert.equal((await head.innerText()).trim(), 'AxiomLM');
+  const ev = await page.evaluate(() => window.__ev);
+  assert.equal(ev[0], 'testcard');
+  assert.equal(ev.at(-1), null);
 }));
 
 test('accordion at 390', () => run({ width: 390, height: 844, mobile: true }, async (page) => {
@@ -74,4 +81,8 @@ test('rows are tap-sized', () => run({ width: 390, height: 844, mobile: true }, 
   const hs = await page.locator('[data-work-row] button').evaluateAll((b) => b.map((x) => x.getBoundingClientRect().height));
   assert.equal(hs.length, 4);
   hs.forEach((h) => assert.ok(h >= 44, `row ${h}`));
+  await page.locator('[data-work-row] button').nth(0).tap();
+  const chips = await page.locator('#work .bg-surface.text-xs').evaluateAll((c) => c.filter((e) => e.offsetParent).map((e) => e.getBoundingClientRect().height));
+  assert.ok(chips.length > 0);
+  chips.forEach((h) => assert.ok(h >= 32, `chip ${h}`));
 }));

@@ -1,8 +1,13 @@
+import { useRef } from 'react';
 import { ProjectMedia } from './ProjectMedia';
 import { Stack, Links, meta } from './shared';
 
 // All projects are pre-rendered in one grid cell, so swapping only toggles visibility and the card never reflows.
-export const FeaturedCard = ({ projects, shownId }) => (
+export const FeaturedCard = ({ projects, shownId }) => {
+  // Images of projects not yet shown stay unrequested.
+  const seen = useRef(new Set());
+  seen.current.add(shownId);
+  return (
   <div data-featured className="grid bg-surface">
     {projects.map((p) => {
       const on = p.id === shownId;
@@ -13,7 +18,7 @@ export const FeaturedCard = ({ projects, shownId }) => (
           inert={on ? undefined : true}
           className={`[grid-area:1/1] grid gap-6 p-4 sm:p-6 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:items-start ${on ? '' : 'invisible'}`}
         >
-          <ProjectMedia project={p} />
+          <ProjectMedia project={p} show={seen.current.has(p.id)} />
           <div className="flex flex-col gap-4">
             <div>
               <h3 data-featured-title className="text-xl text-text">{p.title}</h3>
@@ -29,3 +34,4 @@ export const FeaturedCard = ({ projects, shownId }) => (
     })}
   </div>
 );
+};
