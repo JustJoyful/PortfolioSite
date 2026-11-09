@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { PORTFOLIO_DATA } from '../data/content';
 import placeholders from '../data/placeholders.json';
 import { Reveal } from '../components/ui/Reveal';
@@ -9,6 +9,12 @@ const announce = (id) => window.dispatchEvent(new CustomEvent('annotation:focus'
 export const About = () => {
   const { portrait, bio, focus, currently, skills } = PORTFOLIO_DATA.about;
   const [loaded, setLoaded] = useState(false);
+  const [on, setOn] = useState(null);
+  useEffect(() => {
+    const f = (e) => setOn(e.detail);
+    window.addEventListener('annotation:focus', f);
+    return () => window.removeEventListener('annotation:focus', f);
+  }, []);
 
   return (
     <section
@@ -48,6 +54,7 @@ export const About = () => {
                 <Reveal
                   key={f.id}
                   data-focus={f.id}
+                  className={`border-l pl-4 -ml-4 transition-colors ${on === f.id ? 'border-[var(--bloom)]' : 'border-transparent'}`}
                   tabIndex={0}
                   onPointerEnter={() => announce(f.id)}
                   onPointerLeave={() => announce(null)}

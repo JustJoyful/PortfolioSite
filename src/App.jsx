@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { BackgroundSketch } from './components/BackgroundSketch';
 import { LeftRail } from './components/LeftRail';
 import { CustomCursor } from './components/CustomCursor';
+import { Annotations } from './components/Annotations';
 import { Hero } from './sections/Hero';
 import { About } from './sections/About';
 import { Work } from './sections/Work';
@@ -53,6 +54,7 @@ function App() {
       </div>
 
       <LeftRail />
+      <Annotations />
 
       <div className="relative z-10 w-full flex flex-col">
         <Hero />
