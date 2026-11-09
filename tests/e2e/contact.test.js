@@ -5,10 +5,11 @@ import { PORTFOLIO_DATA } from '../../src/data/content.js';
 
 const { emailPersonal, emailStudent, sourceUrl } = PORTFOLIO_DATA.contact;
 
-async function open(opts) {
+async function open(opts, init) {
   const srv = await startPreview();
   const { page, browser } = await openPage('about:blank', opts);
   await page.context().grantPermissions(['clipboard-read', 'clipboard-write'], { origin: new URL(srv.url).origin });
+  if (init) await page.addInitScript(init);
   await page.goto(srv.url);
   await page.locator('#contact').waitFor();
   return { page, close: async () => { await browser.close(); await srv.close(); } };
@@ -63,5 +64,42 @@ test('footer year and source link', async () => {
     assert.ok(text.includes(`© ${year} Joydeep Das`), text);
     assert.equal(await page.locator('footer a', { hasText: 'Source' }).getAttribute('href'), sourceUrl);
     assert.equal(await page.getByText("Let's build something.").count(), 0);
+  } finally { await close(); }
+});
+
+test('success then failure shows no stale check', async () => {
+  const { page, close } = await open({ width: 1440 });
+  try {
+    const btn = page.getByRole('button', { name: `Copy ${emailPersonal}` });
+    await btn.click();
+    await page.locator(`button[aria-label="Copy ${emailPersonal}"][data-copied]`).waitFor({ timeout: 1000 });
+    await page.evaluate(() => { navigator.clipboard.writeText = () => Promise.reject(new Error('denied')); });
+    await btn.click();
+    await page.waitForFunction((s) => getSelection().toString() === s, emailPersonal, { timeout: 1000 });
+    await page.waitForTimeout(300);
+    assert.equal(await btn.locator('[data-check]').count(), 0, 'failed copy shows no check');
+    assert.equal(await btn.getAttribute('data-copied'), null);
+  } finally { await close(); }
+});
+
+test('missing clipboard selects the address, no check', async () => {
+  const { page, close } = await open({ width: 1440 }, () => {
+    Object.defineProperty(navigator, 'clipboard', { value: undefined });
+  });
+  try {
+    const btn = page.getByRole('button', { name: `Copy ${emailStudent}` });
+    await btn.click();
+    await page.waitForFunction((s) => getSelection().toString() === s, emailStudent, { timeout: 1000 });
+    assert.equal(await btn.locator('[data-check]').count(), 0);
+    assert.equal(await btn.getAttribute('data-copied'), null);
+  } finally { await close(); }
+});
+
+test('every link and button in contact is at least 44 px tall at 390', async () => {
+  const { page, close } = await open({ width: 390, height: 844, mobile: true });
+  try {
+    const hs = await page.locator('#contact a, #contact button').evaluateAll((els) => els.map((e) => e.getBoundingClientRect().height));
+    assert.equal(hs.length, 7, `targets ${hs.length}`);
+    hs.forEach((h, i) => assert.ok(h >= 44, `target ${i} is ${h} px`));
   } finally { await close(); }
 });

@@ -31,7 +31,9 @@ const EmailRow = ({ label, address, delay }) => {
       clearTimeout(timer.current);
       timer.current = setTimeout(() => setCopied(false), 1500);
     } catch {
-      // No check on failure: select the address so the user can copy it by hand.
+      // No check on failure: drop any check from an earlier success, then select the address.
+      clearTimeout(timer.current);
+      setCopied(false);
       const range = document.createRange();
       range.selectNodeContents(addressRef.current);
       getSelection().removeAllRanges();
@@ -46,7 +48,7 @@ const EmailRow = ({ label, address, delay }) => {
         ref={addressRef}
         data-address
         href={`mailto:${address}`}
-        className="min-w-0 text-sm text-text-muted hover:text-text [overflow-wrap:anywhere]"
+        className="min-w-0 min-h-11 inline-flex items-center text-sm text-text-muted hover:text-text [overflow-wrap:anywhere]"
       >
         {address}
       </a>
@@ -67,7 +69,7 @@ const EmailRow = ({ label, address, delay }) => {
 const ContactRow = ({ label, value, href, delay }) => (
   <Reveal stagger={delay} className="flex items-center gap-4 min-w-0">
     <span className="text-xs text-text-faint shrink-0 w-16">{label}</span>
-    <ExternalLink href={href} className="min-w-0 text-sm text-text-muted hover:text-text [overflow-wrap:anywhere]">
+    <ExternalLink href={href} className="min-w-0 min-h-11 inline-flex items-center text-sm text-text-muted hover:text-text [overflow-wrap:anywhere]">
       {value}
     </ExternalLink>
   </Reveal>
@@ -104,7 +106,7 @@ export const Contact = () => {
           className="mt-20 flex flex-wrap items-baseline justify-between gap-4 text-sm"
         >
           <p className="text-text-faint">© {new Date().getFullYear()} Joydeep Das</p>
-          <ExternalLink href={contact.sourceUrl} className="text-text-muted hover:text-text">
+          <ExternalLink href={contact.sourceUrl} className="min-h-11 inline-flex items-center text-text-muted hover:text-text">
             Source
           </ExternalLink>
         </Reveal>
