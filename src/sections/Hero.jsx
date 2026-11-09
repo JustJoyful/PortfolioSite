@@ -1,45 +1,47 @@
-import { motion } from 'framer-motion';
 import { PORTFOLIO_DATA } from '../data/content';
+import { Reveal } from '../components/ui/Reveal';
+import { ExternalLink } from '../components/ui/ExternalLink';
+
+const icon = { width: 20, height: 20, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': true };
+const GithubIcon = () => (
+  <svg {...icon}>
+    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.02c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A4.8 4.8 0 0 0 8 18v4" />
+  </svg>
+);
+const LinkedinIcon = () => (
+  <svg {...icon}>
+    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2zM4 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4z" />
+  </svg>
+);
+
+const iconLink = 'inline-flex items-center justify-center w-11 h-11 text-text-muted hover:text-text focus-visible:text-text';
 
 export const Hero = () => {
+  const { hero, resumeUrl, contact } = PORTFOLIO_DATA;
   return (
     <section
       id="hero"
-      className="relative h-[100dvh] w-full flex flex-col justify-end items-center pb-20 pointer-events-none select-none overflow-hidden"
+      className="relative min-h-[100svh] w-full flex flex-col justify-end lg:justify-center pointer-events-none px-5 md:px-12 pb-16 lg:pb-0 lg:pl-[56vw] lg:pr-12"
     >
-      {/* Bottom vignette — soft fade into next section */}
-      <div
-        className="absolute bottom-0 left-0 w-full pointer-events-none"
-        style={{
-          height: '35vh',
-          background: 'linear-gradient(to bottom, transparent, rgba(0,0,0,0.5))',
-        }}
-      />
-
-      {/* Tagline — lower third, above vignette */}
-      <motion.div
-        className="text-center z-10 px-4 mb-4"
-      >
-        <p
-          className="text-sm text-text-muted"
-        >
-          {PORTFOLIO_DATA.hero.role}
-        </p>
-      </motion.div>
-
-      {/* Scroll indicator */}
-      <motion.div
-        className="absolute bottom-7 left-1/2 -translate-x-1/2 flex flex-col items-center gap-0 z-10"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1 }}
-      >
-        <motion.div
-          animate={{ height: [20, 44, 20], opacity: [0.2, 0.55, 0.2] }}
-          transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut' }}
-          className="w-[1px] bg-gradient-to-b from-white/60 to-transparent"
-        />
-      </motion.div>
+      <div className="pointer-events-auto">
+        <h1 className="font-display text-display text-text tracking-[-0.02em]">
+          <Reveal as="span" variant="lines" className="block pb-[0.15em] -mb-[0.15em]">{hero.name}</Reveal>
+        </h1>
+        <div>
+          <p className="text-lg text-text mt-4">{hero.role}</p>
+          <p className="text-sm text-text-muted mt-1">{hero.degree}</p>
+          <p className="text-base text-text mt-6 max-w-[34rem]">{hero.sentence}</p>
+        </div>
+        <div className="flex flex-wrap items-center gap-x-6 mt-6">
+          <a href="#work" className="ext-link inline-flex items-center min-h-11 text-base text-text">Work</a>
+          <a href="#contact" className="ext-link inline-flex items-center min-h-11 text-base text-text">Contact</a>
+          {resumeUrl && <ExternalLink href={resumeUrl} className="inline-flex items-center min-h-11 text-base text-text">Résumé</ExternalLink>}
+          <span className="flex">
+            <a href={contact.githubUrl} target="_blank" rel="noopener noreferrer" aria-label="GitHub" className={iconLink}><GithubIcon /></a>
+            <a href={contact.linkedinUrl} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className={iconLink}><LinkedinIcon /></a>
+          </span>
+        </div>
+      </div>
     </section>
   );
 };

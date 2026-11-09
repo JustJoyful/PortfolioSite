@@ -42,7 +42,7 @@
     animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
   }
   @media (min-width: 1024px) {
-    #flower { --flower-dx: -31vw; }
+    #flower { --flower-dx: -17vw; }
   }
   @media (prefers-reduced-motion: reduce) {
     #flower { animation: none; }

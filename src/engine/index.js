@@ -64,7 +64,7 @@ export function createBloom(canvas, opts = {}) {
   let rafId = 0, destroyed = false;
   let frames = 0, fps = 0, lastScreen = 0, lastBuf = -1e9, lastT = 0;
   let ready = false;
-  let layoutOpts = { falloffX: 0, centerX: null };
+  let layoutOpts = { falloffX: 0, centerX: null, centerY: null };
 
   let elIdx = 0, phase = 'growing', phaseT = 0;
   let bloom = 0, bloomT = 0, wilt = 0;
@@ -92,7 +92,7 @@ export function createBloom(canvas, opts = {}) {
   const rectSize = () => Math.min(W, H) * SAFE_SCALE;
   const rectOrigin = () => {
     const s = rectSize();
-    return [(layoutOpts.centerX ?? W / 2) - s / 2 + mInfX, (H - s) / 2 + mInfY, s];
+    return [(layoutOpts.centerX ?? W / 2) - s / 2 + mInfX, (layoutOpts.centerY ?? H / 2) - s / 2 + mInfY, s];
   };
 
   // ---- elements
@@ -446,7 +446,7 @@ export function createBloom(canvas, opts = {}) {
     },
     stats: () => ({
       backend: post ? post.backend : 'canvas2d', tier: tierName, frames, fps: Math.round(fps),
-      mode: post ? MODE_NAMES[renderMode] : 'pixels', phase, width: W, height: H, modeT, presence: sec.presence, bufferFps: bufferFps(),
+      mode: post ? MODE_NAMES[renderMode] : 'pixels', phase, width: W, height: H, rect: rectOrigin(), modeT, presence: sec.presence, bufferFps: bufferFps(),
     }),
     destroy() {
       destroyed = true; sync();

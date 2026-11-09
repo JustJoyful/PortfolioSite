@@ -11,7 +11,14 @@ export const BackgroundSketch = ({ paused = false }) => {
 
   useEffect(() => {
     let dead = false, engine = null;
-    const layout = () => engine?.setLayout({ falloffX: innerWidth >= 1024 ? 0.69 * innerWidth : 0 });
+    const layout = () => {
+      const d = innerWidth >= 1024;
+      engine?.setLayout({
+        falloffX: d ? 0.55 * innerWidth : 0,
+        centerX: d ? 0.36 * innerWidth : null,
+        centerY: d ? null : 0.36 * innerHeight,
+      });
+    };
     let t;
     const onResize = () => { clearTimeout(t); t = setTimeout(layout, 150); };
 

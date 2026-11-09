@@ -44,8 +44,7 @@ test('survives font failure', async () => {
   await page.route('**/fonts/**', (r) => r.abort());
   try {
     await page.goto(srv.url);
-    // Phase 3 retargets this from the tagline to the hero h1.
-    await page.locator('#hero p').first().waitFor({ state: 'visible' });
+    await page.locator('h1').first().waitFor({ state: 'visible' });
     assert.ok((await shifts(page)) < 0.02);
   } finally { await browser.close(); await srv.close(); }
 });
