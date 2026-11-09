@@ -1,90 +1,76 @@
+import { useState } from 'react';
 import { PORTFOLIO_DATA } from '../data/content';
+import placeholders from '../data/placeholders.json';
 import { Reveal } from '../components/ui/Reveal';
 import { SectionHeading } from '../components/ui/SectionHeading';
-import { Chip } from '../components/ui/Chip';
+
+const announce = (id) => window.dispatchEvent(new CustomEvent('annotation:focus', { detail: id }));
 
 export const About = () => {
-  const groups = PORTFOLIO_DATA.about.skills;
-  const allTags = groups.filter(g => g.label !== 'Spoken').flatMap(g => g.items);
-  const spoken = groups.find(g => g.label === 'Spoken').items;
+  const { portrait, bio, focus, currently, skills } = PORTFOLIO_DATA.about;
+  const [loaded, setLoaded] = useState(false);
 
   return (
     <section
       id="about"
       aria-labelledby="about-title"
-      className="lg:min-h-screen w-full flex items-center pointer-events-none py-28"
+      className="lg:min-h-screen w-full flex items-center pointer-events-none py-24 lg:py-32"
     >
-      <div
-        className="pointer-events-auto w-full px-5 md:px-12 lg:pl-[38vw] lg:pr-12"
-      >
-        {/* Section label — first */}
-        <SectionHeading id="about-title" title="About" className="mb-5" />
+      <div className="pointer-events-auto w-full px-5 md:px-12 lg:pl-[38vw] lg:pr-12">
+        <SectionHeading id="about-title" title="About" className="mb-8" />
 
-        {/* Portrait + Name */}
-        <Reveal stagger={1} className="mb-10"
-        >
-          {/* Portrait card */}
-          <div
-            className="overflow-hidden bg-surface mb-5"
-            style={{ width: '160px', height: '213px' }}
-          >
-            {PORTFOLIO_DATA.about.portrait ? (
-              <picture>
-                <source type="image/avif" srcSet={PORTFOLIO_DATA.about.portrait.avif} sizes="160px" />
-                <source type="image/webp" srcSet={PORTFOLIO_DATA.about.portrait.webp} sizes="160px" />
-                <img
-                  src={PORTFOLIO_DATA.about.portrait.src}
-                  width={PORTFOLIO_DATA.about.portrait.width}
-                  height={PORTFOLIO_DATA.about.portrait.height}
-                  alt={PORTFOLIO_DATA.about.portrait.alt}
-                  className="w-full h-full object-cover object-top"
-                />
-              </picture>
-            ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center gap-2">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-text-faint" strokeWidth="1">
-                  <circle cx="12" cy="8" r="4" />
-                  <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
-                </svg>
-                <span className="text-xs text-text-faint">Photo</span>
-              </div>
-            )}
-          </div>
-
-          {/* Name + subtitle below portrait */}
-          <h1
-            className="font-display text-2xl text-text"
-          >
-            Joydeep Das
-          </h1>
-          <p
-            className="text-xs text-text-faint mt-1 tabular-nums"
-          >
-            NSEC · CSE 2025–29
-          </p>
-        </Reveal>
-
-        {/* Bio */}
-        <div className="space-y-5 mb-10">
-          <Reveal as="p" stagger={2} className="text-base text-text leading-loose">
-            {PORTFOLIO_DATA.about.bio}
+        <div className="grid gap-8 lg:gap-12 lg:grid-cols-[minmax(0,240px)_minmax(0,1fr)] lg:items-start">
+          <Reveal stagger={1} className="relative bg-surface w-full max-w-[240px] overflow-hidden" style={{ aspectRatio: `${portrait.width} / ${portrait.height}` }}>
+            <pre aria-hidden="true" className={`absolute left-0 top-0 m-0 font-mono text-xs leading-none text-text-faint origin-top-left ${loaded ? 'opacity-0' : 'opacity-100'}`} style={{ transform: 'scale(0.555, 0.889)', transition: 'opacity 600ms ease' }}>
+              {placeholders.portrait}
+            </pre>
+            <picture>
+              <source type="image/avif" srcSet={portrait.avif} sizes="240px" />
+              <source type="image/webp" srcSet={portrait.webp} sizes="240px" />
+              <img
+                src={portrait.src}
+                width={portrait.width}
+                height={portrait.height}
+                alt={portrait.alt}
+                onLoad={() => setLoaded(true)}
+                ref={(el) => { if (el?.complete && !loaded) setLoaded(true); }}
+                className="absolute inset-0 w-full h-full object-cover object-top"
+                style={{ opacity: loaded ? 1 : 0, transition: 'opacity 600ms ease' }}
+              />
+            </picture>
           </Reveal>
-        </div>
 
-        {/* Stack */}
-        <Reveal as="p" className="text-sm text-text-muted mb-3">Stack</Reveal>
-        <div className="flex flex-wrap gap-2 mb-8">
-          {allTags.map((tag, i) => (
-            <Reveal key={tag} stagger={Math.min(i, 8)}>
-              <Chip>{tag}</Chip>
-            </Reveal>
-          ))}
-        </div>
+          <div className="max-w-[40rem]">
+            <Reveal as="p" stagger={2} className="text-base text-text">{bio}</Reveal>
 
-        {/* Spoken */}
-        <Reveal as="p" className="text-sm text-text-muted mb-3">Spoken</Reveal>
-        <div className="flex flex-wrap gap-2">
-          {spoken.map(lang => <Chip key={lang}>{lang}</Chip>)}
+            <dl className="mt-8 space-y-4">
+              {focus.map((f) => (
+                <Reveal
+                  key={f.id}
+                  data-focus={f.id}
+                  tabIndex={0}
+                  onPointerEnter={() => announce(f.id)}
+                  onPointerLeave={() => announce(null)}
+                  onFocus={() => announce(f.id)}
+                  onBlur={() => announce(null)}
+                >
+                  <dt className="text-base text-text font-medium">{f.label}</dt>
+                  <dd className="text-base text-text">{f.text}</dd>
+                </Reveal>
+              ))}
+            </dl>
+
+            <Reveal as="p" className="text-base text-text mt-8">{currently}</Reveal>
+
+            <dl className="mt-8 grid grid-cols-1 sm:grid-cols-[max-content_1fr] gap-x-8 gap-y-3">
+              {skills.map((g) => (
+                <div key={g.label} className="contents">
+                  <dt className="text-sm text-text-faint">{g.label}</dt>
+                  <dd className="text-base text-text">{g.items.join(', ')}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
         </div>
       </div>
     </section>
