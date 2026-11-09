@@ -4,7 +4,7 @@ import { LeftRail } from './components/LeftRail';
 import { CustomCursor } from './components/CustomCursor';
 import { Hero } from './sections/Hero';
 import { About } from './sections/About';
-import { Projects } from './sections/Projects';
+import { Work } from './sections/Work';
 import { Contact } from './sections/Contact';
 import { useActiveSection } from './hooks/useActiveSection';
 import { getEngine } from './engine/handle';
@@ -57,7 +57,7 @@ function App() {
       <div className="relative z-10 w-full flex flex-col">
         <Hero />
         <About />
-        <Projects />
+        <Work />
         <Contact />
       </div>
     </div>
