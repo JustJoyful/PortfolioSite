@@ -1,26 +1,77 @@
+import { useEffect, useRef, useState } from 'react';
 import { PORTFOLIO_DATA } from '../data/content';
 import { Reveal } from '../components/ui/Reveal';
 import { SectionHeading } from '../components/ui/SectionHeading';
 import { ExternalLink } from '../components/ui/ExternalLink';
 
-const ContactRow = ({ label, value, href, delay }) => {
-  const Link = href.startsWith('http') ? ExternalLink : 'a';
+const CopyIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+    <rect x="9" y="9" width="11" height="11" rx="1.5" />
+    <path d="M5 15V5.5A1.5 1.5 0 0 1 6.5 4H15" />
+  </svg>
+);
+
+const CheckIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true" data-check>
+    <path d="M5 12.5l4.5 4.5L19 7.5" />
+  </svg>
+);
+
+const EmailRow = ({ label, address, delay }) => {
+  const [copied, setCopied] = useState(false);
+  const addressRef = useRef(null);
+  const timer = useRef(0);
+  useEffect(() => () => clearTimeout(timer.current), []);
+
+  const copy = async () => {
+    try {
+      // Throws when navigator.clipboard is missing, so the fallback below covers it too.
+      await navigator.clipboard.writeText(address);
+      setCopied(true);
+      clearTimeout(timer.current);
+      timer.current = setTimeout(() => setCopied(false), 1500);
+    } catch {
+      // No check on failure: select the address so the user can copy it by hand.
+      const range = document.createRange();
+      range.selectNodeContents(addressRef.current);
+      getSelection().removeAllRanges();
+      getSelection().addRange(range);
+    }
+  };
+
   return (
-  <Reveal stagger={delay} className="flex items-baseline gap-5 group">
-    <span
-      className="text-xs text-text-faint shrink-0 w-16"
-    >
-      {label}
-    </span>
-    <Link
-      href={href}
-      className="text-sm text-text-muted hover:bg-text hover:text-bg truncate"
-    >
-      {value}
-    </Link>
-  </Reveal>
+    <Reveal stagger={delay} className="flex items-center gap-4 min-w-0">
+      <span className="text-xs text-text-faint shrink-0 w-16">{label}</span>
+      <a
+        ref={addressRef}
+        data-address
+        href={`mailto:${address}`}
+        className="min-w-0 text-sm text-text-muted hover:text-text [overflow-wrap:anywhere]"
+      >
+        {address}
+      </a>
+      <button
+        type="button"
+        aria-label={`Copy ${address}`}
+        onClick={copy}
+        data-copied={copied || undefined}
+        className="shrink-0 inline-flex items-center justify-center h-11 w-11 text-text-muted hover:text-text focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-text"
+      >
+        {copied ? <CheckIcon /> : <CopyIcon />}
+      </button>
+      <span className="sr-only" aria-live="polite">{copied ? 'Copied' : ''}</span>
+    </Reveal>
   );
 };
+
+const ContactRow = ({ label, value, href, delay }) => (
+  <Reveal stagger={delay} className="flex items-center gap-4 min-w-0">
+    <span className="text-xs text-text-faint shrink-0 w-16">{label}</span>
+    <ExternalLink href={href} className="min-w-0 text-sm text-text-muted hover:text-text [overflow-wrap:anywhere]">
+      {value}
+    </ExternalLink>
+  </Reveal>
+);
 
 export const Contact = () => {
   const { contact } = PORTFOLIO_DATA;
@@ -36,30 +87,26 @@ export const Contact = () => {
       >
         <SectionHeading id="contact-title" title="Contact" className="mb-6" />
 
-        <Reveal
-          as="p"
-          stagger={1}
-          className="font-display text-2xl text-text mb-12"
-        >
-          Let's build something.
+        <Reveal as="p" stagger={1} className="font-sans text-lg text-text-muted mb-12">
+          The best way to reach me is email.
         </Reveal>
 
         <div className="flex flex-col gap-5">
-          <ContactRow label="github"   value={contact.github}        href={contact.githubUrl}               delay={2} />
-          <ContactRow label="linkedin" value={contact.linkedin}      href={contact.linkedinUrl}             delay={3} />
-          <ContactRow label="email"    value={contact.emailPersonal} href={`mailto:${contact.emailPersonal}`} delay={4} />
-          <ContactRow label="student"  value={contact.emailStudent}  href={`mailto:${contact.emailStudent}`}  delay={5} />
+          <EmailRow label="email" address={contact.emailPersonal} delay={2} />
+          <EmailRow label="student" address={contact.emailStudent} delay={3} />
+          <ContactRow label="github" value={contact.github} href={contact.githubUrl} delay={4} />
+          <ContactRow label="linkedin" value={contact.linkedin} href={contact.linkedinUrl} delay={5} />
         </div>
 
         <Reveal
+          as="footer"
           stagger={7}
-          className="mt-20 pt-8 border-t border-line"
+          className="mt-20 flex flex-wrap items-baseline justify-between gap-4 text-sm"
         >
-          <p
-            className="text-xs text-text-faint"
-          >
-            Joydeep Das — NSEC CSE 2025–29
-          </p>
+          <p className="text-text-faint">© {new Date().getFullYear()} Joydeep Das</p>
+          <ExternalLink href={contact.sourceUrl} className="text-text-muted hover:text-text">
+            Source
+          </ExternalLink>
         </Reveal>
       </div>
     </section>
