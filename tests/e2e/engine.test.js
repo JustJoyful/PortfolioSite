@@ -119,3 +119,36 @@ test('ambient buffer rate: 15 fps desktop, 10 mobile', async () => {
     } finally { await browser.close(); }
   }
 });
+
+// Touch gestures go through CDP Input.dispatchTouchEvent: real touch pointer events, and the browser's own pan-y gesture arbitration.
+async function touch(page, steps, { release = true } = {}) {
+  const cdp = await page.context().newCDPSession(page);
+  const send = (type, pts) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: pts.map(([x, y]) => ({ x, y })) });
+  await send('touchStart', [steps[0]]);
+  for (const p of steps.slice(1)) { await send('touchMove', [p]); await sleep(16); }
+  return { cdp, end: () => send('touchEnd', []) };
+}
+const line = (x0, y0, x1, y1, n = 10) => Array.from({ length: n + 1 }, (_, i) => [x0 + (x1 - x0) * i / n, y0 + (y1 - y0) * i / n]);
+const MOBILE = { width: 390, height: 844, mobile: true };
+
+test('drag rotates', () => withPage(MOBILE, async (page) => {
+  const a = (await stats(page)).rotY;
+  const g = await touch(page, line(100, 600, 200, 600));
+  const b = (await stats(page)).rotY;
+  await g.end();
+  assert.ok(Math.abs(b - a) > 0.3, `rotY moved ${b - a}`);
+}));
+
+test('tap glitches', () => withPage(MOBILE, async (page) => {
+  const a = (await stats(page)).glitchCount;
+  const g = await touch(page, [[195, 600]]);
+  await g.end();
+  assert.ok((await stats(page)).glitchCount > a);
+}));
+
+test('vertical swipe scrolls', () => withPage(MOBILE, async (page) => {
+  const g = await touch(page, line(195, 700, 195, 400, 15));
+  await g.end();
+  await sleep(300);
+  assert.ok(await page.evaluate(() => scrollY) > 0);
+}));

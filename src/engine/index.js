@@ -76,7 +76,8 @@ export function createBloom(canvas, opts = {}) {
   let px = 0, py = 0, prevPx = 0, prevPy = 0, mouseSpeed = 0, lastInput = -1e9;
   let mInfX = 0, mInfY = 0;
   let glowIntensity = 0;
-  let glitchTimer = 0, glitchSlices = [];
+  let glitchTimer = 0, glitchSlices = [], glitchTotal = 0;
+  let touchRot = 0, touch = null; // touch: the one tracked finger {id, x0, y0, x, t0}
   let ripples = [];
   let highlightId = null;
   const anchorPos = {};
@@ -132,6 +133,7 @@ export function createBloom(canvas, opts = {}) {
   // ---- glitch
   function triggerGlitch(light = false) {
     if (isStatic()) return;
+    glitchTotal++;
     const sf = constrain(mouseSpeed / 20, 0, 1);
     let intensity = random(rand, 0.15 + sf * 0.2, 0.45 + sf * 0.45);
     if (light) intensity *= 0.6;
@@ -181,6 +183,7 @@ export function createBloom(canvas, opts = {}) {
     autoRotX += dt * 0.12 * Math.sin(t * 0.15) * re * rs;
     autoRotZ += dt * 0.08 * Math.sin(t * 0.09 + 1.5) * re * rs;
     mouseRotX += ((py - H / 2) / H * 1.2 - mouseRotX) * k60(0.04, dt);
+    if (!touch) touchRot *= 1 - k60(0.06, dt); // ease back after release
     mouseRotY += ((px - W / 2) / W * 1.8 - mouseRotY) * k60(0.04, dt);
 
     if (ready && phase === 'growing') {
@@ -256,7 +259,7 @@ export function createBloom(canvas, opts = {}) {
   function syncFlowerState() {
     Object.assign(flowerState, {
       bloom, wilt, rotX: autoRotX + mouseRotX * easeInOutCubic(rotEaseIn),
-      rotY: autoRotY + mouseRotY * easeInOutCubic(rotEaseIn), rotZ: autoRotZ,
+      rotY: autoRotY + mouseRotY * easeInOutCubic(rotEaseIn) + touchRot, rotZ: autoRotZ,
       brightBoost: glowIntensity, tier: tierName === 'low' ? 1 : 0,
     });
   }
@@ -387,8 +390,26 @@ export function createBloom(canvas, opts = {}) {
 
   // ---- input and page events
   const interactive = (e) => e.target?.closest?.(IGNORE);
-  const onMove = (e) => { if (!interactive(e)) setPointer(e.clientX, e.clientY); };
-  const onDown = (e) => { if (!interactive(e)) setPointer(e.clientX, e.clientY, { down: true }); };
+  const onMove = (e) => {
+    if (e.pointerType === 'touch') {
+      if (touch?.id === e.pointerId) { touchRot += (e.clientX - touch.x) * 0.005; touch.x = e.clientX; }
+      return;
+    }
+    if (!interactive(e)) setPointer(e.clientX, e.clientY);
+  };
+  const onDown = (e) => {
+    if (interactive(e)) return;
+    if (e.pointerType !== 'touch') return setPointer(e.clientX, e.clientY, { down: true });
+    // multi-touch is ignored: a second finger cancels the drag/tap
+    if (touch) { touch.id = null; return; }
+    touch = { id: e.pointerId, x0: e.clientX, y0: e.clientY, x: e.clientX, t0: performance.now() };
+  };
+  const onUp = (e) => {
+    if (e.pointerType !== 'touch' || !touch) return;
+    if (touch.id === e.pointerId && e.type === 'pointerup' && performance.now() - touch.t0 < 250
+      && Math.hypot(e.clientX - touch.x0, e.clientY - touch.y0) < 10) setPointer(e.clientX, e.clientY, { down: true });
+    touch = null;
+  };
   const onKey = (e) => { if (e.key === 'g' || e.key === 'G') triggerGlitch(); };
   const onVis = () => { hidden = document.visibilityState === 'hidden'; sync(); };
   let scrollTimer = 0;
@@ -441,6 +462,8 @@ export function createBloom(canvas, opts = {}) {
 
   window.addEventListener('pointermove', onMove, { passive: true });
   window.addEventListener('pointerdown', onDown, { passive: true });
+  window.addEventListener('pointerup', onUp, { passive: true });
+  window.addEventListener('pointercancel', onUp, { passive: true });
   window.addEventListener('keydown', onKey);
   window.addEventListener('resize', onResize);
   window.addEventListener('scroll', onScroll, { passive: true, capture: true });
@@ -473,13 +496,16 @@ export function createBloom(canvas, opts = {}) {
     },
     stats: () => ({
       backend: post ? post.backend : 'canvas2d', tier: tierName, frames, fps: Math.round(fps),
-      mode: post ? MODE_NAMES[renderMode] : 'pixels', phase, width: W, height: H, rect: rectOrigin(), modeT, presence: sec.presence, bufferFps: bufferFps(),
+      mode: post ? MODE_NAMES[renderMode] : 'pixels', phase, width: W, height: H, rect: rectOrigin(), modeT, glitchCount: glitchTotal,
+      rotY: autoRotY + mouseRotY * easeInOutCubic(rotEaseIn) + touchRot, presence: sec.presence, bufferFps: bufferFps(),
     }),
     destroy() {
       destroyed = true; sync();
       clearTimeout(resizeTimer); clearTimeout(scrollTimer);
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerdown', onDown);
+      window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
       window.removeEventListener('keydown', onKey);
       window.removeEventListener('resize', onResize);
       window.removeEventListener('scroll', onScroll, { capture: true });

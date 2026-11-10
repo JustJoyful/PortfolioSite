@@ -61,7 +61,7 @@ export const BackgroundSketch = ({ paused = false }) => {
       ref={canvasRef}
       aria-hidden="true"
       className="absolute inset-0 w-full h-full block"
-      style={{ touchAction: 'pan-y', opacity: ready ? 1 : 0, transition: 'opacity 600ms ease' }}
+      style={{ touchAction: 'pan-y pinch-zoom', opacity: ready ? 1 : 0, transition: 'opacity 600ms ease' }}
     />
   );
 };

@@ -9,6 +9,7 @@
 
   body {
     @apply bg-bg text-text font-sans antialiased overflow-x-hidden;
+    touch-action: pan-y pinch-zoom; /* horizontal drags reach the engine; vertical scroll and pinch stay native */
   }
 
   :focus-visible {
