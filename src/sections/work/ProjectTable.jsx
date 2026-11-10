@@ -26,18 +26,21 @@ export const ProjectTable = ({ projects, shownId, onShow }) => {
       {projects.map((p) => {
         const isOpen = open === p.id;
         return desktop ? (
-          <li
-            key={p.id}
-            data-work-row
-            tabIndex={0}
-            onPointerEnter={() => hover(p.id)}
-            onFocus={() => hover(p.id)}
-            className={`grid grid-cols-[9rem_minmax(0,1fr)_5rem_3rem] gap-6 items-baseline py-4 border-t border-line text-sm cursor-default transition-colors ${shownId === p.id ? 'text-text' : 'text-text-muted'}`}
-          >
-            <span data-title className="text-base font-medium">{p.title}</span>
-            <span>{p.oneLiner}</span>
-            <span>{KIND[p.kind]}</span>
-            <span className="tabular-nums text-right">{p.year}</span>
+          <li key={p.id} className="border-t border-line">
+            <button
+              type="button"
+              data-work-row
+              aria-pressed={shownId === p.id}
+              onPointerEnter={() => hover(p.id)}
+              onFocus={() => hover(p.id)}
+              onClick={() => hover(p.id)}
+              className={`w-full grid grid-cols-[9rem_minmax(0,1fr)_5rem_3rem] gap-6 items-baseline py-4 text-left text-sm cursor-default transition-colors ${shownId === p.id ? 'text-text' : 'text-text-muted'}`}
+            >
+              <span data-title className="text-base font-medium">{p.title}</span>
+              <span>{p.oneLiner}</span>
+              <span>{KIND[p.kind]}</span>
+              <span className="tabular-nums text-right">{p.year}</span>
+            </button>
           </li>
         ) : (
           <li key={p.id} data-work-row className="border-t border-line">

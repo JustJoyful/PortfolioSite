@@ -57,7 +57,7 @@ const EmailRow = ({ label, address, delay }) => {
         aria-label={`Copy ${address}`}
         onClick={copy}
         data-copied={copied || undefined}
-        className="shrink-0 inline-flex items-center justify-center h-11 w-11 text-text-muted hover:text-text focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-text"
+        className="shrink-0 inline-flex items-center justify-center h-11 w-11 text-text-muted hover:text-text "
       >
         {copied ? <CheckIcon /> : <CopyIcon />}
       </button>
@@ -82,10 +82,10 @@ export const Contact = () => {
     <section
       id="contact"
       aria-labelledby="contact-title"
-      className="lg:min-h-screen w-full flex items-center pointer-events-none py-28"
+      className="lg:min-h-screen w-full lg:grid lg:grid-cols-[38vw_minmax(0,1fr)] items-center pointer-events-none py-28"
     >
       <div
-        className="pointer-events-auto w-full px-5 md:px-12 lg:pl-[38vw] lg:pr-12"
+        className="pointer-events-auto w-full px-5 md:px-12 lg:px-0 lg:pr-12 lg:col-start-2 lg:max-w-[680px]"
       >
         <SectionHeading id="contact-title" title="Contact" className="mb-6" />
 
@@ -100,16 +100,6 @@ export const Contact = () => {
           <ContactRow label="linkedin" value={contact.linkedin} href={contact.linkedinUrl} delay={5} />
         </div>
 
-        <Reveal
-          as="footer"
-          stagger={7}
-          className="mt-20 flex flex-wrap items-baseline justify-between gap-4 text-sm"
-        >
-          <p className="text-text-faint">© {new Date().getFullYear()} Joydeep Das</p>
-          <ExternalLink href={contact.sourceUrl} className="min-h-11 inline-flex items-center text-text-muted hover:text-text">
-            Source
-          </ExternalLink>
-        </Reveal>
       </div>
     </section>
   );

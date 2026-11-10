@@ -11,6 +11,11 @@
     @apply bg-bg text-text font-sans antialiased overflow-x-hidden;
   }
 
+  :focus-visible {
+    outline: 2px solid var(--bloom);
+    outline-offset: 2px;
+  }
+
   ::selection {
     background: rgba(255, 255, 255, 0.12);
   }

@@ -1,51 +1,41 @@
 import { useActiveSection } from '../hooks/useActiveSection';
-import { motion } from 'framer-motion';
 
-const IDS = ['hero', 'about', 'work', 'contact'];
+export const SECTIONS = [['hero', 'Home'], ['about', 'About'], ['work', 'Work'], ['contact', 'Contact']];
+const IDS = SECTIONS.map(([id]) => id);
 
 export const LeftRail = () => {
   const activeId = useActiveSection(IDS);
-  const active = IDS.indexOf(activeId);
+  const vertical = { writingMode: 'vertical-rl', transform: 'rotate(180deg)' };
 
   return (
-    <motion.aside
-      initial={{ opacity: 0, x: -16 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 1.2, ease: 'easeOut' }}
-      className="fixed left-0 top-0 h-full z-20 flex flex-col items-center justify-between py-12 px-4 pointer-events-none select-none hidden lg:flex"
-      style={{ width: '64px' }}
-    >
-      {/* Vertical name */}
-      <div
-        className="text-xs text-text-faint"
-        style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
-      >
-        Joydeep Das
-      </div>
+    <aside className="fixed left-0 top-0 h-full w-16 z-20 hidden lg:flex flex-col items-center justify-between py-12 pointer-events-none select-none">
+      <div className="text-xs text-text-faint" style={vertical}>Joydeep Das</div>
 
-      {/* Section dots */}
-      <div className="flex flex-col items-center gap-3">
-        {IDS.map((_, idx) => (
-          <div
-            key={idx}
-            className="transition-all duration-500"
-            style={{
-              width: active === idx ? '2px' : '2px',
-              height: active === idx ? '24px' : '6px',
-              borderRadius: '2px',
-              background: active === idx
-                ? 'rgba(255,255,255,0.7)'
-                : 'rgba(255,255,255,0.2)',
-              transition: 'height 0.4s ease, background 0.4s ease',
-            }}
-          />
-        ))}
-      </div>
+      <nav aria-label="Sections" className="flex flex-col items-center pointer-events-auto">
+        {SECTIONS.map(([id, name]) => {
+          const on = activeId === id;
+          return (
+            <a
+              key={id}
+              href={`#${id}`}
+              aria-label={name}
+              aria-current={on ? 'location' : undefined}
+              className="group relative flex items-center justify-center w-11 h-11"
+            >
+              <span
+                aria-hidden="true"
+                className="block w-0.5 rounded-sm"
+                style={{ height: on ? 24 : 6, background: on ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.2)', transition: 'height 0.4s ease, background 0.4s ease' }}
+              />
+              <span aria-hidden="true" className="absolute left-full ml-1 px-2 text-xs text-text whitespace-nowrap opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity">
+                {name}
+              </span>
+            </a>
+          );
+        })}
+      </nav>
 
-      {/* Bottom thin line */}
-      <div className="text-xs text-text-faint" style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>
-        ©2025
-      </div>
-    </motion.aside>
+      <div className="text-xs text-text-faint tabular-nums" style={vertical}>{new Date().getFullYear()}</div>
+    </aside>
   );
 };

@@ -20,9 +20,9 @@ export const About = () => {
     <section
       id="about"
       aria-labelledby="about-title"
-      className="lg:min-h-screen w-full flex items-center pointer-events-none py-24 lg:py-32"
+      className="lg:min-h-screen w-full lg:grid lg:grid-cols-[38vw_minmax(0,1fr)] items-center pointer-events-none py-24 lg:py-32"
     >
-      <div className="pointer-events-auto w-full px-5 md:px-12 lg:pl-[38vw] lg:pr-12">
+      <div className="pointer-events-auto w-full px-5 md:px-12 lg:px-0 lg:pr-12 lg:col-start-2 lg:max-w-[680px]">
         <SectionHeading id="about-title" title="About" className="mb-8" />
 
         <div className="grid gap-8 lg:gap-12 lg:grid-cols-[minmax(0,240px)_minmax(0,1fr)] lg:items-start">

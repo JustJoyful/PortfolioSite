@@ -21,10 +21,11 @@ export const Hero = () => {
   return (
     <section
       id="hero"
+      aria-labelledby="hero-title"
       className="relative min-h-[100svh] w-full flex flex-col justify-end lg:justify-center pointer-events-none px-5 md:px-12 pb-16 lg:pb-0 lg:pl-[56vw] lg:pr-12"
     >
       <div className="pointer-events-auto">
-        <h1 className="font-display text-display text-text tracking-[-0.02em]">
+        <h1 id="hero-title" className="font-display text-display text-text tracking-[-0.02em]">
           <Reveal as="span" variant="lines" className="block pb-[0.15em] -mb-[0.15em]">{hero.name}</Reveal>
         </h1>
         <div>

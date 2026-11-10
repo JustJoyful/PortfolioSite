@@ -98,7 +98,7 @@ test('missing clipboard selects the address, no check', async () => {
 test('every link and button in contact is at least 44 px tall at 390', async () => {
   const { page, close } = await open({ width: 390, height: 844, mobile: true });
   try {
-    const hs = await page.locator('#contact a, #contact button').evaluateAll((els) => els.map((e) => e.getBoundingClientRect().height));
+    const hs = await page.locator('#contact a, #contact button, footer a').evaluateAll((els) => els.map((e) => e.getBoundingClientRect().height));
     assert.equal(hs.length, 7, `targets ${hs.length}`);
     hs.forEach((h, i) => assert.ok(h >= 44, `target ${i} is ${h} px`));
   } finally { await close(); }

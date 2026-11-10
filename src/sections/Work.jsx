@@ -16,10 +16,10 @@ export const Work = () => {
     <section
       id="work"
       aria-labelledby="work-title"
-      className="w-full pointer-events-none py-24 lg:py-32"
+      className="w-full lg:grid lg:grid-cols-[38vw_minmax(0,1fr)] pointer-events-none py-24 lg:py-32"
     >
-      <div className="pointer-events-auto w-full px-5 md:px-12 lg:pl-[38vw] lg:pr-12 max-w-[60rem] lg:max-w-none">
-        <div className="lg:max-w-[48rem] flex flex-col gap-6">
+      <div className="pointer-events-auto w-full px-5 md:px-12 lg:px-0 lg:pr-12 max-w-[60rem] lg:max-w-[680px] lg:col-start-2">
+        <div className="flex flex-col gap-6">
           <SectionHeading id="work-title" title="Work" className="mb-2" />
           <Reveal><FeaturedCard projects={projects} shownId={hovered ?? featured.id} /></Reveal>
           {research && <Reveal><ResearchCard project={research} hidden={(hovered ?? featured.id) === research.id} /></Reveal>}

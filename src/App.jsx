@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 import { BackgroundSketch } from './components/BackgroundSketch';
+import { MobileNav } from './components/MobileNav';
+import { Footer } from './components/Footer';
 import { LeftRail } from './components/LeftRail';
 import { CustomCursor } from './components/CustomCursor';
 import { Annotations } from './components/Annotations';
@@ -42,6 +44,7 @@ function App() {
 
   return (
     <div className="relative w-full min-h-full text-white bg-black">
+      <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:bg-bg focus:px-4 focus:py-3 text-text">Skip to content</a>
       <CustomCursor />
 
       {/* Layer 0 — bloom engine (slid left on desktop via CSS scroll timeline, see index.css) */}
@@ -54,14 +57,16 @@ function App() {
       </div>
 
       <LeftRail />
+      <MobileNav />
       <Annotations />
 
-      <div className="relative z-10 w-full flex flex-col">
+      <main id="main" className="relative z-10 w-full flex flex-col">
         <Hero />
         <About />
         <Work />
         <Contact />
-      </div>
+      </main>
+      <Footer />
     </div>
   );
 }
