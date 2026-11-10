@@ -1,6 +1,6 @@
 // Bloom engine entry: one rAF loop drives a Canvas2D flower buffer and a WebGL (or Canvas2D) post stage.
 import { rng, random, lerp, constrain, easeInOutCubic, bloomCurve, BLOOM_DURATION } from './math.js';
-import { VARIANTS, outerTips, drawFlower } from './flower.js';
+import { VARIANTS, FLOWER_BUFFER_SCALE, outerTips, drawFlower } from './flower.js';
 import { buildGlyphAtlas } from './glyphAtlas.js';
 import { TIERS, initialTier, createGovernor } from './quality.js';
 import { createPost } from './gl.js';
@@ -262,24 +262,42 @@ export function createBloom(canvas, opts = {}) {
   }
 
   // ---- anchors
+  // Targets (fractions of the buffer width) are picked at buffer rate, only where labels can show; positions lerp per frame.
+  const ANCHOR_SLOTS = [['ai', 0.25], ['research', 0.5], ['inference', 0.75], ['project', 0.5]];
+  const tipBuf = [], cand = [], usedTips = new Set();
+  const targets = Object.fromEntries(ANCHOR_SLOTS.map(([id]) => [id, { x: 0, y: 0, ok: false }]));
+  function pickTargets() {
+    const active = (section === 'about' || section === 'work') && W >= 1024;
+    cand.length = 0; usedTips.clear();
+    if (active) {
+      syncFlowerState();
+      const bw = bufCanvas.width, cx = FLOWER_BUFFER_SCALE * bw; // flower centre x in the buffer
+      for (const p of outerTips(VARIANTS[elIdx], flowerState, bw, tipBuf)) if (p.z <= 0 && p.x >= cx) cand.push(p);
+      // Pointer-driven rotation can leave no right-half tips facing us; fall back to any front-facing tip rather than hiding.
+      if (!cand.length) for (const p of tipBuf) if (p.z <= 0) cand.push(p);
+    }
+    let lo = Infinity, hi = -Infinity;
+    for (const p of cand) { if (p.y < lo) lo = p.y; if (p.y > hi) hi = p.y; }
+    const bw = bufCanvas.width;
+    for (const [id, f] of ANCHOR_SLOTS) {
+      const t = targets[id], want = lo + f * (hi - lo);
+      let best = null;
+      for (const p of cand) {
+        if (usedTips.has(p)) continue;
+        if (!best || Math.abs(p.y - want) < Math.abs(best.y - want)) best = p;
+      }
+      if (best && id !== 'project') usedTips.add(best);
+      t.ok = !!best;
+      if (best) { t.x = best.x / bw; t.y = best.y / bw; }
+    }
+  }
   function updateAnchors(snap) {
-    syncFlowerState();
     const [ox, oy, s] = rectOrigin();
     const first = snap || !anchorsInit;
-    // Front-facing right-half petal tips; each id takes the tip nearest its target height.
-    const bw = bufCanvas.width;
-    const tips = outerTips(VARIANTS[elIdx], flowerState, bw).filter((p) => p.z <= 0 && p.x >= bw / 2);
-    const used = new Set();
-    for (const [id, f] of [['ai', 0.25], ['research', 0.5], ['inference', 0.75], ['project', 0.5]]) {
-      const a = (anchorPos[id] ??= { id, x: W / 2, y: H / 2, visible: false });
-      let best = null;
-      for (const p of tips) {
-        if (used.has(p)) continue;
-        if (!best || Math.abs(p.y / bw - f) < Math.abs(best.y / bw - f)) best = p;
-      }
-      if (best && id !== 'project') used.add(best);
-      if (!best) { a.visible = false; continue; }
-      const x = ox + (best.x / bw) * s, y = oy + (best.y / bw) * s;
+    for (const [id] of ANCHOR_SLOTS) {
+      const a = (anchorPos[id] ??= { id, x: W / 2, y: H / 2, visible: false }), t = targets[id];
+      if (!t.ok) { a.visible = false; continue; }
+      const x = ox + t.x * s, y = oy + t.y * s;
       a.x = first || !a.visible ? x : lerp(a.x, x, 0.15);
       a.y = first || !a.visible ? y : lerp(a.y, y, 0.15);
       a.visible = true;
@@ -292,6 +310,7 @@ export function createBloom(canvas, opts = {}) {
     syncFlowerState();
     drawFlower(bufCtx, VARIANTS[elIdx], flowerState);
     post?.uploadFlower(bufCanvas);
+    pickTargets();
   }
 
   function fillUniforms() {
@@ -438,6 +457,7 @@ export function createBloom(canvas, opts = {}) {
       if (!SECTION_NAMES.includes(name) || name === section) return;
       section = name;
       sec = sectionState(section, { desktop: W >= 1024 });
+      pickTargets();
       if (!isStatic()) {
         prevMode = renderMode; modeT = 0; // every section change dissolves
         if (sec.mode !== 'cycle') renderMode = MODE_OF[sec.mode];
@@ -450,7 +470,7 @@ export function createBloom(canvas, opts = {}) {
     setHighlight(id) { highlightId = id; if (isStatic()) renderStatic(); },
     setLayout(l) { layoutOpts = { ...layoutOpts, ...l }; anchorsInit = false; if (isStatic()) renderStatic(); },
     getAnchors() {
-      if (!anchorsInit) updateAnchors(true);
+      if (!anchorsInit) { pickTargets(); updateAnchors(true); }
       return Object.values(anchorPos).map(({ id, x, y, visible }) => ({ id, x, y, visible }));
     },
     stats: () => ({
