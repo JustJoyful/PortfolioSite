@@ -20,9 +20,14 @@ test('anchors sit on the right half of the flower; project anchor visible on Wor
     const row = page.locator('[data-work-row]').filter({ hasText: 'Testcard' });
     await row.evaluate((el) => el.scrollIntoView({ block: 'center' }));
     await page.waitForTimeout(500);
+    const op = () => page.evaluate(() => [...document.querySelectorAll('[aria-hidden="true"].fixed p')].filter((p) => p.textContent.includes('SRCC')).map((p) => getComputedStyle(p).opacity));
+    assert.ok((await op()).every((o) => o === '0'), 'project label hidden before hover');
+    await page.evaluate(() => { window.__ev = []; addEventListener('annotation:project', (e) => window.__ev.push(e.detail)); });
     const b = await row.boundingBox();
     await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2);
     await page.waitForTimeout(1500);
+    assert.ok((await page.evaluate(() => window.__ev)).includes('testcard'), 'annotation:project fired for testcard');
+    assert.deepEqual(await op(), ['1'], 'project label shown after hover');
     const w = await page.evaluate(() => ({ ph: window.__bloom.stats().phase, y: scrollY, h: document.documentElement.scrollHeight, pr: window.__bloom.stats().presence, a: window.__bloom.getAnchors() }));
     assert.ok(w.a.find((a) => a.id === 'project').visible, JSON.stringify(w));
   } finally { await browser.close(); await srv.close(); }

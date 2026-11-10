@@ -273,8 +273,6 @@ export function createBloom(canvas, opts = {}) {
       syncFlowerState();
       const bw = bufCanvas.width, cx = FLOWER_BUFFER_SCALE * bw; // flower centre x in the buffer
       for (const p of outerTips(VARIANTS[elIdx], flowerState, bw, tipBuf)) if (p.z <= 0 && p.x >= cx) cand.push(p);
-      // Pointer-driven rotation can leave no right-half tips facing us; fall back to any front-facing tip rather than hiding.
-      if (!cand.length) for (const p of tipBuf) if (p.z <= 0) cand.push(p);
     }
     let lo = Infinity, hi = -Infinity;
     for (const p of cand) { if (p.y < lo) lo = p.y; if (p.y > hi) hi = p.y; }
