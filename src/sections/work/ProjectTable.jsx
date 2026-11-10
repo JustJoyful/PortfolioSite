@@ -19,14 +19,14 @@ export const ProjectTable = ({ projects, shownId, onShow }) => {
   return (
     <ul
       data-work-table
-      className="border-b border-line"
+      className="border-b border-line" /* taste-skill-ignore: real table rows */
       onPointerLeave={desktop ? leave : undefined}
       onBlur={desktop ? (e) => { if (!e.currentTarget.contains(e.relatedTarget)) leave(); } : undefined}
     >
       {projects.map((p) => {
         const isOpen = open === p.id;
         return desktop ? (
-          <li key={p.id} className="border-t border-line">
+          <li key={p.id} className="border-t border-line" /* taste-skill-ignore: real table rows */>
             <button
               type="button"
               data-work-row
@@ -43,7 +43,7 @@ export const ProjectTable = ({ projects, shownId, onShow }) => {
             </button>
           </li>
         ) : (
-          <li key={p.id} data-work-row className="border-t border-line">
+          <li key={p.id} data-work-row className="border-t border-line" /* taste-skill-ignore: real table rows */>
             <button
               type="button"
               aria-expanded={isOpen}

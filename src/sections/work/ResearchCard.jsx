@@ -18,8 +18,8 @@ export const ResearchCard = ({ project: p, hidden }) => (
       <Links links={p.links} />
     </div>
     {p.figure && (
-      <div tabIndex={0} role="region" aria-label={`${p.title} figure, scrollable`} className="overflow-x-auto">
-        <img data-figure src={p.figure.src} alt={p.figure.alt} width={710} height={251} loading="lazy" decoding="async" className="min-w-[710px] w-full h-auto" />
+      <div tabIndex={0} role="region" aria-label={`${p.title} figure, scrollable`} className="overflow-x-auto sm:-mx-6 sm:-mb-6">
+        <img data-figure src={p.figure.src} alt={p.figure.alt} width={710} height={251} loading="lazy" decoding="async" className="min-w-[680px] w-full h-auto" />
       </div>
     )}
   </article>

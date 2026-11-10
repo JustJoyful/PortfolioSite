@@ -1,7 +1,8 @@
 @font-face { font-family: 'Instrument Serif'; font-weight: 400; font-style: normal; font-display: swap; src: url('/fonts/instrument-serif-400.woff2') format('woff2'); }
 @font-face { font-family: 'Geist'; font-weight: 400; font-style: normal; font-display: swap; src: url('/fonts/geist-400.woff2') format('woff2'); }
 @font-face { font-family: 'Geist'; font-weight: 500; font-style: normal; font-display: swap; src: url('/fonts/geist-500.woff2') format('woff2'); }
-@font-face { font-family: 'Geist Mono'; font-weight: 400; font-style: normal; font-display: swap; src: url('/fonts/geist-mono-400.woff2') format('woff2'); }
+@font-face {
+  font-family: 'Geist Mono'; /* taste-skill-ignore: R2, mono only for ASCII placeholders */ font-weight: 400; font-style: normal; font-display: swap; src: url('/fonts/geist-mono-400.woff2') format('woff2'); }
 
 /* Metric-matched fallbacks: size-adjust = web avg lowercase advance / local avg; overrides = web metric / size-adjust. */
 @font-face { font-family: 'Instrument Serif Fallback'; src: local('Georgia'); size-adjust: 79.6%; ascent-override: 124.4%; descent-override: 38.9%; line-gap-override: 0%; }

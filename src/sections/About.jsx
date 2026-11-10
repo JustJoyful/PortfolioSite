@@ -20,7 +20,7 @@ export const About = () => {
     <section
       id="about"
       aria-labelledby="about-title"
-      className="lg:min-h-screen w-full lg:grid lg:grid-cols-[38vw_minmax(0,1fr)] items-center pointer-events-none py-24 lg:py-32"
+      className="lg:min-h-[100svh] w-full lg:grid lg:grid-cols-[38vw_minmax(0,1fr)] items-center pointer-events-none py-24 lg:py-32"
     >
       <div className="pointer-events-auto w-full px-5 md:px-12 lg:px-0 lg:pr-12 lg:col-start-2 lg:max-w-[680px]">
         <SectionHeading id="about-title" title="About" className="mb-8" />
@@ -54,7 +54,7 @@ export const About = () => {
                 <Reveal
                   key={f.id}
                   data-focus={f.id}
-                  className={`border-l pl-4 -ml-4 transition-colors ${on === f.id ? 'border-[var(--bloom)]' : 'border-transparent'}`}
+                  className={`border-l pl-4 -ml-4 transition-colors ${on === f.id ? 'border-[var(--bloom)]' : 'border-transparent'}`} /* taste-skill-ignore: focus-row highlight, a state not a divider */
                   tabIndex={0}
                   onPointerEnter={() => announce(f.id)}
                   onPointerLeave={() => announce(null)}
@@ -69,10 +69,10 @@ export const About = () => {
 
             <Reveal as="p" className="text-base text-text mt-8">{currently}</Reveal>
 
-            <dl className="mt-8 grid grid-cols-1 sm:grid-cols-[max-content_1fr] gap-x-8 gap-y-3">
+            <dl className="mt-8 grid grid-cols-1 gap-y-1">
               {skills.map((g) => (
                 <div key={g.label} className="contents">
-                  <dt className="text-sm text-text-faint">{g.label}</dt>
+                  <dt className="text-sm text-text-faint mt-3 first:mt-0">{g.label}</dt>
                   <dd className="text-base text-text">{g.items.join(', ')}</dd>
                 </div>
               ))}

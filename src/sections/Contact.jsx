@@ -82,7 +82,7 @@ export const Contact = () => {
     <section
       id="contact"
       aria-labelledby="contact-title"
-      className="lg:min-h-screen w-full lg:grid lg:grid-cols-[38vw_minmax(0,1fr)] items-center pointer-events-none py-28"
+      className="lg:min-h-[100svh] w-full lg:grid lg:grid-cols-[38vw_minmax(0,1fr)] items-center pointer-events-none py-28"
     >
       <div
         className="pointer-events-auto w-full px-5 md:px-12 lg:px-0 lg:pr-12 lg:col-start-2 lg:max-w-[680px]"

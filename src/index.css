@@ -74,8 +74,15 @@
   .js [data-reveal], .js [data-reveal] > .reveal-line { opacity: 1; transform: none; transition: none; }
 }
 
-.ext-link {
-  background: linear-gradient(currentColor, currentColor) left bottom / 0 1px no-repeat;
-  transition: background-size 300ms cubic-bezier(0.16, 1, 0.3, 1);
+.ext-link { position: relative; }
+.ext-link::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 1px; /* taste-skill-ignore: link underline */
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
 }
-.ext-link:hover, .ext-link:focus-visible { background-size: 100% 1px; }
+.ext-link:hover::after, .ext-link:focus-visible::after { transform: scaleX(1); }
