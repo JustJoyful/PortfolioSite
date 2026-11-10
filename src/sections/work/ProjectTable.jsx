@@ -30,7 +30,7 @@ export const ProjectTable = ({ projects, shownId, onShow }) => {
             <button
               type="button"
               data-work-row
-              aria-pressed={shownId === p.id}
+              aria-current={shownId === p.id ? 'true' : undefined}
               onPointerEnter={() => hover(p.id)}
               onFocus={() => hover(p.id)}
               onClick={() => hover(p.id)}

@@ -57,7 +57,7 @@ const EmailRow = ({ label, address, delay }) => {
         aria-label={`Copy ${address}`}
         onClick={copy}
         data-copied={copied || undefined}
-        className="shrink-0 inline-flex items-center justify-center h-11 w-11 text-text-muted hover:text-text "
+        className="shrink-0 inline-flex items-center justify-center h-11 w-11 text-text-muted hover:text-text"
       >
         {copied ? <CheckIcon /> : <CopyIcon />}
       </button>

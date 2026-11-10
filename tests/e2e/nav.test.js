@@ -60,3 +60,8 @@ test('keyboard reach', () => run({ width: 1440 }, async (page) => {
   assert.deepEqual(bad, [], 'every stop has an outline');
   assert.ok(reached.size >= want, `reached ${reached.size} of ${want}`);
 }));
+
+test('mobile nav has no transition under reduced motion', () => run({ width: 390, height: 844, mobile: true, reducedMotion: true }, async (page) => {
+  const d = await page.evaluate(() => getComputedStyle(document.querySelector('header')).transitionDuration);
+  assert.equal(d, '0s');
+}));

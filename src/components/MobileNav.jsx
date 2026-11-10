@@ -27,8 +27,8 @@ export const MobileNav = () => {
   return (
     <header
       ref={bar}
-      className="fixed top-0 inset-x-0 z-30 lg:hidden bg-bg"
-      style={{ paddingTop: 'env(safe-area-inset-top)', transition: 'transform 300ms cubic-bezier(0.16, 1, 0.3, 1)' }}
+      className="mobile-nav fixed top-0 inset-x-0 z-30 lg:hidden bg-bg"
+      style={{ paddingTop: 'env(safe-area-inset-top)' }}
     >
       <nav aria-label="Primary" className="flex items-center justify-between px-2">
         <a href="#hero" aria-label="Joydeep Das, top of page" className="inline-flex items-center min-h-11 px-3 font-display text-lg text-text">JD</a>
