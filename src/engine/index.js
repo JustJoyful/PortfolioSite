@@ -1,6 +1,6 @@
 // Bloom engine entry: one rAF loop drives a Canvas2D flower buffer and a WebGL (or Canvas2D) post stage.
 import { rng, random, lerp, constrain, easeInOutCubic, bloomCurve, BLOOM_DURATION } from './math.js';
-import { VARIANTS, ANCHORS, projectAnchor, drawFlower } from './flower.js';
+import { VARIANTS, outerTips, drawFlower } from './flower.js';
 import { buildGlyphAtlas } from './glyphAtlas.js';
 import { TIERS, initialTier, createGovernor } from './quality.js';
 import { createPost } from './gl.js';
@@ -266,14 +266,23 @@ export function createBloom(canvas, opts = {}) {
     syncFlowerState();
     const [ox, oy, s] = rectOrigin();
     const first = snap || !anchorsInit;
-    for (const id of Object.keys(ANCHORS)) {
-      const p = projectAnchor(VARIANTS[elIdx], ANCHORS[id], flowerState, bufCanvas.width);
+    // Front-facing right-half petal tips; each id takes the tip nearest its target height.
+    const bw = bufCanvas.width;
+    const tips = outerTips(VARIANTS[elIdx], flowerState, bw).filter((p) => p.z <= 0 && p.x >= bw / 2);
+    const used = new Set();
+    for (const [id, f] of [['ai', 0.25], ['research', 0.5], ['inference', 0.75], ['project', 0.5]]) {
       const a = (anchorPos[id] ??= { id, x: W / 2, y: H / 2, visible: false });
-      if (!p) { a.visible = false; continue; }
-      const x = ox + (p.x / bufCanvas.width) * s, y = oy + (p.y / bufCanvas.width) * s;
-      a.x = first ? x : lerp(a.x, x, 0.15);
-      a.y = first ? y : lerp(a.y, y, 0.15);
-      a.visible = p.z <= 0;
+      let best = null;
+      for (const p of tips) {
+        if (used.has(p)) continue;
+        if (!best || Math.abs(p.y / bw - f) < Math.abs(best.y / bw - f)) best = p;
+      }
+      if (best && id !== 'project') used.add(best);
+      if (!best) { a.visible = false; continue; }
+      const x = ox + (best.x / bw) * s, y = oy + (best.y / bw) * s;
+      a.x = first || !a.visible ? x : lerp(a.x, x, 0.15);
+      a.y = first || !a.visible ? y : lerp(a.y, y, 0.15);
+      a.visible = true;
     }
     anchorsInit = true;
   }

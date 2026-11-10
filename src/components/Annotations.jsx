@@ -17,6 +17,7 @@ function Overlay() {
   picks.forEach((p) => { lastText.current[p.anchorId] = p.text; });
   const labels = useRef({}), lines = useRef({});
   const key = picks.map((p) => p.anchorId).join();
+  const hiId = picks.find((x) => x.highlighted)?.anchorId ?? null;
 
   useEffect(() => {
     const f = (e) => setHover((h) => ({ ...h, focus: e.detail }));
@@ -27,16 +28,16 @@ function Overlay() {
   }, []);
 
   useEffect(() => {
-    const hi = picks.find((x) => x.highlighted);
-    const apply = () => getEngine()?.setHighlight(hi ? hi.anchorId : null);
+    const apply = () => getEngine()?.setHighlight(hiId);
     apply();
     window.addEventListener('engine:change', apply);
     return () => { window.removeEventListener('engine:change', apply); getEngine()?.setHighlight(null); };
-  }, [picks.find((x) => x.highlighted)?.anchorId]);
+  }, [hiId]);
 
   // One rAF loop, only while at least one label is shown.
   useEffect(() => {
-    if (!picks.length) return;
+    if (!key) return;
+    const want = key.split(',');
     let raf, engine, canvas;
     const tick = () => {
       raf = requestAnimationFrame(tick);
@@ -47,21 +48,22 @@ function Overlay() {
       const sx = r.width / canvas.clientWidth || 1; // anchors are CSS px of the canvas
       const slotX = innerWidth * 0.38 - 28;
       const anchors = Object.fromEntries(engine.getAnchors().map((a) => [a.id, a]));
-      const shown = picks.filter((p) => anchors[p.anchorId]?.visible)
-        .map((p) => ({ p, ax: r.left + anchors[p.anchorId].x * sx, ay: r.top + anchors[p.anchorId].y * sx }))
+      const shown = want.filter((id) => anchors[id]?.visible)
+        .map((id) => ({ p: { anchorId: id }, ax: r.left + anchors[id].x * sx, ay: r.top + anchors[id].y * sx }))
         .sort((a, b) => a.ay - b.ay);
       let prev = -Infinity;
       const ids = new Set();
       for (const s of shown) {
         const y = Math.max(s.ay, prev + GAP); prev = y;
         const el = labels.current[s.p.anchorId], ln = lines.current[s.p.anchorId];
-        el.style.transform = `translate(${slotX - el.offsetWidth}px, ${y - el.offsetHeight / 2}px)`;
-        ln.setAttribute('x1', s.ax); ln.setAttribute('y1', s.ay); ln.setAttribute('x2', slotX - el.offsetWidth - 8); ln.setAttribute('y2', y);
+        el.style.transform = `translate(${slotX - el.offsetWidth}px, ${y - el.offsetHeight - 3}px)`;
+        ln.setAttribute('x1', s.ax); ln.setAttribute('y1', s.ay); ln.setAttribute('x2', slotX); ln.setAttribute('y2', y);
         ids.add(s.p.anchorId);
       }
       for (const id of ANCHOR_IDS) {
         const on = ids.has(id);
         labels.current[id].style.opacity = on ? 1 : 0;
+        labels.current[id].style.pointerEvents = on ? 'auto' : 'none';
         lines.current[id].style.strokeDashoffset = on || reduced ? 0 : 1;
         if (reduced) lines.current[id].style.opacity = on ? 1 : 0;
       }
@@ -72,9 +74,9 @@ function Overlay() {
 
   // Fade everything out when nothing is picked (the loop has stopped).
   useEffect(() => {
-    if (picks.length) return;
+    if (key) return;
     ANCHOR_IDS.forEach((id) => {
-      if (labels.current[id]) labels.current[id].style.opacity = 0;
+      if (labels.current[id]) { labels.current[id].style.opacity = 0; labels.current[id].style.pointerEvents = 'none'; }
       if (lines.current[id]) { lines.current[id].style.strokeDashoffset = 1; lines.current[id].style.opacity = reduced ? 0 : 1; }
     });
   }, [key]);
@@ -102,8 +104,8 @@ function Overlay() {
           ref={(el) => (labels.current[id] = el)}
           onPointerEnter={() => id !== 'project' && window.dispatchEvent(new CustomEvent('annotation:focus', { detail: id }))}
           onPointerLeave={() => id !== 'project' && window.dispatchEvent(new CustomEvent('annotation:focus', { detail: null }))}
-          className="absolute left-0 top-0 m-0 font-sans text-sm text-text whitespace-nowrap pointer-events-auto"
-          style={{ opacity: 0, transition: reduced ? 'none' : 'opacity 400ms ease' }}
+          className="absolute left-0 top-0 m-0 font-sans text-sm text-text whitespace-nowrap "
+          style={{ opacity: 0, pointerEvents: 'none', transition: reduced ? 'none' : 'opacity 400ms ease' }}
         >
           {byId[id]?.text ?? lastText.current[id]}
         </p>

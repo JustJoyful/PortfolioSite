@@ -294,3 +294,16 @@ export function projectAnchor(variant, anchor, state, size) {
     z: it.rz,
   };
 }
+
+// Projected tips of the two outermost layers (every 2nd petal), for dynamic annotation anchors.
+export function outerTips(variant, state, size) {
+  const out = [];
+  for (const layer of [variant.layers, variant.layers - 1]) {
+    const np = numPetals(variant, layer);
+    for (let index = 0; index < np; index += 2) {
+      const p = projectAnchor(variant, { layer, index }, state, size);
+      if (p) out.push(p);
+    }
+  }
+  return out;
+}
