@@ -31,7 +31,7 @@ export const MobileNav = () => {
       style={{ paddingTop: 'env(safe-area-inset-top)' }}
     >
       <nav aria-label="Primary" className="flex items-center justify-between px-2">
-        <a href="#hero" aria-label="Joydeep Das, top of page" className="inline-flex items-center min-h-11 px-3 font-display text-lg text-text">JD</a>
+        <a href="#hero" aria-label="Joydeep Das, top of page" className="inline-flex items-center justify-center min-h-11 min-w-11 px-3 font-display text-lg text-text">JD</a>
         <span className="flex">
           <a href="#about" className={link}>About</a>
           <a href="#work" className={link}>Work</a>

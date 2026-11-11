@@ -30,7 +30,7 @@ export const Hero = () => {
         </h1>
         <div>
           <p className="text-lg text-text mt-4">{hero.role}</p>
-          <p className="text-sm text-text-muted mt-1">{hero.degree}</p>
+          <p className="text-base text-text-muted mt-1">{hero.degree}</p>
           <p className="text-base text-text mt-6 max-w-[34rem]">{hero.sentence}</p>
         </div>
         <div className="flex flex-wrap items-center gap-x-6 mt-6">

@@ -32,7 +32,7 @@ export const ProjectMedia = ({ project, show = true, className = '' }) => {
       <pre
         aria-hidden="true"
         className="absolute inset-0 m-0 overflow-hidden font-mono text-text-faint select-none"
-        style={{ fontSize: '2.315cqw', lineHeight: '2.083cqw', opacity: loaded ? 0 : 1, transition: 'opacity 400ms ease' }}
+        style={{ fontSize: 'max(12px, 2.315cqw)', lineHeight: 'max(10.8px, 2.083cqw)', opacity: loaded ? 0 : 1, transition: 'opacity 400ms ease' }}
       >
         {ascii}
       </pre>
