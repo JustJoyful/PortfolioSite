@@ -433,3 +433,7 @@ Suggested order: 0 → 1 → 2 → 3 → 4 → 5. Phase 0 alone already fixes mo
 
 **Still open:**
 - Screenshots for S.P.E.A.K. and VGC-Telemetry.
+### 9.x Phase 4 mobile measurements
+
+- Low-end Android substitute: **6x CPU-throttled Chromium, not a real device**. 390x844 mobile emulation, DPR 3, `?debug`, scrolled the whole page, `__bloom.stats()`: **30 fps, tier `low`, WebGL2**. A real device check over `chrome://inspect` is still open.
+- Lighthouse 12, mobile, production build, headless Chromium (SwiftShader WebGL): **performance 97**; FCP 1.5 s, LCP 2.0 s, TBT 150 ms, CLS 0, Speed Index 2.2 s. LCP is above the 1.5 s budget on Lighthouse's simulated slow 4G; the engine loads on idle (300 ms timeout) and is not on the critical path.
