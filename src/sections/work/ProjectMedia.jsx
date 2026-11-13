@@ -56,6 +56,7 @@ export const ProjectMedia = ({ project, show = true, active = true, className = 
         <>
           <video
             ref={vid}
+            poster={image?.src}
             muted playsInline loop preload="none"
             aria-hidden="true"
             onPlaying={() => setPlaying(true)}
