@@ -72,7 +72,7 @@ export const About = () => {
             <dl className="mt-8 grid grid-cols-1 gap-y-1">
               {skills.map((g) => (
                 <div key={g.label} className="contents">
-                  <dt className="text-sm text-text-faint mt-3 first:mt-0">{g.label}</dt>
+                  <dt className="text-sm text-text-muted mt-3 first:mt-0">{g.label}</dt>
                   <dd className="text-base text-text">{g.items.join(', ')}</dd>
                 </div>
               ))}
