@@ -20,7 +20,13 @@ export const BackgroundSketch = ({ paused = false }) => {
       });
     };
     let t;
-    const onResize = () => { clearTimeout(t); t = setTimeout(layout, 150); };
+    let w = innerWidth, h = innerHeight;
+    const onResize = () => {
+      const small = matchMedia('(pointer: coarse)').matches && innerWidth === w && Math.abs(innerHeight - h) < 160;
+      if (small) return; // URL-bar show/hide
+      w = innerWidth; h = innerHeight;
+      clearTimeout(t); t = setTimeout(layout, 150);
+    };
 
     const id = idle(async () => {
       if (dead) return;

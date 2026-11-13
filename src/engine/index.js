@@ -39,13 +39,12 @@ export function createBloom(canvas, opts = {}) {
     if (!fbCanvas && post === null && canvas.dataset.bloomGl) {
       fbCanvas = canvas.cloneNode(false);
       fbCanvas.removeAttribute('data-bloom-gl');
+      fbCanvas.style.opacity = ''; // React's pre-ready opacity:0 would hide the fallback
       canvas.after(fbCanvas);
       canvas.style.display = 'none';
     }
     ctx2d = (fbCanvas ?? canvas).getContext('2d');
   };
-  if (!post) useFallback();
-
   const bufCanvas = document.createElement('canvas');
   const bufCtx = bufCanvas.getContext('2d');
   const lowCanvas = document.createElement('canvas');
@@ -55,6 +54,7 @@ export function createBloom(canvas, opts = {}) {
   overlay.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none';
   canvas.after(overlay);
   const particles = createParticles(overlay, rand);
+  if (!post) useFallback(); // after the overlay so the fallback canvas sits under the embers
 
   // ---- state
   let W = 1, H = 1, dpr = 1;
@@ -118,10 +118,13 @@ export function createBloom(canvas, opts = {}) {
     else { const c = fbCanvas ?? canvas; c.width = Math.round(W * dpr); c.height = Math.round(H * dpr); }
     particles.resize(W, H);
     anchorsInit = false;
-    if (isStatic()) renderStatic();
+    if (isStatic()) renderStatic(); else if (ready || frames) render(); // resize clears the canvas; never leave it black
   }
   let resizeTimer = 0;
-  const onResize = () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(layout, 150); };
+  const onResize = () => {
+    if (coarse && innerWidth === W && Math.abs(innerHeight - H) < 160) return; // URL-bar show/hide
+    clearTimeout(resizeTimer); resizeTimer = setTimeout(layout, 150);
+  };
   let dprMq = null;
   const watchDpr = () => {
     dprMq?.removeEventListener('change', onDprChange);
@@ -410,7 +413,10 @@ export function createBloom(canvas, opts = {}) {
       && Math.hypot(e.clientX - touch.x0, e.clientY - touch.y0) < 10) setPointer(e.clientX, e.clientY, { down: true });
     touch = null;
   };
-  const onKey = (e) => { if (e.key === 'g' || e.key === 'G') triggerGlitch(); };
+  const onKey = (e) => {
+    if (e.ctrlKey || e.metaKey || e.altKey || e.target.closest?.('input,textarea,select,[contenteditable]')) return;
+    if (e.key === 'g' || e.key === 'G') triggerGlitch();
+  };
   const onVis = () => { hidden = document.visibilityState === 'hidden'; sync(); };
   let scrollTimer = 0;
   const onScroll = () => {
