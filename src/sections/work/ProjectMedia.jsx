@@ -24,7 +24,7 @@ export const ProjectMedia = ({ project, show = true, className = '' }) => {
 
   return (
     <div
-      className={`relative bg-surface overflow-hidden aspect-[16/10] ${className}`}
+      className={`relative overflow-hidden aspect-[16/10] ${className}`}
       style={{ containerType: 'inline-size' }}
       onPointerEnter={() => setArmed(true)}
       onPointerDown={() => setArmed(true)}

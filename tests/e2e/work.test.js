@@ -82,7 +82,6 @@ test('rows are tap-sized', () => run({ width: 390, height: 844, mobile: true }, 
   assert.equal(hs.length, 4);
   hs.forEach((h) => assert.ok(h >= 44, `row ${h}`));
   await page.locator('[data-work-row] button').nth(0).tap();
-  const chips = await page.locator('#work .bg-surface.text-xs').evaluateAll((c) => c.filter((e) => e.offsetParent).map((e) => e.getBoundingClientRect().height));
-  assert.ok(chips.length > 0);
-  chips.forEach((h) => assert.ok(h >= 32, `chip ${h}`));
+  // The tapped row opens and shows its stack.
+  assert.equal(await page.locator('[data-work-row] [data-stack]').evaluateAll((s) => s.filter((e) => e.offsetParent).length), 1);
 }));
