@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { PORTFOLIO_DATA } from '../data/content';
 import placeholders from '../data/placeholders.json';
+import activity from '../data/activity.json';
+import { ExternalLink } from '../components/ui/ExternalLink';
 import { Reveal } from '../components/ui/Reveal';
 import { SectionHeading } from '../components/ui/SectionHeading';
 import { useInView } from '../hooks/useInView';
@@ -42,22 +44,27 @@ const Typed = ({ text, className }) => {
   );
 };
 
-const kolkata = new Intl.DateTimeFormat('en-IN', { timeZone: 'Asia/Kolkata', hour: 'numeric', minute: '2-digit' });
-
-// The visitor's view of my clock: changes every visit, no data needed.
-const LocalTime = () => {
-  const [now, setNow] = useState(() => new Date());
-  useEffect(() => {
-    const id = setInterval(() => setNow(new Date()), 15000);
-    return () => clearInterval(id);
-  }, []);
-  return (
-    <p>
-      <time dateTime={now.toISOString()} className="block font-display text-2xl text-text tabular-nums tracking-[-0.02em]">{kolkata.format(now)}</time>
-      <span className="block mt-2 text-sm text-text-muted">Local time in Kolkata, where I work</span>
-    </p>
-  );
-};
+// Last 26 weeks of GitHub contributions, one square per day (snapshot from scripts/github-activity.mjs).
+const STRENGTH = [0, 0.3, 0.55, 0.8, 1];
+const Activity = () => (
+  <figure className="m-0">
+    <div aria-hidden="true" className="grid gap-[3px]" style={{ gridTemplateColumns: `repeat(${activity.weeks.length}, minmax(0, 1fr))` }}>
+      {activity.weeks.flatMap((w, col) => w.map((l, row) => (
+        <span
+          key={`${col}-${row}`}
+          className={`aspect-square ${l ? 'bg-bloom' : 'bg-surface'}`}
+          style={{ gridColumn: col + 1, gridRow: row + 1, opacity: l ? STRENGTH[l] : 1 }}
+        />
+      )))}
+    </div>
+    <figcaption className="mt-3 text-sm text-text-muted">
+      <ExternalLink href={`https://github.com/${activity.user}`} className="text-text hover:text-bloom transition-colors">
+        {activity.total} contributions on GitHub
+      </ExternalLink>{' '}
+      in the last six months
+    </figcaption>
+  </figure>
+);
 
 const announce = (id) => window.dispatchEvent(new CustomEvent('annotation:focus', { detail: id }));
 
@@ -106,7 +113,7 @@ export const About = () => {
           </Reveal>
           <div className="flex flex-col gap-10 sm:self-stretch sm:justify-between max-w-[36rem]">
             <Typed text={bio} className="text-lg text-text" />
-            <LocalTime />
+            <Activity />
           </div>
         </div>
 
