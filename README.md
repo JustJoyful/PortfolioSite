@@ -39,3 +39,5 @@ Set `VITE_SITE_URL` (for example `https://example.com`, without a trailing slash
 
 - Screenshots for S.P.E.A.K. and VGC-Telemetry are missing. Their cards show the ASCII placeholder until a 1440 x 900 dark-UI WebP is added. To complete one, save it to `public/work/` and run `node scripts/ascii-placeholders.mjs`, which regenerates `src/data/placeholders.json`, then set that project's `image` in `content.js`.
 - The AxiomLM demo clip (WebM, 10 to 15 seconds, under 1.5 MB) is not yet made. The clip goes in `links.demo` for AxiomLM in `content.js`. Until then the project shows its image and no demo link.
+
+Type: Clash Grotesk by [Indian Type Foundry](https://www.fontshare.com/fonts/clash-grotesk) (ITF Free Font License, self-hosted in `public/fonts`) and Geist.

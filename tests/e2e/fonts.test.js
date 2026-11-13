@@ -14,9 +14,9 @@ test('fonts load', async () => {
   const { page, browser } = await openPage(srv.url, { width: 1280 });
   try {
     const r = await page.evaluate(async () => {
-      await document.fonts.load('16px Geist'); await document.fonts.load('48px "Instrument Serif"');
+      await document.fonts.load('16px Geist'); await document.fonts.load('48px "Clash Grotesk"');
       await document.fonts.ready;
-      return [document.fonts.check('16px Geist'), document.fonts.check('48px "Instrument Serif"')];
+      return [document.fonts.check('16px Geist'), document.fonts.check('48px "Clash Grotesk"')];
     });
     assert.deepEqual(r, [true, true]);
   } finally { await browser.close(); await srv.close(); }

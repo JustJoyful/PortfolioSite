@@ -22,7 +22,7 @@ Self-hosted WOFF2, Latin subset, `font-display: swap`, with metric-matched fallb
 
 | Family (Tailwind) | Face | Use |
 |---|---|---|
-| `font-display` | Instrument Serif 400, no italics | Headings at 40 px or larger only |
+| `font-display` | Clash Grotesk 400 (ITF Free Font License, credited in the footer) | The name, section headings and project titles; tracking -0.02 to -0.03em |
 | `font-sans` | Geist 400 / 500 | All UI and body copy; metadata uses `tabular-nums` |
 | `font-mono` | Geist Mono 400 | ASCII placeholders and the engine's glyph atlas only |
 
@@ -46,7 +46,7 @@ Scale: `xs 12 · sm 14 · base 16 · lg 20 · xl 28 · 2xl 40 · display clamp(4
 
 ## Primitives (`src/components/ui/`)
 
-`SectionHeading` (display-serif heading with line reveal), `Reveal`, `Chip` (surface tone, `text-muted`, `text-xs`, tabular numerals), `ExternalLink` (new tab, `noopener noreferrer`, draw-in underline).
+`SectionHeading` (display heading with line reveal), `Reveal`, `ExternalLink` (new tab, `noopener noreferrer`, draw-in underline).
 
 ## Rules
 
