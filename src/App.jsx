@@ -29,12 +29,12 @@ function App() {
 
   // JS fallback for the scroll slide when CSS scroll-driven animation is unsupported.
   useEffect(() => {
-    if (reduced || css) return;
+    if (css) return;
     const el = document.getElementById('flower');
     const onScroll = () => {
       if (innerWidth < 1024) { el.style.transform = ''; return; }
       const p = Math.min(1, scrollY / innerHeight);
-      const e = p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+      const e = reduced ? +(p >= 1) : p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
       el.style.transform = `translateX(${-17 * e}vw)`;
     };
     window.addEventListener('scroll', onScroll, { passive: true });

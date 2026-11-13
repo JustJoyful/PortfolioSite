@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 @layer base {
-  html {
-    scroll-behavior: smooth;
+  @media (prefers-reduced-motion: no-preference) {
+    html { scroll-behavior: smooth; }
   }
 
   body {
@@ -51,7 +51,7 @@
     #flower { --flower-dx: -17vw; }
   }
   @media (prefers-reduced-motion: reduce) {
-    #flower { animation: none; }
+    #flower { animation-timing-function: step-end; } /* jump to the final position at 100vh */
   }
 }
 
