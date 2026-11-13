@@ -35,7 +35,6 @@ export const PORTFOLIO_DATA = {
         projects: ['axiomlm', 'testcard', 'speak'],
       },
     ],
-    currently: "Right now I'm developing AxiomLM, with a focus on retrieval quality and evaluation.",
     skills: [
       { label: 'LLMs & retrieval', items: ['Ollama', 'agents', 'tool calling', 'RAG', 'late chunking', 'Jina embeddings', 'ChromaDB', 'BM25'] },
       { label: 'ML, vision & speech', items: ['PyTorch', 'DINOv2', 'ResNet', 'Mamba', 'NumPy', 'SciPy', 'FFmpeg', 'faster-whisper', 'MinerU'] },

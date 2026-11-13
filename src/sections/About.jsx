@@ -3,11 +3,49 @@ import { PORTFOLIO_DATA } from '../data/content';
 import placeholders from '../data/placeholders.json';
 import { Reveal } from '../components/ui/Reveal';
 import { SectionHeading } from '../components/ui/SectionHeading';
+import { useInView } from '../hooks/useInView';
+import { useReducedMotion } from '../hooks/useReducedMotion';
+
+// Types the text in once when it enters view. The untyped rest stays in place, transparent, so lines never reflow;
+// screen readers and reduced motion get the whole text at once.
+const Typed = ({ text, className }) => {
+  const [ref, seen] = useInView();
+  const reduced = useReducedMotion();
+  const [n, setN] = useState(0);
+  const done = reduced || n >= text.length;
+  useEffect(() => {
+    if (!seen || reduced) return;
+    // Paced by elapsed time (~90 chars/s), not tick count, so a busy main thread skips letters instead of slowing down.
+    const t0 = performance.now();
+    let raf;
+    const step = (now) => {
+      const k = Math.min(text.length, Math.round((now - t0) * 0.09));
+      setN(k);
+      if (k < text.length) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [seen, reduced, text]);
+  return (
+    <p ref={ref} className={className}>
+      <span className="sr-only">{text}</span>
+      <span aria-hidden="true">
+        {done ? text : (
+          <>
+            {text.slice(0, n)}
+            <span className="relative"><span className="absolute left-0 top-[0.2em] h-[1.1em] w-[2px] bg-bloom" /></span>
+            <span className="opacity-0">{text.slice(n)}</span>
+          </>
+        )}
+      </span>
+    </p>
+  );
+};
 
 const announce = (id) => window.dispatchEvent(new CustomEvent('annotation:focus', { detail: id }));
 
 export const About = () => {
-  const { portrait, lead, bio, focus, currently, skills } = PORTFOLIO_DATA.about;
+  const { portrait, lead, bio, focus, skills } = PORTFOLIO_DATA.about;
   const titles = Object.fromEntries(PORTFOLIO_DATA.projects.map((p) => [p.id, p.title]));
   const [loaded, setLoaded] = useState(false);
   const [on, setOn] = useState(null);
@@ -25,11 +63,9 @@ export const About = () => {
     >
       <div className="pointer-events-auto w-full px-5 md:px-12 lg:px-0 lg:pr-24 lg:col-start-2">
         <SectionHeading id="about-title" title="About" />
-        <Reveal as="p" className="text-lg md:text-xl text-text mt-8 lg:mt-10 max-w-[44rem]">{lead}</Reveal>
-
-        <div className="mt-12 grid gap-8 sm:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] sm:gap-10 items-start">
-          {/* sm:mt-1.5: drops the photo's top edge to the bio's cap height (measured 5.5px below its line box). */}
-          <Reveal stagger={1} className="relative w-full overflow-hidden sm:mt-1.5" style={{ aspectRatio: `${portrait.width} / ${portrait.height}`, containerType: 'inline-size' }}>
+        <div className="mt-10 lg:mt-12 grid gap-8 sm:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] sm:gap-10 items-start">
+          {/* sm:mt-[7px]: drops the photo's top edge to the lead's cap height (~7px below its line box at 20 and 28px). */}
+          <Reveal stagger={1} className="relative w-full max-w-[16rem] sm:max-w-none overflow-hidden sm:mt-[7px]" style={{ aspectRatio: `${portrait.width} / ${portrait.height}`, containerType: 'inline-size' }}>
             {/* 72 cols x 0.6em = 100cqw; 30 rows fill the photo's 0.895 height. Floors keep it >= 12px (it overflows and clips below ~520px wide). */}
             <pre aria-hidden="true" className={`absolute inset-0 m-0 overflow-hidden font-mono text-text-faint select-none ${loaded ? 'opacity-0' : 'opacity-100'}`} style={{ fontSize: 'max(12px, 2.315cqw)', lineHeight: 'max(15.5px, 2.983cqw)', transition: 'opacity 600ms ease' }}>
               {placeholders.portrait}
@@ -49,9 +85,9 @@ export const About = () => {
               />
             </picture>
           </Reveal>
-          <div className="flex flex-col gap-4 max-w-[34rem]">
-            <Reveal as="p" stagger={2} className="text-base text-text">{bio}</Reveal>
-            <Reveal as="p" stagger={3} className="text-base text-text">{currently}</Reveal>
+          <div className="flex flex-col gap-6 max-w-[36rem]">
+            <Reveal as="p" className="text-lg xl:text-xl text-text">{lead}</Reveal>
+            <Typed text={bio} className="text-lg text-text" />
           </div>
         </div>
 
