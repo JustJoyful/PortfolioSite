@@ -11,7 +11,7 @@ function subscribe(ids, fn) {
     const io = new IntersectionObserver((entries) => {
       for (const e of entries) if (e.isIntersecting) s.active = e.target.id;
       s.fns.forEach((f) => f(s.active));
-    }, { threshold: 0.4 });
+    }, { rootMargin: '-50% 0px -50% 0px', threshold: 0 });
     ids.forEach((id) => { const el = document.getElementById(id); if (el) io.observe(el); });
     s.io = io;
     shared.set(key, s);
