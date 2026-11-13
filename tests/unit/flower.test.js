@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { VARIANTS, ANCHORS, drawFlower, projectAnchor } from '../../src/engine/flower.js';
+import { VARIANTS, ANCHORS, drawFlower, projectAnchor, bloomParts } from '../../src/engine/flower.js';
 import { rng } from '../../src/engine/math.js';
 
 function stubCtx() {
@@ -33,4 +33,11 @@ test('anchors face the viewer, and flip behind after rotY += PI', () => {
     assert.ok(projectAnchor(v, a, mk(), 400).z <= 0, JSON.stringify(a));
     assert.ok(projectAnchor(v, a, mk({ rotY: Math.PI }), 400).z > 0);
   }
+});
+
+test('bud waits for the stem to reach the head', () => {
+  assert.equal(bloomParts(0).bud, 0);
+  assert.equal(bloomParts(0.1).bud, 0);
+  assert.ok(bloomParts(0.2).bud > 0 && bloomParts(0.2).bud < 1);
+  assert.equal(bloomParts(0.34).bud, 1);
 });

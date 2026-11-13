@@ -68,14 +68,16 @@ function drawLeaf(ctx, x, y, side, sz, sc) {
   ctx.restore();
 }
 
+// Stem centre-line offset at fraction tt from the head; leaves use it too so they stay attached while wilting.
+const stemCurve = (tt, wl) => sin(tt * PI * 0.3) * 22 + sin(tt * PI * 0.8) * 8 + wl * 45 * (1 - tt) * sin((1 - tt) * PI);
+
 function drawStem(ctx, f, progress, wl, cy) {
   const stemLen = 800 * 0.42, stemX = 400, stemTop = cy, stemBot = stemTop + stemLen;
   const visibleTop = stemBot - stemLen * easeOutQuart(progress);
   for (let y = visibleTop; y < stemBot; y += 3) {
     const tt = (y - stemTop) / stemLen;
     const sw = lerp(15, 8, tt);
-    const wiltBend = wl * 45 * (1 - tt) * sin((1 - tt) * PI);
-    const curveX = sin(tt * PI * 0.3) * 22 + sin(tt * PI * 0.8) * 8 + wiltBend;
+    const curveX = stemCurve(tt, wl);
     let r = lerp(f.stemC[0], f.stemC[0] * 0.5, tt);
     let gc = lerp(f.stemC[1], f.stemC[1] * 0.5, tt);
     let b = lerp(f.stemC[2], f.stemC[2] * 0.5, tt);
@@ -89,10 +91,10 @@ function drawStem(ctx, f, progress, wl, cy) {
     ctx.fillStyle = col(r * 1.4, gc * 1.4, b * 1.3, 50);
     ellipse(ctx, stemX + curveX - 2, y, sw * 0.2, 3);
   }
-  for (const [after, span, at, side, size] of [[0.3, 0.4, 0.22, -1, 48], [0.5, 0.4, 0.50, 1, 42], [0.7, 0.3, 0.35, -1, 35]]) {
+  for (const [after, span, at, side, size] of [[0.35, 0.4, 0.22, -1, 48], [0.5, 0.4, 0.50, 1, 42], [0.7, 0.3, 0.35, -1, 35]]) {
     if (progress > after) {
       const leafP = constrain((progress - after) / span, 0, 1);
-      drawLeaf(ctx, stemX + sin(at * PI * 0.3) * 22, stemTop + stemLen * at, side, size * leafP, f.stemC);
+      drawLeaf(ctx, stemX + stemCurve(at, wl), stemTop + stemLen * at, side, size * leafP, f.stemC);
     }
   }
 }
@@ -156,23 +158,24 @@ function petalAt(f, s, layer, i, bl, wl, brightBoost) {
 
 const numPetals = (f, layer) => f.petalsPerLayer + floor(layer * 1.5) + floor((1 - layer / f.layers) * 5);
 
-function drawPeony3D(ctx, f, s, bl, wl, cx, cy) {
+function drawPeony3D(ctx, f, s, bl, wl, cx, cy, bud = 1) {
   const tier = s.tier || 0;
   const items = [];
 
-  if (f.sepals && bl < 0.7) {
+  if (f.sepals && bl < 0.7 && bud > 0) {
     const openAng = easeInOutCubic(bl) * HALF_PI * 0.9;
     let sepalAlpha = map(constrain(bl, 0, 0.7), 0, 0.7, 255, 0);
+    sepalAlpha *= bud;
     if (wl) sepalAlpha *= 1 - wl;
     if (sepalAlpha > 5) {
       for (let i = 0; i < f.sepals; i++) {
         const a = (TWO_PI / f.sepals) * i;
         const sTilt = HALF_PI * 0.35 - openAng;
         const ct = cos(sTilt), st = sin(sTilt);
-        const [rx, ry, rz] = rot3D(s, cos(a) * 50 * ct, -st * 50, sin(a) * 50 * ct);
+        const [rx, ry, rz] = rot3D(s, cos(a) * 50 * bud * ct, -st * 50 * bud, sin(a) * 50 * bud * ct);
         const ps = FOCAL / (FOCAL + rz);
         const fv = max(FOCAL / (FOCAL + abs(rz)), 0.15);
-        items.push({ rz, tp: 's', sx: rx * ps, sy: ry * ps, sa: atan2(ry, rx), sLen: 80 * ps, sW: 25 * ps * fv, sAlpha: sepalAlpha, sc: f.stemC });
+        items.push({ rz, tp: 's', sx: rx * ps, sy: ry * ps, sa: atan2(ry, rx), sLen: 80 * ps * bud, sW: 25 * ps * fv * bud, sAlpha: sepalAlpha, sc: f.stemC });
       }
     }
   }
@@ -265,20 +268,24 @@ function drawPeony3D(ctx, f, s, bl, wl, cx, cy) {
   }
 }
 
-const bloomParts = (bl) => ({ stemP: constrain(bl * 3, 0, 1), flowerBl: constrain((bl - 0.15) / 0.85, 0, 1) });
+// bud: 0 until the growing stem tip is ~85% of the way to the head, so sepals never float above a bare stem.
+export const bloomParts = (bl) => {
+  const stemP = constrain(bl * 3, 0, 1);
+  return { stemP, flowerBl: constrain((bl - 0.15) / 0.85, 0, 1), bud: constrain((easeOutQuart(stemP) - 0.85) / 0.15, 0, 1) };
+};
 
 // state = { bloom, wilt, rotX, rotY, rotZ, brightBoost, rand, tier? }
 export function drawFlower(ctx, variant, state) {
   const size = ctx.canvas.width;
   const wl = state.wilt || 0;
-  const { stemP, flowerBl } = bloomParts(state.bloom);
+  const { stemP, flowerBl, bud } = bloomParts(state.bloom);
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, size, ctx.canvas.height);
   ctx.save();
   ctx.scale(FLOWER_BUFFER_SCALE * size / 400, FLOWER_BUFFER_SCALE * size / 400);
   const cy = 800 * 0.48 + wl * 55;
   drawStem(ctx, variant, stemP, wl, cy);
-  drawPeony3D(ctx, variant, state, flowerBl, wl, 400, cy);
+  drawPeony3D(ctx, variant, state, flowerBl, wl, 400, cy, bud);
   ctx.restore();
 }
 
