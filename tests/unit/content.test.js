@@ -43,11 +43,10 @@ test('fact strings match the key facts in the spec', () => {
   assert.deepEqual(projects.map((p) => p.fact), FACTS);
 });
 
-test('images: null only for speak and vgc-telemetry; every src exists under public/', () => {
-  const nullImage = projects.filter((p) => p.image === null).map((p) => p.id);
-  assert.deepEqual(nullImage, ['speak', 'vgc-telemetry']);
+test('every project has a still and a demo video under public/', () => {
   for (const p of projects) {
-    if (p.image) assert.ok(existsSync('public' + p.image.src), p.image.src);
+    assert.ok(existsSync('public' + p.image.src), p.image.src);
+    for (const ext of ['.webm', '.mp4']) assert.ok(existsSync('public' + p.video + ext), p.video + ext);
     if (p.figure) assert.ok(existsSync('public' + p.figure.src), p.figure.src);
   }
   assert.ok(projects[1].figure, 'testcard figure');

@@ -35,9 +35,8 @@ The site is a plain static build deployed on Vercel. The Vercel project should u
 
 Set `VITE_SITE_URL` (for example `https://example.com`, without a trailing slash) in the Vercel environment. It makes the Open Graph image and `og:url` absolute. If it is unset, the build uses a relative `/og.png` and omits `og:url`. Regenerate `public/og.png` with `node scripts/og-image.mjs` (needs ImageMagick, `magick`) after changing the hero.
 
-## Open content
+## Project media
 
-- Screenshots for S.P.E.A.K. and VGC-Telemetry are missing. Their cards show the ASCII placeholder until a 1440 x 900 dark-UI WebP is added. To complete one, save it to `public/work/` and run `node scripts/ascii-placeholders.mjs`, which regenerates `src/data/placeholders.json`, then set that project's `image` in `content.js`.
-- The AxiomLM demo clip (WebM, 10 to 15 seconds, under 1.5 MB) is not yet made. The clip goes in `links.demo` for AxiomLM in `content.js`. Until then the project shows its image and no demo link.
+- Project media: each project has a 16:10 still (`public/work/<id>.webp`, 1640 x 1025) and a muted demo loop (`public/work/<id>.webm` VP9 plus `.mp4` H.264 fallback, 1440 wide, no audio), set as `image` and `video` (path without extension) in `content.js`. Raw sources live in `media/` (git-ignored). After changing a still, run `node scripts/ascii-placeholders.mjs` to regenerate `src/data/placeholders.json`. A demo plays only while it is on screen, never under reduced motion or Save-Data, and has a Pause button.
 
 Type: Clash Grotesk by [Indian Type Foundry](https://www.fontshare.com/fonts/clash-grotesk) (ITF Free Font License, self-hosted in `public/fonts`) and Geist.

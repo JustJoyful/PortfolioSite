@@ -40,7 +40,7 @@ test('keyboard swaps featured', () => run({ width: 1440 }, async (page) => {
 
 test('accordion at 390', () => run({ width: 390, height: 844, mobile: true }, async (page) => {
   const row = page.locator('[data-work-row]').nth(2);
-  const btn = row.locator('button');
+  const btn = row.locator('button[aria-expanded]');
   const stack = row.locator('[data-stack]');
   await btn.scrollIntoViewIfNeeded();
   await btn.tap();
@@ -84,4 +84,25 @@ test('rows are tap-sized', () => run({ width: 390, height: 844, mobile: true }, 
   await page.locator('[data-work-row] button').nth(0).tap();
   // The tapped row opens and shows its stack.
   assert.equal(await page.locator('[data-work-row] [data-stack]').evaluateAll((s) => s.filter((e) => e.offsetParent).length), 1);
+}));
+
+test('demo plays in view, only for the shown exhibit, and can be paused', () => run({ width: 1440, height: 2400 }, async (page) => {
+  await page.locator('[data-featured]').scrollIntoViewIfNeeded();
+  const vids = page.locator('[data-featured] video');
+  await page.waitForFunction(() => { const v = document.querySelector('[data-featured] article:not([inert]) video'); return v && !v.paused && v.currentTime > 0; });
+  assert.deepEqual(await vids.evaluateAll((vs) => vs.map((v) => !!v.getAttribute('src'))), [true, false, false, false]);
+  await page.locator('[data-featured] article:not([inert]) [data-demo-toggle]').click();
+  assert.ok(await vids.first().evaluate((v) => v.paused));
+  // Focus, not hover: scrolling under a hovering pointer fires pointerleave and resets the exhibit.
+  await page.locator('[data-work-row]').nth(2).focus();
+  await page.locator('[data-featured]').evaluate((e) => e.scrollIntoView({ block: 'nearest' }));
+  await page.waitForFunction(() => !document.querySelectorAll('[data-featured] video')[2].paused);
+  assert.ok(await vids.first().evaluate((v) => v.paused));
+}));
+
+test('reduced motion: stills only', () => run({ width: 1440, reducedMotion: true }, async (page) => {
+  await page.locator('[data-featured]').scrollIntoViewIfNeeded();
+  await page.waitForTimeout(500);
+  assert.equal(await page.locator('#work video').count(), 0);
+  assert.ok(await page.locator('[data-featured] article:not([inert]) img').evaluate((i) => i.naturalWidth > 0));
 }));

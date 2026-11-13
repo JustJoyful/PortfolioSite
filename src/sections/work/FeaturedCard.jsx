@@ -18,7 +18,7 @@ export const FeaturedCard = ({ projects, shownId }) => {
           inert={on ? undefined : true}
           className={`[grid-area:1/1] flex flex-col gap-6 ${on ? '' : 'invisible'}`}
         >
-          <ProjectMedia project={p} show={seen.current.has(p.id)} />
+          <ProjectMedia project={p} show={seen.current.has(p.id)} active={on} />
           <Caption p={p} stack titleProps={{ 'data-featured-title': true }} />
         </article>
       );

@@ -44,3 +44,6 @@ get_logs.cjs
 .measure/
 .parity/
 .taste-skill/
+
+# Raw project media (encoded copies live in public/work)
+media/

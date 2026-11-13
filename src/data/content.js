@@ -65,7 +65,8 @@ export const PORTFOLIO_DATA = {
       stack: ['Python', 'PyTorch', 'Ollama', 'MinerU', 'Jina v5', 'Textual'],
       links: { source: 'https://github.com/JustJoyful/AxiomLM' },
       fact: 'Runs offline · 6 GB GPU',
-      image: { src: '/work/axiomlm.webp', width: 1440, height: 1017, alt: 'AxiomLM terminal interface studying a textbook question' },
+      image: { src: '/work/axiomlm.webp', width: 1640, height: 1025, alt: 'AxiomLM terminal answering an eigenvalue question with a verified SymPy check' },
+      video: '/work/axiomlm',
     },
     {
       id: 'testcard',
@@ -87,7 +88,8 @@ export const PORTFOLIO_DATA = {
         model: 'https://huggingface.co/JustJoyful/testcard-r50-ridge',
       },
       fact: 'SRCC 0.644 · cross-dataset',
-      image: { src: '/work/testcard.webp', width: 1440, height: 1722, alt: 'Testcard browser result for a video quality prediction' },
+      image: { src: '/work/testcard.webp', width: 1640, height: 1025, alt: 'Testcard demo showing a predicted quality score of 3.42 out of 5 on a TV screen' },
+      video: '/work/testcard',
       figure: { src: '/work/testcard-heads.svg', alt: 'Bar chart of paired differences in SRCC between temporal heads on ResNet-50 features' },
     },
     {
@@ -106,7 +108,8 @@ export const PORTFOLIO_DATA = {
       stack: ['FastAPI', 'React', 'faster-whisper', 'GLiNER', 'SQLite'],
       links: { source: 'https://github.com/JustJoyful/medsync-proto' },
       fact: 'PII masked on-device',
-      image: null,
+      image: { src: '/work/speak.webp', width: 1640, height: 1025, alt: 'S.P.E.A.K. workspace dictating a consultation, with the privacy X-ray masking identifiers' },
+      video: '/work/speak',
     },
     {
       id: 'vgc-telemetry',
@@ -124,7 +127,8 @@ export const PORTFOLIO_DATA = {
       stack: ['FastAPI', 'DynamoDB', 'S3', 'Docker', 'Terraform', 'GitHub Actions'],
       links: { source: 'https://github.com/JustJoyful/VGC-Telemetry' },
       fact: 'Immutable data snapshots',
-      image: null,
+      image: { src: '/work/vgc-telemetry.webp', width: 1640, height: 1025, alt: 'VGC-Telemetry meta explorer and tournament team views' },
+      video: '/work/vgc-telemetry',
     },
   ],
   contact: {

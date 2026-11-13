@@ -1,5 +1,6 @@
 import { useState, useSyncExternalStore } from 'react';
 import { Stack, Links, KIND, meta } from './shared';
+import { ProjectMedia } from './ProjectMedia';
 
 const mq = typeof matchMedia === 'function' ? matchMedia('(min-width: 1024px)') : null;
 export const useDesktop = () => useSyncExternalStore(
@@ -55,6 +56,8 @@ export const ProjectTable = ({ projects, shownId, onShow }) => {
               <span className="text-sm text-text-muted tabular-nums">{meta(p)}</span>
             </button>
             <div id={`panel-${p.id}`} hidden={!isOpen} className={`pb-4 flex-col gap-4 ${isOpen ? "flex" : "hidden"}`}>
+              {/* The featured exhibit above already shows its own media. */}
+              {isOpen && p.id !== shownId && <ProjectMedia project={p} />}
               <p className="text-base text-text">{p.oneLiner}</p>
               <ul className="list-disc pl-5 text-sm text-text-muted space-y-2">{p.details.map((d) => <li key={d}>{d}</li>)}</ul>
               <p className="text-sm text-text-muted">{p.fact}</p>
