@@ -2,9 +2,7 @@ export const PORTFOLIO_DATA = {
   resumeUrl: null,
   hero: {
     name: 'Joydeep Das',
-    role: 'AI Engineering · ML Research',
-    degree: 'B.Tech Computer Science & Engineering, Netaji Subhash Engineering College, Kolkata',
-    sentence: 'I build retrieval and agent systems that run on local hardware, and evaluate them carefully.',
+    line: 'AI engineer building local LLM agents, retrieval and speech pipelines, and running controlled ML experiments.',
   },
   about: {
     portrait: {
@@ -15,7 +13,8 @@ export const PORTFOLIO_DATA = {
       height: 426,
       alt: 'Portrait of Joydeep Das',
     },
-    bio: "I'm a B.Tech Computer Science student at Netaji Subhash Engineering College, Kolkata, working toward AI engineering. I build retrieval and agent systems that run on local hardware, and I run controlled experiments to find out what actually drives model performance. Outside of that, I spend time on hardware, electronics and Linux.",
+    lead: 'I build retrieval and agent systems that run on local hardware, and run controlled experiments to find out what actually drives model performance.',
+    bio: "I'm a B.Tech Computer Science & Engineering student at Netaji Subhash Engineering College, Kolkata, working toward AI engineering. Outside of that, I spend time on hardware, electronics and Linux.",
     focus: [
       {
         id: 'ai',
@@ -36,7 +35,7 @@ export const PORTFOLIO_DATA = {
         projects: ['axiomlm', 'testcard', 'speak'],
       },
     ],
-    currently: 'Developing AxiomLM, with a focus on retrieval quality and evaluation.',
+    currently: "Right now I'm developing AxiomLM, with a focus on retrieval quality and evaluation.",
     skills: [
       { label: 'LLMs & retrieval', items: ['Ollama', 'agents', 'tool calling', 'RAG', 'late chunking', 'Jina embeddings', 'ChromaDB', 'BM25'] },
       { label: 'ML, vision & speech', items: ['PyTorch', 'DINOv2', 'ResNet', 'Mamba', 'NumPy', 'SciPy', 'FFmpeg', 'faster-whisper', 'MinerU'] },
@@ -64,9 +63,15 @@ export const PORTFOLIO_DATA = {
       featured: true,
       stack: ['Python', 'PyTorch', 'Ollama', 'MinerU', 'Jina v5', 'Textual'],
       links: { source: 'https://github.com/JustJoyful/AxiomLM' },
-      fact: 'Runs offline · 6 GB GPU',
       image: { src: '/work/axiomlm.webp', width: 1640, height: 1025, alt: 'AxiomLM terminal answering an eigenvalue question with a verified SymPy check' },
       video: '/work/axiomlm',
+      gallery: [
+        { src: '/work/axiomlm/claim-check.webp', alt: 'AxiomLM flagging a claim the retrieved book passages do not support' },
+        { src: '/work/axiomlm/coverage.webp', alt: 'AxiomLM coverage view listing which textbook sections answers have drawn on' },
+        { src: '/work/axiomlm/ingest.webp', alt: 'AxiomLM parsing and embedding a 1184-page PDF on the GPU' },
+        { src: '/work/axiomlm/themes.webp', alt: 'AxiomLM theme picker with terminal, Catppuccin, Gruvbox, Nord, Tokyo Night and paper themes' },
+        { src: '/work/axiomlm/commands.webp', alt: 'AxiomLM command palette with parse, books, remove and model commands' },
+      ],
     },
     {
       id: 'testcard',
@@ -87,9 +92,15 @@ export const PORTFOLIO_DATA = {
         source: 'https://github.com/JustJoyful/Testcard',
         model: 'https://huggingface.co/JustJoyful/testcard-r50-ridge',
       },
-      fact: 'SRCC 0.644 · cross-dataset',
       image: { src: '/work/testcard.webp', width: 1640, height: 1025, alt: 'Testcard demo showing a predicted quality score of 3.42 out of 5 on a TV screen' },
       video: '/work/testcard',
+      gallery: [
+        { src: '/work/testcard/details.webp', alt: 'Testcard result details for an analysed video' },
+        { src: '/work/testcard/json.webp', alt: 'Testcard raw JSON output for a prediction' },
+        { src: '/work/testcard/live-scatter.webp', alt: 'Scatter of predicted against true MOS on 585 unseen LIVE-VQC videos, SRCC 0.644' },
+        { src: '/work/testcard/heads.webp', alt: 'Sequence heads against mean pooling on both datasets, with 95% paired-bootstrap intervals' },
+        { src: '/work/testcard/sota-gap.webp', alt: 'Bar chart of the gap between Testcard and published video-quality models' },
+      ],
       figure: { src: '/work/testcard-heads.svg', alt: 'Bar chart of paired differences in SRCC between temporal heads on ResNet-50 features' },
     },
     {
@@ -107,9 +118,14 @@ export const PORTFOLIO_DATA = {
       kind: 'ai',
       stack: ['FastAPI', 'React', 'faster-whisper', 'GLiNER', 'SQLite'],
       links: { source: 'https://github.com/JustJoyful/medsync-proto' },
-      fact: 'PII masked on-device',
       image: { src: '/work/speak.webp', width: 1640, height: 1025, alt: 'S.P.E.A.K. workspace dictating a consultation, with the privacy X-ray masking identifiers' },
       video: '/work/speak',
+      gallery: [
+        { src: '/work/speak/privacy-xray.webp', alt: 'S.P.E.A.K. privacy X-ray striking and hashing identifiers in a dark theme' },
+        { src: '/work/speak/record.webp', alt: 'S.P.E.A.K. structured clinical record ready to validate' },
+        { src: '/work/speak/showcase-xray.webp', alt: 'S.P.E.A.K. PII scan redacting a name, address and phone number before structuring' },
+        { src: '/work/speak/showcase-record.webp', alt: 'S.P.E.A.K. structured clinical record in light and dark themes' },
+      ],
     },
     {
       id: 'vgc-telemetry',
@@ -126,9 +142,14 @@ export const PORTFOLIO_DATA = {
       kind: 'backend',
       stack: ['FastAPI', 'DynamoDB', 'S3', 'Docker', 'Terraform', 'GitHub Actions'],
       links: { source: 'https://github.com/JustJoyful/VGC-Telemetry' },
-      fact: 'Immutable data snapshots',
       image: { src: '/work/vgc-telemetry.webp', width: 1640, height: 1025, alt: 'VGC-Telemetry meta explorer and tournament team views' },
       video: '/work/vgc-telemetry',
+      gallery: [
+        { src: '/work/vgc-telemetry/cores.webp', alt: 'VGC-Telemetry most-used Pokémon and common cores' },
+        { src: '/work/vgc-telemetry/pokemon.webp', alt: 'VGC-Telemetry Incineroar page with usage share and reference facts' },
+        { src: '/work/vgc-telemetry/teams.webp', alt: 'VGC-Telemetry tournament teams with Pokémon, tournament and placement filters' },
+        { src: '/work/vgc-telemetry/team-detail.webp', alt: 'VGC-Telemetry Tyranitar evidence page with sourced abilities and moves' },
+      ],
     },
   ],
   contact: {

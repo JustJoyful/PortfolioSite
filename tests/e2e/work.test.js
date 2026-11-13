@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { startPreview, openPage } from './harness.js';
 
 const TITLES = ['AxiomLM', 'Testcard', 'S.P.E.A.K.', 'VGC-Telemetry'];
+const live = '[data-slide]:not([inert])';
 
 async function run(opts, fn, setup) {
   const srv = await startPreview();
@@ -14,41 +15,49 @@ async function run(opts, fn, setup) {
     await fn(page);
   } finally { await browser.close(); await srv.close(); }
 }
+const current = (page) => page.locator(`${live} [data-slide-title]`).innerText();
+const settle = (page, title) => page.waitForFunction((t) => document.querySelector('[data-slide]:not([inert]) [data-slide-title]')?.textContent === t, title);
 
-test('table has four rows', () => run({ width: 1440 }, async (page) => {
-  const t = await page.locator('[data-work-row] [data-title]').allInnerTexts();
-  assert.deepEqual(t.map((s) => s.trim()), TITLES);
+test('four slides; tabs, buttons and arrow keys move the track and wrap', () => run({ width: 1440 }, async (page) => {
+  assert.deepEqual(await page.locator('[data-slide-title]').allInnerTexts(), TITLES);
+  assert.equal(await current(page), 'AxiomLM');
+  assert.equal(await page.locator('[data-slide][inert]').count(), 3);
+  await page.locator('[data-tab]').nth(2).click();
+  await settle(page, 'S.P.E.A.K.');
+  assert.equal(await page.locator('[data-tab][aria-current]').innerText(), 'S.P.E.A.K.');
+  await page.getByRole('button', { name: 'Next project' }).click();
+  await settle(page, 'VGC-Telemetry');
+  await page.getByRole('button', { name: 'Next project' }).click();
+  await settle(page, 'AxiomLM');
+  await page.keyboard.press('ArrowLeft');
+  await settle(page, 'VGC-Telemetry');
 }));
 
-test('keyboard swaps featured', () => run({ width: 1440 }, async (page) => {
-  const head = page.locator('[data-featured] article:not([inert]) [data-featured-title]');
-  assert.equal((await head.innerText()).trim(), 'AxiomLM');
-  await page.evaluate(() => { window.__ev = []; addEventListener('annotation:project', (e) => window.__ev.push(e.detail)); });
-  await page.locator('[data-work-row]').nth(1).focus();
-  assert.equal((await head.innerText()).trim(), 'Testcard');
-  assert.equal(await page.locator('#work article:not([inert]) h3', { hasText: /^Testcard$/ }).count(), 1);
-  const w = await page.locator('[data-figure]').evaluate((i) => i.getBoundingClientRect().width);
-  assert.ok(w >= 0.95 * 710, `figure ${w}`);
-  await page.locator('[data-work-row]').nth(0).focus();
-  await page.locator('body').click({ position: { x: 5, y: 5 } });
-  await page.locator('[data-work-row]').nth(1).blur();
-  assert.equal((await head.innerText()).trim(), 'AxiomLM');
-  const ev = await page.evaluate(() => window.__ev);
-  assert.equal(ev[0], 'testcard');
-  assert.equal(ev.at(-1), null);
+test('thumbnails swap the viewer', () => run({ width: 1440 }, async (page) => {
+  const thumbs = page.locator(`${live} [data-thumb]`);
+  assert.equal(await thumbs.count(), 6);
+  await thumbs.nth(2).click();
+  assert.equal(await thumbs.nth(2).getAttribute('aria-pressed'), 'true');
+  const img = page.locator(`${live} img[src="/work/axiomlm/coverage.webp"]`);
+  await img.waitFor();
+  assert.ok(await img.evaluate((i) => i.decode().then(() => i.naturalWidth > 0)));
+  await thumbs.nth(0).click();
+  await page.locator(`${live} [data-media]`).waitFor();
 }));
 
-test('accordion at 390', () => run({ width: 390, height: 844, mobile: true }, async (page) => {
-  const row = page.locator('[data-work-row]').nth(2);
-  const btn = row.locator('button[aria-expanded]');
-  const stack = row.locator('[data-stack]');
-  await btn.scrollIntoViewIfNeeded();
-  await btn.tap();
-  assert.equal(await btn.getAttribute('aria-expanded'), 'true');
-  assert.ok(await stack.isVisible());
-  await btn.tap();
-  assert.equal(await btn.getAttribute('aria-expanded'), 'false');
-  assert.ok(!(await stack.isVisible()));
+test('About focus links open that project', () => run({ width: 1440, reducedMotion: true }, async (page) => {
+  await page.locator('[data-focus="research"] a', { hasText: 'Testcard' }).click();
+  await settle(page, 'Testcard');
+}));
+
+test('phone: swipe moves the track and the counter follows', () => run({ width: 390, height: 844, mobile: true }, async (page) => {
+  const counter = page.locator('#work p[aria-live]');
+  assert.equal(await counter.innerText(), '1 of 4');
+  await page.locator('[data-track]').evaluate((t) => t.scrollTo({ left: t.clientWidth, behavior: 'instant' }));
+  await settle(page, 'Testcard');
+  assert.equal(await counter.innerText(), '2 of 4');
+  const hs = await page.locator(`${live} [data-thumb]`).evaluateAll((b) => b.map((x) => x.getBoundingClientRect().height));
+  hs.forEach((h) => assert.ok(h >= 44, `thumb ${h}`));
 }));
 
 test('no video on load', () => run({ width: 1440 }, async (page) => {
@@ -62,47 +71,34 @@ test('missing image keeps placeholder', async () => {
   const heights = async (page) => {
     await page.locator('#work').scrollIntoViewIfNeeded();
     await page.waitForTimeout(800);
-    return page.locator('#work [data-featured] .aspect-\\[16\\/10\\]').evaluateAll((els) => els.map((e) => e.getBoundingClientRect().height));
+    return page.locator('[data-media]').evaluateAll((els) => els.map((e) => e.getBoundingClientRect().height));
   };
   let base;
   await run({ width: 1440 }, async (page) => { base = await heights(page); });
-  await run({ width: 1440 }, async (page) => {
+  await run({ width: 1440, reducedMotion: true }, async (page) => {
     const h = await heights(page);
     assert.equal(h.length, 4);
     h.forEach((x, i) => assert.ok(Math.abs(x - base[i]) <= 2, `height ${x} vs ${base[i]}`));
-    assert.equal(await page.locator('[data-featured] .aspect-\\[16\\/10\\] pre').count(), 4);
-    assert.equal(await page.locator('[data-featured] img').count(), 0);
-    const bad = await page.locator('#work img').evaluateAll((els) => els.filter((i) => i.naturalWidth === 0 && i.offsetParent).length);
-    assert.equal(bad, 0);
-  }, (page) => page.route('**/work/*.webp', (r) => r.abort()));
+    assert.equal(await page.locator('[data-media] pre').count(), 4);
+    assert.equal(await page.locator(`${live} [data-media] img`).count(), 0);
+  }, (page) => page.route(/\/work\/[a-z-]+\.webp$/, (r) => r.abort()));
 });
 
-test('rows are tap-sized', () => run({ width: 390, height: 844, mobile: true }, async (page) => {
-  const hs = await page.locator('[data-work-row] button').evaluateAll((b) => b.map((x) => x.getBoundingClientRect().height));
-  assert.equal(hs.length, 4);
-  hs.forEach((h) => assert.ok(h >= 44, `row ${h}`));
-  await page.locator('[data-work-row] button').nth(0).tap();
-  // The tapped row opens and shows its stack.
-  assert.equal(await page.locator('[data-work-row] [data-stack]').evaluateAll((s) => s.filter((e) => e.offsetParent).length), 1);
-}));
-
-test('demo plays in view, only for the shown exhibit, and can be paused', () => run({ width: 1440, height: 2400 }, async (page) => {
-  await page.locator('[data-featured]').scrollIntoViewIfNeeded();
-  const vids = page.locator('[data-featured] video');
-  await page.waitForFunction(() => { const v = document.querySelector('[data-featured] article:not([inert]) video'); return v && !v.paused && v.currentTime > 0; });
+test('demo plays in view, only for the shown slide, and can be paused', () => run({ width: 1440, height: 2400 }, async (page) => {
+  await page.locator('#work').scrollIntoViewIfNeeded();
+  const vids = page.locator('[data-slide] video');
+  await page.waitForFunction(() => { const v = document.querySelector('[data-slide]:not([inert]) video'); return v && !v.paused && v.currentTime > 0; });
   assert.deepEqual(await vids.evaluateAll((vs) => vs.map((v) => !!v.getAttribute('src'))), [true, false, false, false]);
-  await page.locator('[data-featured] article:not([inert]) [data-demo-toggle]').click();
+  await page.locator(`${live} [data-demo-toggle]`).click();
   assert.ok(await vids.first().evaluate((v) => v.paused));
-  // Focus, not hover: scrolling under a hovering pointer fires pointerleave and resets the exhibit.
-  await page.locator('[data-work-row]').nth(2).focus();
-  await page.locator('[data-featured]').evaluate((e) => e.scrollIntoView({ block: 'nearest' }));
-  await page.waitForFunction(() => !document.querySelectorAll('[data-featured] video')[2].paused);
+  await page.locator('[data-tab]').nth(2).click();
+  await page.waitForFunction(() => !document.querySelectorAll('[data-slide] video')[2].paused);
   assert.ok(await vids.first().evaluate((v) => v.paused));
 }));
 
 test('reduced motion: stills only', () => run({ width: 1440, reducedMotion: true }, async (page) => {
-  await page.locator('[data-featured]').scrollIntoViewIfNeeded();
+  await page.locator('#work').scrollIntoViewIfNeeded();
   await page.waitForTimeout(500);
   assert.equal(await page.locator('#work video').count(), 0);
-  assert.ok(await page.locator('[data-featured] article:not([inert]) img').evaluate((i) => i.naturalWidth > 0));
+  assert.ok(await page.locator(`${live} [data-media] img`).evaluate((i) => i.decode().then(() => i.naturalWidth > 0)));
 }));

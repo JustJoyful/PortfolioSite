@@ -5,12 +5,6 @@ import { PORTFOLIO_DATA } from '../../src/data/content.js';
 
 const { projects } = PORTFOLIO_DATA;
 const STATUSES = ['active', 'complete', 'hackathon'];
-const FACTS = [
-  'Runs offline · 6 GB GPU',
-  'SRCC 0.644 · cross-dataset',
-  'PII masked on-device',
-  'Immutable data snapshots',
-];
 
 test('portrait files exist and are each under 40 KB', () => {
   const { avif, webp } = PORTFOLIO_DATA.about.portrait;
@@ -33,20 +27,22 @@ test('one featured project (axiomlm) and one research pin (testcard)', () => {
 test('every project has a valid status, copy, stack and source link', () => {
   for (const p of projects) {
     assert.ok(STATUSES.includes(p.status), `${p.id} status`);
-    for (const k of ['fact', 'oneLiner', 'result']) assert.ok(p[k]?.length > 0, `${p.id} ${k}`);
+    for (const k of ['oneLiner', 'result']) assert.ok(p[k]?.length > 0, `${p.id} ${k}`);
     assert.ok(p.stack.length >= 3, `${p.id} stack`);
     assert.ok(p.links.source.startsWith('https://github.com/'), `${p.id} source`);
   }
 });
 
-test('fact strings match the key facts in the spec', () => {
-  assert.deepEqual(projects.map((p) => p.fact), FACTS);
-});
 
 test('every project has a still and a demo video under public/', () => {
   for (const p of projects) {
     assert.ok(existsSync('public' + p.image.src), p.image.src);
     for (const ext of ['.webm', '.mp4']) assert.ok(existsSync('public' + p.video + ext), p.video + ext);
+    assert.ok(p.gallery.length >= 3 && p.gallery.length <= 5, `${p.id} gallery`);
+    for (const g of [p.image, ...p.gallery]) {
+      assert.ok(existsSync('public' + g.src.replace('.webp', '-thumb.webp')), g.src + ' thumb');
+      if (g !== p.image) assert.ok(existsSync('public' + g.src) && g.alt, g.src);
+    }
     if (p.figure) assert.ok(existsSync('public' + p.figure.src), p.figure.src);
   }
   assert.ok(projects[1].figure, 'testcard figure');

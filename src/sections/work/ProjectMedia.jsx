@@ -19,7 +19,7 @@ export const ProjectMedia = ({ project, show = true, active = true, className = 
     const v = vid.current;
     if (!v || !active || paused) { v?.pause(); return; }
     const io = new IntersectionObserver(([e]) => {
-      if (!e.isIntersecting) return v.pause();
+      if (e.intersectionRatio < 0.5) return v.pause();
       // `video` is a path without extension: VP9 WebM where supported, H.264 MP4 otherwise (older Safari).
       if (!v.getAttribute('src')) v.src = video + (v.canPlayType('video/webm; codecs="vp9"') ? '.webm' : '.mp4');
       v.play().catch(() => {});
@@ -29,7 +29,7 @@ export const ProjectMedia = ({ project, show = true, active = true, className = 
   }, [video, active, paused]);
 
   return (
-    <div className={`relative overflow-hidden aspect-[16/10] ${className}`} style={{ containerType: 'inline-size' }}>
+    <div data-media className={`relative overflow-hidden aspect-[16/10] ${className}`} style={{ containerType: 'inline-size' }}>
       <pre
         aria-hidden="true"
         className="absolute inset-0 m-0 overflow-hidden font-mono text-text-faint select-none"

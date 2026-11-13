@@ -27,13 +27,9 @@ export const Hero = () => {
         <h1 id="hero-title" className="font-display text-display text-text tracking-[-0.03em] lg:w-min">
           {hero.name}
         </h1>
-        <div>
-          <p className="text-lg text-text mt-4">{hero.role}</p>
-          <p className="text-base text-text-muted mt-1">{hero.degree}</p>
-          <p className="text-base text-text mt-6 max-w-[34rem]">{hero.sentence}</p>
-        </div>
-        <div className="flex flex-wrap items-center gap-x-6 mt-6">
-          <a href="#work" className="ext-link inline-flex items-center min-h-11 text-base text-text">Work</a>
+        <p className="text-lg text-text mt-6 max-w-[30rem]">{hero.line}</p>
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-8">
+          <a href="#work" className="inline-flex items-center min-h-12 px-6 bg-bloom text-bg text-base font-medium hover:bg-ember transition-colors">See the work</a>
           <a href="#contact" className="ext-link inline-flex items-center min-h-11 text-base text-text">Contact</a>
           {resumeUrl && <ExternalLink href={resumeUrl} className="inline-flex items-center min-h-11 text-base text-text">Résumé</ExternalLink>}
           <span className="flex">

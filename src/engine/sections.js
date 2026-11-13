@@ -10,5 +10,7 @@ const SECTIONS = {
 export function sectionState(section, { desktop }) {
   const s = SECTIONS[section] ?? SECTIONS.hero;
   if (section === 'hero' || !SECTIONS[section]) return { ...s, presence: 1, scrim: 0 };
-  return { ...s, presence: desktop ? 0.55 : 0.27, scrim: desktop ? 0 : 1 };
+  // The full-width Work gallery takes the room on desktop: the flower dims like house lights.
+  const lit = section === 'work' ? 0.2 : 0.55;
+  return { ...s, presence: desktop ? lit : 0.27, scrim: desktop ? 0 : 1 };
 }

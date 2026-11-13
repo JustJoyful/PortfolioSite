@@ -11,16 +11,10 @@ test('about: three focus labels, hovered one highlighted, no numbers', () => {
   assert.ok(r.every((a) => !/\d/.test(a.text)));
 });
 
-test('work: none without hover', () => {
-  assert.deepEqual(pickAnnotations('work', {}), []);
+test('work: none, the gallery takes the room', () => {
+  assert.deepEqual(pickAnnotations('work', { hoveredFocus: 'ai' }), []);
 });
 
-test('work: hovered project shows its fact', () => {
-  assert.deepEqual(pickAnnotations('work', { hoveredProject: 'testcard' }), [
-    { anchorId: 'project', text: 'SRCC 0.644 · cross-dataset', highlighted: true },
-  ]);
-  assert.deepEqual(pickAnnotations('work', { hoveredProject: 'nope' }), []);
-});
 
 test('hero and contact: none', () => {
   assert.deepEqual(pickAnnotations('hero', { hoveredFocus: 'ai' }), []);

@@ -43,12 +43,12 @@ const EmailRow = ({ label, address, delay }) => {
 
   return (
     <Reveal stagger={delay} className="flex items-center gap-4 min-w-0">
-      <span className="text-xs text-text-faint shrink-0 w-16">{label}</span>
+      <span className="text-sm text-text-muted shrink-0 w-28">{label}</span>
       <a
         ref={addressRef}
         data-address
         href={`mailto:${address}`}
-        className="min-w-0 min-h-11 inline-flex items-center text-sm text-text-muted hover:text-text [overflow-wrap:anywhere]"
+        className="min-w-0 min-h-11 inline-flex items-center text-lg text-text hover:text-bloom transition-colors [overflow-wrap:anywhere]"
       >
         {address}
       </a>
@@ -68,8 +68,8 @@ const EmailRow = ({ label, address, delay }) => {
 
 const ContactRow = ({ label, value, href, delay }) => (
   <Reveal stagger={delay} className="flex items-center gap-4 min-w-0">
-    <span className="text-xs text-text-faint shrink-0 w-16">{label}</span>
-    <ExternalLink href={href} className="min-w-0 min-h-11 inline-flex items-center text-sm text-text-muted hover:text-text [overflow-wrap:anywhere]">
+    <span className="text-sm text-text-muted shrink-0 w-28">{label}</span>
+    <ExternalLink href={href} className="min-w-0 min-h-11 inline-flex items-center text-lg text-text hover:text-bloom transition-colors [overflow-wrap:anywhere]">
       {value}
     </ExternalLink>
   </Reveal>
@@ -85,19 +85,19 @@ export const Contact = () => {
       className="lg:min-h-[100svh] w-full lg:grid lg:grid-cols-[38vw_minmax(0,1fr)] items-center pointer-events-none py-28"
     >
       <div
-        className="pointer-events-auto w-full px-5 md:px-12 lg:px-0 lg:pr-12 lg:col-start-2 lg:max-w-[680px]"
+        className="pointer-events-auto w-full px-5 md:px-12 lg:px-0 lg:pr-24 lg:col-start-2"
       >
         <SectionHeading id="contact-title" title="Contact" className="mb-6" />
 
-        <Reveal as="p" stagger={1} className="font-sans text-lg text-text-muted mb-12">
+        <Reveal as="p" stagger={1} className="font-sans text-lg text-text mb-12">
           The best way to reach me is email.
         </Reveal>
 
         <div className="flex flex-col gap-5">
-          <EmailRow label="email" address={contact.emailPersonal} delay={2} />
-          <EmailRow label="student" address={contact.emailStudent} delay={3} />
-          <ContactRow label="github" value={contact.github} href={contact.githubUrl} delay={4} />
-          <ContactRow label="linkedin" value={contact.linkedin} href={contact.linkedinUrl} delay={5} />
+          <EmailRow label="Email" address={contact.emailPersonal} delay={2} />
+          <EmailRow label="Student email" address={contact.emailStudent} delay={3} />
+          <ContactRow label="GitHub" value={contact.github} href={contact.githubUrl} delay={4} />
+          <ContactRow label="LinkedIn" value={contact.linkedin} href={contact.linkedinUrl} delay={5} />
         </div>
 
       </div>

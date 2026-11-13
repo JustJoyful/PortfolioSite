@@ -10,8 +10,8 @@ const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 function Overlay() {
   const section = useActiveSection(IDS);
-  const [hover, setHover] = useState({ focus: null, project: null });
-  const picks = pickAnnotations(section, { hoveredFocus: hover.focus, hoveredProject: hover.project });
+  const [focus, setFocus] = useState(null);
+  const picks = pickAnnotations(section, { hoveredFocus: focus });
   const byId = Object.fromEntries(picks.map((p) => [p.anchorId, p]));
   const lastText = useRef({});
   picks.forEach((p) => { lastText.current[p.anchorId] = p.text; });
@@ -20,11 +20,9 @@ function Overlay() {
   const hiId = picks.find((x) => x.highlighted)?.anchorId ?? null;
 
   useEffect(() => {
-    const f = (e) => setHover((h) => ({ ...h, focus: e.detail }));
-    const p = (e) => setHover((h) => ({ ...h, project: e.detail }));
+    const f = (e) => setFocus(e.detail);
     window.addEventListener('annotation:focus', f);
-    window.addEventListener('annotation:project', p);
-    return () => { window.removeEventListener('annotation:focus', f); window.removeEventListener('annotation:project', p); };
+    return () => window.removeEventListener('annotation:focus', f);
   }, []);
 
   useEffect(() => {
