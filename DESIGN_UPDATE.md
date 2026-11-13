@@ -400,17 +400,17 @@ Suggested order: 0 → 1 → 2 → 3 → 4 → 5. Phase 0 alone already fixes mo
 
 ## 9. Budgets & measurements
 
-| Metric | Before (Phase 0 measures) | After Phase 1 | Target |
+| Metric | Before (Phase 0 measures) | After (Phase 5, final) | Target |
 |---|---|---|---|
-| Initial JS (gz) | 351.2 KB | not measured | **< 120 KB** |
-| Total transfer, first load | 1,575 KiB (Lighthouse total byte weight) | not measured | **< 350 KB** |
-| LCP (mobile, 4G, mid-tier) | 3.6 s (Lighthouse mobile; desktop 1.0 s) | not measured | **< 1.5 s** |
-| CLS | 0 | not measured | **< 0.02** |
-| TBT (mobile) | 300 ms | not measured | **< 150 ms** |
-| Animation, desktop 1080p | 34.6 fps at 1440x900, headless software GL; main thread/frame not measured | Real GPU (Chromium `--use-angle=gl`, 1440x900): Intel UHD GT0.5 bloom 57.4–60.2 fps, 2.7–3.4 ms main thread/frame (after bufferFps 20) vs legacy 48.4 fps / 20 ms; RTX 3050 bloom 60.6 fps / 3.0 ms vs legacy 49.8 fps / 20.2 ms (measured before the 1.8b fixes). Headless SwiftShader (software GL only, not the desktop figure): 12 fps | **60 fps, < 4 ms main thread/frame** |
-| Animation, low-end Android | 18.6 fps (390 px, 4x CPU throttle, desktop Chromium proxy) | 34.8 fps at 390 px, 4x CPU throttle; 20 fps, tier low, at 390 px 6x throttle (6× CPU-throttled Chromium, not a real device) | **≥ 30 fps** |
-| Lighthouse perf mobile / desktop | 77 / 98 | not measured | **≥ 90 / ≥ 98** |
-| Lighthouse a11y | 93 (mobile and desktop) | not measured | **100** |
+| Initial JS (gz) | 351.2 KB | 70.7 KB, index chunk (`npm run budget`). Met. The engine chunk (8.8 KB gz) loads on idle and is outside this figure | **< 120 KB** |
+| Total transfer, first load | 1,575 KiB (Lighthouse total byte weight) | 170.2 KB (390 px, DPR 3, 5 s after load, 11 responses; text gzipped with zlib level 9, images and fonts raw). Met. Lighthouse 13.6 mobile total byte weight: 251 KiB (same method as the Before row: 1,575 KiB) | **< 350 KB** |
+| LCP (mobile, 4G, mid-tier) | 3.6 s (Lighthouse mobile; desktop 1.0 s) | 2.0 s (Lighthouse 13.6 mobile, simulated slow 4G). **Miss**: above the 1.5 s target | **< 1.5 s** |
+| CLS | 0 | 0 (Lighthouse 13.6, mobile and desktop). Met | **< 0.02** |
+| TBT (mobile) | 300 ms | 150 ms (Lighthouse 13.6 mobile). At the limit, not below it | **< 150 ms** |
+| Animation, desktop 1080p | 34.6 fps at 1440x900, headless software GL; main thread/frame not measured | Real GPU (Chromium `--use-angle=gl`, 1440x900): Intel UHD GT0.5 bloom 57.4–60.2 fps, 2.7–3.4 ms main thread/frame (after bufferFps 20) vs legacy 48.4 fps / 20 ms; RTX 3050 bloom 60.6 fps / 3.0 ms vs legacy 49.8 fps / 20.2 ms (measured before the 1.8b fixes). Headless SwiftShader (software GL only, not the desktop figure): 12 fps. Headless `npm run measure -- --label final` on 2026-11-13 (software GL, tracing on): 18.6 fps at 1440x900 | **60 fps, < 4 ms main thread/frame** |
+| Animation, low-end Android | 18.6 fps (390 px, 4x CPU throttle, desktop Chromium proxy) | 30 fps, tier `low`, 390 px, 6x CPU-throttled Chromium (Phase 4 measurement, `__bloom.stats()`; not a real device, real-device check not done). Met at the substitute only. Headless `npm run measure -- --label final` on 2026-11-13 at 4x throttle: 57 fps (software GL, not comparable with the 6x figure) | **≥ 30 fps** |
+| Lighthouse perf mobile / desktop | 77 / 98 | Mobile **94**, meets ≥ 90 (Lighthouse 13.6; 97 on Lighthouse 12 in Phase 4). Desktop **74**, TBT 740–750 ms, LCP 0.2–0.3 s (Lighthouse 13.6, headless software GL). **Miss on desktop** (target ≥ 98); cause not isolated | **≥ 90 / ≥ 98** |
+| Lighthouse a11y | 93 (mobile and desktop) | 100 mobile and desktop (Lighthouse 13.6); axe 0 violations. Met | **100** |
 
 ---
 
