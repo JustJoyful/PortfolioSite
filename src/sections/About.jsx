@@ -42,6 +42,23 @@ const Typed = ({ text, className }) => {
   );
 };
 
+const kolkata = new Intl.DateTimeFormat('en-IN', { timeZone: 'Asia/Kolkata', hour: 'numeric', minute: '2-digit' });
+
+// The visitor's view of my clock: changes every visit, no data needed.
+const LocalTime = () => {
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 15000);
+    return () => clearInterval(id);
+  }, []);
+  return (
+    <p>
+      <time dateTime={now.toISOString()} className="block font-display text-2xl text-text tabular-nums tracking-[-0.02em]">{kolkata.format(now)}</time>
+      <span className="block mt-2 text-sm text-text-muted">Local time in Kolkata, where I work</span>
+    </p>
+  );
+};
+
 const announce = (id) => window.dispatchEvent(new CustomEvent('annotation:focus', { detail: id }));
 
 export const About = () => {
@@ -63,8 +80,10 @@ export const About = () => {
     >
       <div className="pointer-events-auto w-full px-5 md:px-12 lg:px-0 lg:pr-24 lg:col-start-2">
         <SectionHeading id="about-title" title="About" />
-        <div className="mt-10 lg:mt-12 grid gap-8 sm:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] sm:gap-10 items-start">
-          {/* sm:mt-[7px]: drops the photo's top edge to the lead's cap height (~7px below its line box at 20 and 28px). */}
+        <Reveal as="p" className="text-lg md:text-xl text-text mt-8 lg:mt-10 max-w-[44rem]">{lead}</Reveal>
+
+        <div className="mt-12 grid gap-8 sm:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] sm:gap-10 items-start">
+          {/* sm:mt-[7px]: drops the photo's top edge to the bio's cap height (~7px below its 20px line box). */}
           <Reveal stagger={1} className="relative w-full max-w-[16rem] sm:max-w-none overflow-hidden sm:mt-[7px]" style={{ aspectRatio: `${portrait.width} / ${portrait.height}`, containerType: 'inline-size' }}>
             {/* 72 cols x 0.6em = 100cqw; 30 rows fill the photo's 0.895 height. Floors keep it >= 12px (it overflows and clips below ~520px wide). */}
             <pre aria-hidden="true" className={`absolute inset-0 m-0 overflow-hidden font-mono text-text-faint select-none ${loaded ? 'opacity-0' : 'opacity-100'}`} style={{ fontSize: 'max(12px, 2.315cqw)', lineHeight: 'max(15.5px, 2.983cqw)', transition: 'opacity 600ms ease' }}>
@@ -85,9 +104,9 @@ export const About = () => {
               />
             </picture>
           </Reveal>
-          <div className="flex flex-col gap-6 max-w-[36rem]">
-            <Reveal as="p" className="text-lg xl:text-xl text-text">{lead}</Reveal>
+          <div className="flex flex-col gap-10 sm:self-stretch sm:justify-between max-w-[36rem]">
             <Typed text={bio} className="text-lg text-text" />
+            <LocalTime />
           </div>
         </div>
 
