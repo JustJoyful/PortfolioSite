@@ -28,7 +28,8 @@ export const About = () => {
         <Reveal as="p" className="text-lg md:text-xl text-text mt-8 lg:mt-10 max-w-[44rem]">{lead}</Reveal>
 
         <div className="mt-12 grid gap-8 sm:grid-cols-[minmax(0,200px)_minmax(0,1fr)] sm:gap-10 items-start">
-          <Reveal stagger={1} className="relative w-full max-w-[200px] overflow-hidden" style={{ aspectRatio: `${portrait.width} / ${portrait.height}` }}>
+          {/* sm:mt-1.5: drops the photo's top edge to the bio's cap height (measured 5.5px below its line box). */}
+          <Reveal stagger={1} className="relative w-full max-w-[200px] overflow-hidden sm:mt-1.5" style={{ aspectRatio: `${portrait.width} / ${portrait.height}` }}>
             <pre aria-hidden="true" className={`absolute left-0 top-0 m-0 font-mono text-xs leading-none text-text-faint origin-top-left ${loaded ? 'opacity-0' : 'opacity-100'}`} style={{ transform: 'scale(0.4625, 0.741)', transition: 'opacity 600ms ease' }}>
               {placeholders.portrait}
             </pre>
