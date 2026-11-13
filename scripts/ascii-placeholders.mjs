@@ -11,7 +11,7 @@ const SOURCES = {
   testcard: 'public/work/testcard.webp',
   speak: 'public/work/speak.webp',
   'vgc-telemetry': 'public/work/vgc-telemetry.webp',
-  portrait: 'public/portrait-640.webp',
+  portrait: 'public/portrait-800.webp',
 };
 const OUT = fileURLToPath(new URL('../src/data/placeholders.json', import.meta.url));
 

@@ -6,12 +6,12 @@ export const PORTFOLIO_DATA = {
   },
   about: {
     portrait: {
-      avif: '/portrait-320.avif 320w, /portrait-640.avif 640w',
-      webp: '/portrait-320.webp 320w, /portrait-640.webp 640w',
-      src: '/portrait-640.webp',
-      width: 320,
-      height: 426,
-      alt: 'Portrait of Joydeep Das',
+      avif: '/portrait-400.avif 400w, /portrait-800.avif 800w',
+      webp: '/portrait-400.webp 400w, /portrait-800.webp 800w',
+      src: '/portrait-800.webp',
+      width: 800,
+      height: 716,
+      alt: 'Joydeep Das at a restaurant table, chin resting on his hand',
     },
     lead: 'I build retrieval and agent systems that run on local hardware, and run controlled experiments to find out what actually drives model performance.',
     bio: "I'm a B.Tech Computer Science & Engineering student at Netaji Subhash Engineering College, Kolkata, working toward AI engineering. Outside of that, I spend time on hardware, electronics and Linux.",

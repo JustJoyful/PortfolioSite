@@ -27,15 +27,16 @@ export const About = () => {
         <SectionHeading id="about-title" title="About" />
         <Reveal as="p" className="text-lg md:text-xl text-text mt-8 lg:mt-10 max-w-[44rem]">{lead}</Reveal>
 
-        <div className="mt-12 grid gap-8 sm:grid-cols-[minmax(0,200px)_minmax(0,1fr)] sm:gap-10 items-start">
+        <div className="mt-12 grid gap-8 sm:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] sm:gap-10 items-start">
           {/* sm:mt-1.5: drops the photo's top edge to the bio's cap height (measured 5.5px below its line box). */}
-          <Reveal stagger={1} className="relative w-full max-w-[200px] overflow-hidden sm:mt-1.5" style={{ aspectRatio: `${portrait.width} / ${portrait.height}` }}>
-            <pre aria-hidden="true" className={`absolute left-0 top-0 m-0 font-mono text-xs leading-none text-text-faint origin-top-left ${loaded ? 'opacity-0' : 'opacity-100'}`} style={{ transform: 'scale(0.4625, 0.741)', transition: 'opacity 600ms ease' }}>
+          <Reveal stagger={1} className="relative w-full overflow-hidden sm:mt-1.5" style={{ aspectRatio: `${portrait.width} / ${portrait.height}`, containerType: 'inline-size' }}>
+            {/* 72 cols x 0.6em = 100cqw; 30 rows fill the photo's 0.895 height. Floors keep it >= 12px (it overflows and clips below ~520px wide). */}
+            <pre aria-hidden="true" className={`absolute inset-0 m-0 overflow-hidden font-mono text-text-faint select-none ${loaded ? 'opacity-0' : 'opacity-100'}`} style={{ fontSize: 'max(12px, 2.315cqw)', lineHeight: 'max(15.5px, 2.983cqw)', transition: 'opacity 600ms ease' }}>
               {placeholders.portrait}
             </pre>
             <picture>
-              <source type="image/avif" srcSet={portrait.avif} sizes="200px" />
-              <source type="image/webp" srcSet={portrait.webp} sizes="200px" />
+              <source type="image/avif" srcSet={portrait.avif} sizes="(min-width: 1024px) 28vw, (min-width: 640px) 45vw, calc(100vw - 40px)" />
+              <source type="image/webp" srcSet={portrait.webp} sizes="(min-width: 1024px) 28vw, (min-width: 640px) 45vw, calc(100vw - 40px)" />
               <img
                 src={portrait.src}
                 width={portrait.width}
