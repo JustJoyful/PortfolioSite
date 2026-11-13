@@ -33,7 +33,7 @@ To feature Testcard instead, move the two flags together: set `featured: true` o
 
 The site is a plain static build deployed on Vercel. The Vercel project should use `npm run build` with `dist/` as the output directory. `vercel.json` sets the security headers and the long cache lifetime for hashed assets and fonts. There are no Edge Functions and no Image Optimization.
 
-Set `VITE_SITE_URL` (for example `https://example.com`, without a trailing slash) in the Vercel environment. It makes the Open Graph image and `og:url` absolute. If it is unset, the build uses a relative `/og.png` and omits `og:url`. Regenerate `public/og.png` with `node scripts/og-image.mjs` after changing the hero.
+Set `VITE_SITE_URL` (for example `https://example.com`, without a trailing slash) in the Vercel environment. It makes the Open Graph image and `og:url` absolute. If it is unset, the build uses a relative `/og.png` and omits `og:url`. Regenerate `public/og.png` with `node scripts/og-image.mjs` (needs ImageMagick, `magick`) after changing the hero.
 
 ## Open content
 

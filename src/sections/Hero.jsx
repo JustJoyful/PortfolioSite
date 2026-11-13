@@ -1,5 +1,4 @@
 import { PORTFOLIO_DATA } from '../data/content';
-import { Reveal } from '../components/ui/Reveal';
 import { ExternalLink } from '../components/ui/ExternalLink';
 
 const icon = { width: 20, height: 20, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': true };
@@ -26,7 +25,7 @@ export const Hero = () => {
     >
       <div className="pointer-events-auto">
         <h1 id="hero-title" className="font-display text-display text-text tracking-[-0.02em]">
-          <Reveal as="span" variant="lines" className="block pb-[0.15em] -mb-[0.15em]">{hero.name}</Reveal>
+          <span className="block pb-[0.15em] -mb-[0.15em]">{hero.name}</span>
         </h1>
         <div>
           <p className="text-lg text-text mt-4">{hero.role}</p>

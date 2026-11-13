@@ -38,8 +38,8 @@ export const About = () => {
                 width={portrait.width}
                 height={portrait.height}
                 alt={portrait.alt}
-                onLoad={() => setLoaded(true)}
-                ref={(el) => { if (el?.complete && !loaded) setLoaded(true); }}
+                onLoad={(e) => setLoaded(e.currentTarget.naturalWidth > 0)}
+                ref={(el) => { if (el?.complete && el.naturalWidth > 0 && !loaded) setLoaded(true); }}
                 className="absolute inset-0 w-full h-full object-cover object-top"
                 style={{ opacity: loaded ? 1 : 0, transition: 'opacity 600ms ease' }}
               />
