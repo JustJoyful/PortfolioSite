@@ -11,7 +11,6 @@ export default {
       colors: {
         bg: 'var(--bg)',
         surface: 'var(--surface)',
-        line: 'var(--line)',
         text: 'var(--text)',
         'text-muted': 'var(--text-muted)',
         'text-faint': 'var(--text-faint)',
