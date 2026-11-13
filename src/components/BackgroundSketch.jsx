@@ -15,7 +15,8 @@ export const BackgroundSketch = ({ paused = false }) => {
       const d = innerWidth >= 1024;
       engine?.setLayout({
         falloffX: d ? 0.55 * innerWidth : 0,
-        centerX: d ? 0.36 * innerWidth : null,
+        // Optical centre of the free field between the 64px rail and the hero text at 56vw.
+        centerX: d ? 32 + 0.28 * innerWidth : null,
         centerY: d ? null : 0.36 * innerHeight,
       });
     };

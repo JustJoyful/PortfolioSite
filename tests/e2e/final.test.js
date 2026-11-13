@@ -37,7 +37,7 @@ test('reduced motion on desktop jumps the flower to its final slide', () => run(
   await page.evaluate(() => document.getElementById('about').scrollIntoView({ behavior: 'instant' }));
   await sleep(300);
   const dx = await page.$eval('#flower', (el) => new DOMMatrix(getComputedStyle(el).transform).m41);
-  assert.ok(Math.abs(dx + 0.17 * 1440) < 2, `dx ${dx}`);
+  assert.ok(Math.abs(dx + 0.11 * 1440) < 2, `dx ${dx}`);
 }));
 
 test('reduced motion disables smooth scrolling', () => run({ width: 1440, reducedMotion: true }, async (page) => {

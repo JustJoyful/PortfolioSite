@@ -35,7 +35,7 @@ function App() {
       if (innerWidth < 1024) { el.style.transform = ''; return; }
       const p = Math.min(1, scrollY / innerHeight);
       const e = reduced ? +(p >= 1) : p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
-      el.style.transform = `translateX(${-17 * e}vw)`;
+      el.style.transform = `translateX(${-11 * e}vw)`;
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
