@@ -60,7 +60,7 @@ export const ProjectSlide = ({ p, active }) => {
         <ul className="flex flex-col gap-3 text-base text-text list-disc pl-5 marker:text-text-faint">
           {p.details.map((d) => <li key={d}>{d}</li>)}
         </ul>
-        <p className="text-sm text-text-muted">{p.result}</p>
+        <p className="text-base text-text-muted">{p.result}</p>
         <Stack stack={p.stack} data-stack />
         <Links links={p.links} />
       </div>
