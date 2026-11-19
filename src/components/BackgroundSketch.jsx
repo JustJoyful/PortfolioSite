@@ -48,6 +48,7 @@ export const BackgroundSketch = ({ paused = false }) => {
       engine = createBloom(canvasRef.current, {
         seed: seed == null ? undefined : Number(seed),
         breakShader: params.has('breakshader'),
+        debug: params.has('debug'),
         tier: params.get('tier') ?? undefined,
         variant: params.has('variant') ? Number(params.get('variant')) : undefined,
         onVariant: (v) => {

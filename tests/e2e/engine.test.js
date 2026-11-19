@@ -28,6 +28,17 @@ test('renders with WebGL', () => withPage({ width: 1440 }, async (page) => {
   assert.ok((await stats(page)).frames > a.frames);
 }));
 
+test('the canvas is transparent away from the flower (stars come from the Sky layer)', () => withPage({ width: 1440, height: 900 }, async (page) => {
+  await page.waitForFunction(() => window.__bloom.stats().frames > 5);
+  const px = await page.evaluate(() => {
+    const c = document.querySelector('#flower canvas'), gl = c.getContext('webgl2') || c.getContext('webgl');
+    const out = new Uint8Array(4), read = (x, y) => { gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, out); return [...out]; };
+    return { far: read(c.width - 6, 6), near: read(Math.round(window.__bloom.stats().centre[0] * c.width / innerWidth), Math.round(c.height - window.__bloom.stats().centre[1] * c.height / innerHeight)) };
+  });
+  assert.equal(px.far[3], 0, `corner alpha ${px.far}`);
+  assert.ok(px.near[3] > 0, `bloom alpha ${px.near}`);
+}));
+
 test('setSection(about) switches to dots', () => withPage({ width: 1440 }, async (page) => {
   await page.evaluate(() => window.__bloom.setSection('about'));
   await page.waitForFunction(() => window.__bloom.stats().mode === 'dots', null, { timeout: 1500 });
@@ -55,7 +66,7 @@ test('reduced motion is static', () => withPage({ width: 1440, reducedMotion: tr
 
 test('context loss falls back and recovers', () => withPage({ width: 1440 }, async (page) => {
   await page.evaluate(() => {
-    const c = document.querySelector('canvas');
+    const c = document.querySelector('#flower canvas'); // the Sky canvas is a 2D one
     const gl = c.getContext('webgl2') || c.getContext('webgl');
     window.__lose = gl.getExtension('WEBGL_lose_context');
     window.__lose.loseContext();

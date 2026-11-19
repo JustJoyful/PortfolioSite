@@ -22,7 +22,7 @@ export function createBloom(canvas, opts = {}) {
   const rand = opts.seed != null ? rng(opts.seed) : Math.random;
   const coarse = mq('(pointer: coarse)');
 
-  let post = createPost(canvas, opts.breakShader ? { frag: 'void main(){' } : undefined); // breakShader: test hook
+  let post = createPost(canvas, { ...(opts.breakShader && { frag: 'void main(){' }), preserve: opts.debug }); // breakShader: test hook
   let tierName = opts.tier ?? initialTier({
     coarse,
     cores: navigator.hardwareConcurrency ?? 4,
@@ -452,7 +452,7 @@ export function createBloom(canvas, opts = {}) {
     });
   }
   const onRestored = () => {
-    const p = createPost(canvas);
+    const p = createPost(canvas, { preserve: opts.debug });
     if (!p) return;
     post = p; bindPost(); lastBuf = -1e9;
     fbCanvas?.remove(); fbCanvas = null; canvas.style.display = '';

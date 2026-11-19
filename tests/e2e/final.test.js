@@ -33,11 +33,17 @@ test('About on 844x390 landscape dims the flower', () => run({ width: 844, heigh
   assert.ok((await stats(page)).presence < 1);
 }));
 
-test('reduced motion on desktop jumps the flower to its final slide', () => run({ width: 1440, reducedMotion: true }, async (page) => {
+test('reduced motion on desktop jumps the flower from the hero layout to the column layout', () => run({ width: 1440, height: 900, reducedMotion: true }, async (page) => {
+  const centreX = async () => { const [x, , s] = (await stats(page)).rect; return x + s / 2; };
+  const hero = await centreX();
+  await page.evaluate(() => scrollTo({ top: 450, behavior: 'instant' }));
+  await sleep(300);
+  assert.ok(Math.abs((await centreX()) - hero) < 2, 'half way: still the hero layout, no easing');
   await page.evaluate(() => document.getElementById('about').scrollIntoView({ behavior: 'instant' }));
   await sleep(300);
-  const dx = await page.$eval('#flower', (el) => new DOMMatrix(getComputedStyle(el).transform).m41);
-  assert.ok(Math.abs(dx + 0.11 * 1440) < 2, `dx ${dx}`);
+  const col = await centreX();
+  assert.ok(Math.abs(col - (32 + 0.17 * 1440)) < 2, `column centre ${col}`);
+  assert.ok(hero > col + 50, 'the hero layout is further right');
 }));
 
 test('reduced motion disables smooth scrolling', () => run({ width: 1440, reducedMotion: true }, async (page) => {

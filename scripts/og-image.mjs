@@ -9,12 +9,14 @@ await page.goto(`${srv.url}?engine=bloom&seed=7&debug`);
 await page.waitForFunction(() => window.__bloom?.stats().phase === 'interactive', null, { timeout: 60000 });
 await page.evaluate(async () => {
   await document.fonts.ready;
+  // The hero itself is the picture: the name (layer 1) under the flower (layer 2). Hide the rest, add the subtitle under the name.
   const hide = document.createElement('style');
   hide.textContent = 'main,footer,nav,aside,a[href="#main"]{visibility:hidden!important}';
   document.head.append(hide);
+  const h = document.getElementById('hero-title').getBoundingClientRect();
   const o = document.createElement('div');
-  o.style.cssText = 'position:fixed;inset:0;z-index:99;display:flex;flex-direction:column;justify-content:center;padding:0 48px 0 640px;pointer-events:none;color:#fff';
-  o.innerHTML = '<div style="font:600 88px/0.95 \'Bricolage Grotesque\',sans-serif">Joydeep Das</div><div style="font:500 28px/1.5 Geist,sans-serif;color:rgba(255,255,255,.8);margin-top:12px">AI Engineering · ML Research</div>';
+  o.style.cssText = `position:fixed;left:${h.left}px;top:${h.bottom + 20}px;z-index:99;pointer-events:none;color:rgba(255,255,255,.8);font:500 28px/1.5 Geist,sans-serif`;
+  o.textContent = 'AI Engineering · ML Research';
   document.body.append(o);
 });
 await page.screenshot({ path: 'public/og.png' });

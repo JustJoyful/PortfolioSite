@@ -4,8 +4,8 @@ import frag from './post.frag?raw';
 
 const FLOATS = ['grid', 'mode', 'prevMode', 'modeT', 'glitchCount', 'glow', 'time', 'presence', 'falloffX', 'scrim'];
 
-export function createPost(canvas, { frag: fragSrc = frag } = {}) {
-  const opts = { alpha: true, premultipliedAlpha: true, antialias: false, depth: false, stencil: false, powerPreference: 'high-performance' };
+export function createPost(canvas, { frag: fragSrc = frag, preserve = false } = {}) {
+  const opts = { alpha: true, premultipliedAlpha: true, antialias: false, depth: false, stencil: false, powerPreference: 'high-performance', preserveDrawingBuffer: preserve }; // preserve: ?debug only, so tests can read pixels back
   let gl = canvas.getContext('webgl2', opts);
   let backend = 'webgl2';
   if (!gl) { gl = canvas.getContext('webgl', opts) || canvas.getContext('experimental-webgl', opts); backend = 'webgl'; }

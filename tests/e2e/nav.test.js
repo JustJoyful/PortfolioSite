@@ -17,7 +17,7 @@ test('rail links scroll', () => run({ width: 1440 }, async (page) => {
 }));
 
 test('mobile nav hides and shows', () => run({ width: 390, height: 844, mobile: true }, async (page) => {
-  const y = () => page.evaluate(() => new DOMMatrix(getComputedStyle(document.querySelector('body > #root header, header')).transform).m42);
+  const y = () => page.evaluate(() => new DOMMatrix(getComputedStyle(document.querySelector('.mobile-nav')).transform).m42);
   await page.evaluate(() => scrollTo({ top: 400, behavior: 'instant' }));
   await page.waitForTimeout(400);
   assert.ok((await y()) < 0, 'hidden after scroll down');
@@ -62,6 +62,6 @@ test('keyboard reach', () => run({ width: 1440 }, async (page) => {
 }));
 
 test('mobile nav has no transition under reduced motion', () => run({ width: 390, height: 844, mobile: true, reducedMotion: true }, async (page) => {
-  const d = await page.evaluate(() => getComputedStyle(document.querySelector('header')).transitionDuration);
+  const d = await page.evaluate(() => getComputedStyle(document.querySelector('.mobile-nav')).transitionDuration);
   assert.equal(d, '0s');
 }));
