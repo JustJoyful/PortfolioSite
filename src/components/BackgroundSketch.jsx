@@ -32,14 +32,18 @@ export const BackgroundSketch = ({ paused = false }) => {
     const id = idle(async () => {
       if (dead) return;
       const { createBloom } = await import('../engine/index.js');
-      const { accentFor } = await import('../engine/flower.js');
+      const { accentFor, leafFor } = await import('../engine/flower.js');
       if (dead) return;
       const seed = params.get('seed');
       engine = createBloom(canvasRef.current, {
         seed: seed == null ? undefined : Number(seed),
         breakShader: params.has('breakshader'),
         tier: params.get('tier') ?? undefined,
-        onVariant: (v) => document.documentElement.style.setProperty('--bloom', accentFor(v)),
+        onVariant: (v) => {
+          const root = document.documentElement.style;
+          root.setProperty('--bloom', accentFor(v));
+          root.setProperty('--leaf', leafFor(v));
+        },
         onReady: () => setReady(true),
       });
       engineRef.current = engine;
