@@ -45,7 +45,7 @@ export const ProjectSlide = ({ p, active }) => {
 
       <div className="flex flex-col gap-5 max-w-[40rem]">
         <div>
-          <h3 id={`work-${p.id}-title`} data-slide-title className="font-display text-2xl text-text tracking-[-0.02em]">{p.title}</h3>
+          <h3 id={`work-${p.id}-title`} data-slide-title className="font-display font-medium text-2xl text-text tracking-[-0.02em]">{p.title}</h3>
           <Meta p={p} />
         </div>
         <p className="text-lg text-text">{p.oneLiner}</p>

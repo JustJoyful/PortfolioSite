@@ -22,7 +22,7 @@ Self-hosted WOFF2, Latin subset, `font-display: swap`, with metric-matched fallb
 
 | Family (Tailwind) | Face | Use |
 |---|---|---|
-| `font-display` | Clash Grotesk 400 (ITF Free Font License, credited in the footer) | The name, section headings and project titles; tracking -0.02 to -0.03em |
+| `font-display` | Bricolage Grotesque (SIL OFL 1.1, credited in the footer): 600 at optical size 96 for the name (tracking -0.045em), 500 at optical size 32 for section headings (-0.035em), project titles and sub-headings (-0.02em). Two static Latin instances, 18.9 KB each | The name, section headings and project titles |
 | `font-sans` | Geist 400 / 500 | All UI and body copy; metadata uses `tabular-nums` |
 | `font-mono` | Geist Mono 400 | ASCII placeholders and the engine's glyph atlas only |
 

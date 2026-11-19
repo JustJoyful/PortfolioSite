@@ -39,4 +39,4 @@ Set `VITE_SITE_URL` (for example `https://example.com`, without a trailing slash
 
 - Project media: each project has a 16:10 still (`public/work/<id>.webp`, 1640 x 1025), a muted demo loop (`public/work/<id>.webm` VP9 plus `.mp4` H.264 fallback, 1440 wide, no audio) and three to five gallery pictures (`public/work/<id>/<name>.webp`, up to 1640 wide). Every still and gallery picture has a 320 x 200 `-thumb.webp` beside it for the thumbnail strip. They are set as `image`, `video` (path without extension) and `gallery` (`{ src, alt }`) in `content.js`. Raw sources live in `media/` (git-ignored). After changing a main still, run `node scripts/ascii-placeholders.mjs` to regenerate `src/data/placeholders.json`. A demo plays only while it is on screen, never under reduced motion or Save-Data, and has a Pause button.
 
-Type: Clash Grotesk by [Indian Type Foundry](https://www.fontshare.com/fonts/clash-grotesk) (ITF Free Font License, self-hosted in `public/fonts`) and Geist.
+Type: Bricolage Grotesque by [Mathieu Triay](https://github.com/ateliertriay/bricolage) (SIL OFL 1.1; static 600 and 500 instances, Latin subset, self-hosted in `public/fonts`) and Geist.

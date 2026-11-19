@@ -14,7 +14,7 @@ await page.evaluate(async () => {
   document.head.append(hide);
   const o = document.createElement('div');
   o.style.cssText = 'position:fixed;inset:0;z-index:99;display:flex;flex-direction:column;justify-content:center;padding:0 48px 0 640px;pointer-events:none;color:#fff';
-  o.innerHTML = '<div style="font:400 88px/0.95 \'Clash Grotesk\',sans-serif">Joydeep Das</div><div style="font:500 28px/1.5 Geist,sans-serif;color:rgba(255,255,255,.8);margin-top:12px">AI Engineering · ML Research</div>';
+  o.innerHTML = '<div style="font:600 88px/0.95 \'Bricolage Grotesque\',sans-serif">Joydeep Das</div><div style="font:500 28px/1.5 Geist,sans-serif;color:rgba(255,255,255,.8);margin-top:12px">AI Engineering · ML Research</div>';
   document.body.append(o);
 });
 await page.screenshot({ path: 'public/og.png' });

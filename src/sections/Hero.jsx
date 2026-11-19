@@ -24,7 +24,7 @@ export const Hero = () => {
       className="relative min-h-[100svh] w-full flex flex-col justify-end lg:justify-center pointer-events-none px-5 md:px-12 pb-16 lg:pb-0 lg:pl-[56vw] lg:pr-12"
     >
       <div className="pointer-events-auto">
-        <h1 id="hero-title" className="font-display text-display text-text tracking-[-0.03em] lg:w-min">
+        <h1 id="hero-title" className="font-display font-semibold text-display text-text tracking-[-0.045em] lg:w-min">
           {hero.name}
         </h1>
         <p className="text-lg text-text mt-6 max-w-[30rem]">{hero.line}</p>

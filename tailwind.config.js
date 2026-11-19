@@ -21,7 +21,7 @@ export default {
         ember: 'var(--ember)',
       },
       fontFamily: {
-        display: ['"Clash Grotesk"', '"Clash Grotesk Fallback"', 'Arial', 'sans-serif'],
+        display: ['"Bricolage Grotesque"', '"Bricolage Grotesque Fallback"', 'Arial', 'sans-serif'],
         sans: ['Geist', '"Geist Fallback"', 'Arial', 'sans-serif'],
         mono: ['"Geist Mono"', 'ui-monospace', 'monospace'],
       },
