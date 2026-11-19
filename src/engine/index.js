@@ -6,7 +6,7 @@ import { TIERS, initialTier, createGovernor } from './quality.js';
 import { createPost } from './gl.js';
 import { createParticles } from './particles.js';
 import { sectionState } from './sections.js';
-import { FLOWER_AT, bloomRadius } from './heroLayout.js';
+import { FLOWER_AT, HEADS } from './heroLayout.js';
 
 export { sectionState };
 
@@ -516,12 +516,12 @@ export function createBloom(canvas, opts = {}) {
       return Object.values(anchorPos).map(({ id, x, y, visible }) => ({ id, x, y, visible }));
     },
     stats: () => {
-      const [ox, oy, s] = rectOrigin(), r = VARIANTS[elIdx].maxRadius;
+      const [ox, oy, s] = rectOrigin(), h = HEADS[elIdx];
       return {
       backend: post ? post.backend : 'canvas2d', tier: tierName, frames, fps: Math.round(fps),
       mode: post ? MODE_NAMES[renderMode] : 'pixels', phase, width: W, height: H, rect: rectOrigin(), modeT, glitchCount: glitchTotal,
       rotY: autoRotY + mouseRotY * easeInOutCubic(rotEaseIn) + touchRot, presence: sec.presence, bufferFps: bufferFps(),
-        maxRadius: r, bloomR: bloomRadius(r, s), centre: [ox + FLOWER_AT[0] * s, oy + FLOWER_AT[1] * s],
+        variant: elIdx, bloomR: h.a * s, centre: [ox + (FLOWER_AT[0] + h.dx) * s, oy + (FLOWER_AT[1] - h.dy) * s], // the bloom head's half-width and centre
       };
     },
     destroy() {

@@ -17,7 +17,7 @@ export const BackgroundSketch = ({ paused = false }) => {
       const m = engine && place && measureName();
       if (!m) return;
       const W = innerWidth, H = innerHeight, d = W >= 1024;
-      const L = (d ? place.desktopLayout : place.mobileLayout)({ W, H, J: m.J, maxRadius: engine.stats().maxRadius });
+      const L = (d ? place.desktopLayout : place.mobileLayout)({ W, H, J: m.J, variant: engine.stats().variant });
       engine.setLayout({
         centerX: L.centerX, centerY: L.centerY, scale: L.scale, falloff: d, stem: d,
         column: d ? { centerX: 32 + place.COLUMN.x * W, centerY: null, scale: place.COLUMN.scale } : null,
