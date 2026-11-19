@@ -1,4 +1,5 @@
 // Snapshots the public GitHub contribution calendar into src/data/activity.json. Run by hand to refresh:
+// A scheduled workflow (.github/workflows/activity.yml) runs it every 6 hours and commits the result.
 //   node scripts/github-activity.mjs
 // The site ships the committed JSON, so visitors never call GitHub.
 import { writeFileSync } from 'node:fs';

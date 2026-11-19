@@ -1,0 +1,26 @@
+name: Refresh GitHub activity
+# Scheduled workflows only run from the default branch. The commit lands on main, which Vercel deploys.
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: activity
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/github-activity.mjs
+      - name: Commit if changed
+        run: |
+          git diff --quiet src/data/activity.json && exit 0
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'chore: refresh GitHub activity' src/data/activity.json
+          git push
