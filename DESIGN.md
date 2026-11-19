@@ -11,7 +11,8 @@ A black page with a generative peony in WebGL behind it, and quiet, high-contras
 | `text` | `rgb(255 255 255 / .92)` | Headings, primary copy |
 | `text-muted` | `rgb(255 255 255 / .64)` | Body copy minimum, secondary copy |
 | `text-faint` | `rgb(255 255 255 / .45)` | Labels at 12 px or larger, never body copy |
-| `bloom` `#ee99bb` · `bloom-deep` `#cc7777` · `stem` `#5a8a46` · `ember` `#ffd2eb` | | Flower palette; the accent follows the flower. `bloom` fills the one primary button ("See the work", `ember` on hover), marks the current project tab and thumbnail, and highlights the hovered focus area |
+| `bloom` `#ee99bb` · `bloom-deep` `#cc7777` · `stem` `#5a8a46` · `ember` `#ffd2eb` | | Flower palette; the accent follows the flower. `bloom` (pink) is for interactive and selected states only: it fills the one primary button ("See the work", `ember` on hover), marks the current project tab and thumbnail, link hovers, the focus ring, the highlighted annotation line and the hovered focus area |
+| `leaf` `#bcc583` | | Triad of `bloom`: +120° on the OKLCH hue wheel at L 0.80; facts and data only: project figures, activity grid, active status dot, mobile progress line; computed per variant in `leafFor` (`src/engine/flower.js`). The static value is used before the engine reports a variant, under reduced motion and without WebGL. Text and small marks only: no fills, borders or glows, never on anything clickable |
 
 Contrast is WCAG AA: `text-muted` and `text` pass on `bg` and `surface`; `text-faint` is reserved for >= 12 px labels. No `text-white/NN` classes anywhere.
 
@@ -52,4 +53,5 @@ Scale: `xs 12 · sm 14 · base 16 · lg 20 · xl 28 · 2xl 40 · section clamp(4
 
 1. Colour, size and family come from tokens. If a style is missing, add a token, not an inline value.
 2. Copy is professional and numerical; first person only in About.
-3. Check with `grep -rnE "fontSize|fontFamily|letterSpacing|text-white/(1|2|3|4|5)[0-9]?\b" src/sections src/components`, which must return nothing.
+3. Pink marks what you can act on; leaf marks facts. Never both on one element.
+4. Check with `grep -rnE "fontSize|fontFamily|letterSpacing|text-white/(1|2|3|4|5)[0-9]?\b" src/sections src/components`, which must return nothing.
