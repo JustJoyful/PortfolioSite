@@ -51,6 +51,10 @@ export const PORTFOLIO_DATA = {
       title: 'AxiomLM',
       oneLiner: 'Offline, tool-using study agent for STEM textbooks on a local 4B LLM.',
       result: 'Runs offline on a 6 GB GPU.',
+      figures: [
+        { value: '6 GB', label: 'GPU, fully offline' },
+        { value: '≤ 6', label: 'model calls per answer' },
+      ],
       details: [
         'Bounded agent (≤ 6 model calls / 120 s): book search, sandboxed SymPy checked by an independent verifier.',
         'Document-vision router sends scans to GPU OCR, digital PDFs to direct extraction, with physical-page citations.',
@@ -77,6 +81,10 @@ export const PORTFOLIO_DATA = {
       title: 'Testcard',
       oneLiner: 'Controlled study of where video-quality signal lives: backbone features or temporal head.',
       result: 'Deployed ResNet-50 ridge: SRCC 0.644 on LIVE-VQC. Post-hoc, DINOv2 block-6 features reached 0.824 on KoNViD-1k and 0.727 on LIVE-VQC.',
+      figures: [
+        { value: '0.644', label: 'SRCC on unseen LIVE-VQC (deployed)' },
+        { value: '0.824', label: 'SRCC, DINOv2 block 6 (post-hoc)' },
+      ],
       details: [
         'Frozen ResNet-50 / DINOv2 features, parameter-matched mean-pool, Bi-GRU, Transformer and Mamba heads; KoNViD-1k 5-fold × 5 seeds, cross-dataset on LIVE-VQC.',
         'Paired bootstrap CIs, Holm-adjusted tests against a predeclared margin.',
@@ -107,6 +115,10 @@ export const PORTFOLIO_DATA = {
       title: 'S.P.E.A.K.',
       oneLiner: 'Offline pipeline turning live clinical dictation into validated FHIR R4 records.',
       result: 'Clinical dictation to validated FHIR R4 records; PII masked before any text leaves the machine.',
+      figures: [
+        { value: '4-layer', label: 'hallucination suppression' },
+        { value: 'AES-256', label: 'encrypted offline outbox' },
+      ],
       details: [
         'AudioWorklet → WebSocket → int8 faster-whisper on CPU, gated by Silero VAD.',
         '4-layer hallucination suppression; GLiNER + regex PII masking before any text leaves the machine.',
@@ -131,6 +143,10 @@ export const PORTFOLIO_DATA = {
       title: 'VGC-Telemetry',
       oneLiner: 'Tournament data API and web explorer with consistent, immutable snapshots.',
       result: 'Immutable data snapshots, with 400+ tests in GitHub Actions CI.',
+      figures: [
+        { value: '400+', label: 'tests in CI' },
+        { value: '1 command', label: 'local stack' },
+      ],
       details: [
         'Rate-limit-aware ingestion; immutable snapshots keep paginated reads consistent.',
         'DynamoDB single-table + versioned S3.',

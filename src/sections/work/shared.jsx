@@ -1,7 +1,15 @@
 import { ExternalLink } from '../../components/ui/ExternalLink';
 
 export const STATUS = { active: 'Active', complete: 'Complete', hackathon: 'Hackathon' };
-export const meta = (p) => `${STATUS[p.status]} · ${p.year}`;
+const meta = (p) => `${STATUS[p.status]} · ${p.year}`;
+
+// Live work is marked with a leaf-coloured dot.
+export const Meta = ({ p }) => (
+  <p className="flex items-center gap-2 text-sm text-text-muted tabular-nums mt-2">
+    {p.status === 'active' && <span aria-hidden="true" className="size-1.5 rounded-full bg-leaf" />}
+    {meta(p)}
+  </p>
+);
 
 export const Stack = ({ stack, ...rest }) => (
   <p className="text-sm text-text-muted" {...rest}>{stack.join(', ')}</p>

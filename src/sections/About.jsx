@@ -35,7 +35,7 @@ const Typed = ({ text, className }) => {
         {done ? text : (
           <>
             {text.slice(0, n)}
-            <span className="relative"><span className="absolute left-0 top-[0.2em] h-[1.1em] w-[2px] bg-bloom" /></span>
+            <span className="relative"><span className="absolute left-0 top-[0.2em] h-[1.1em] w-[2px] bg-text" /></span>
             <span className="opacity-0">{text.slice(n)}</span>
           </>
         )}
@@ -52,7 +52,7 @@ const Activity = () => (
       {activity.weeks.flatMap((w, col) => w.map((l, row) => (
         <span
           key={`${col}-${row}`}
-          className={`aspect-square ${l ? 'bg-bloom' : 'bg-surface'}`}
+          className={`aspect-square ${l ? 'bg-leaf' : 'bg-surface'}`}
           style={{ gridColumn: col + 1, gridRow: row + 1, opacity: l ? STRENGTH[l] : 1 }}
         />
       )))}
