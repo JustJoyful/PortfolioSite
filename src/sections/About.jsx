@@ -45,7 +45,7 @@ const Typed = ({ text, className }) => {
 };
 
 // Last 26 weeks of GitHub contributions, one square per day (snapshot from scripts/github-activity.mjs).
-const STRENGTH = [0, 0.3, 0.55, 0.8, 1];
+const STRENGTH = [0, 0.4, 0.65, 0.85, 1];
 const Activity = () => (
   <figure className="m-0">
     <div aria-hidden="true" className="grid gap-[3px]" style={{ gridTemplateColumns: `repeat(${activity.weeks.length}, minmax(0, 1fr))` }}>

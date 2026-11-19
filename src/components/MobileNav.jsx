@@ -38,7 +38,7 @@ export const MobileNav = () => {
           <a href="#contact" className={link}>Contact</a>
         </span>
       </nav>
-      <div ref={line} aria-hidden="true" className="absolute bottom-0 left-0 w-full h-px origin-left" /* taste-skill-ignore: progress line, a gauge */ style={{ background: 'var(--leaf)', transform: 'scaleX(0)' }} />
+      <div ref={line} aria-hidden="true" className="absolute bottom-0 left-0 w-full h-0.5 origin-left" /* taste-skill-ignore: progress line, a gauge */ style={{ background: 'var(--leaf)', transform: 'scaleX(0)' }} />
     </header>
   );
 };
