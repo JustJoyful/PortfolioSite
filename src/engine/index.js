@@ -349,6 +349,15 @@ export function createBloom(canvas, opts = {}) {
     const n = Math.max(1, Math.ceil(s / g));
     lowCanvas.width = lowCanvas.height = n;
     lowCtx.drawImage(bufCanvas, 0, 0, n, n);
+    // The buffer is opaque black behind the flower: turn brightness into alpha (colour unpremultiplied, so over black it is unchanged)
+    // so the name layer under the flower shows through, as with the shader.
+    const img = lowCtx.getImageData(0, 0, n, n), d = img.data;
+    for (let i = 0; i < d.length; i += 4) {
+      const m = Math.max(d[i], d[i + 1], d[i + 2]);
+      if (m) { const k = 255 / m; d[i] *= k; d[i + 1] *= k; d[i + 2] *= k; }
+      d[i + 3] = m;
+    }
+    lowCtx.putImageData(img, 0, 0);
     ctx2d.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx2d.clearRect(0, 0, W, H);
     ctx2d.imageSmoothingEnabled = false;

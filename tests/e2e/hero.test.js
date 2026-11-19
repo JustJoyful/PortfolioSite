@@ -90,6 +90,28 @@ for (const [width, height, mobile, variants] of CASES) {
   }
 }
 
+test('the Canvas2D fallback keeps the name visible under the flower rect', async () => {
+  const srv = await startPreview();
+  const { page, browser } = await openPage(`${srv.url}?debug&seed=1&breakshader&tier=medium`, { width: 1440, height: 900 });
+  try {
+    await page.waitForFunction(() => window.__bloom?.stats().backend === 'canvas2d' && window.__bloom.stats().frames > 3, null, { timeout: 8000 });
+    await page.evaluate(() => document.fonts.ready);
+    await page.waitForTimeout(400);
+    // The J's left edge lies outside the bloom head but inside the flower's square rect, where the old opaque buffer hid it.
+    const clip = await page.evaluate(() => { const t = document.getElementById('hero-title').firstChild, r = document.createRange(); r.setStart(t, 1); r.setEnd(t, 3); const b = r.getBoundingClientRect(); return { x: Math.floor(b.left), y: Math.floor(b.top + b.height * 0.3), width: Math.ceil(b.width), height: Math.ceil(b.height * 0.4) }; });
+    const shot = await page.screenshot({ clip });
+    const bright = await page.evaluate(async (u) => {
+      const img = new Image(); img.src = u; await img.decode();
+      const c = document.createElement('canvas'); c.width = img.width; c.height = img.height;
+      const x = c.getContext('2d'); x.drawImage(img, 0, 0);
+      const d = x.getImageData(0, 0, c.width, c.height).data; let n = 0;
+      for (let i = 0; i < d.length; i += 4) if (d[i] > 200 && d[i + 1] > 200 && d[i + 2] > 200) n++;
+      return n;
+    }, 'data:image/png;base64,' + shot.toString('base64'));
+    assert.ok(bright > 200, `the letters "oy" are visible (${bright} bright pixels)`);
+  } finally { await browser.close(); await srv.close(); }
+});
+
 test('no Think. Then Build. copy', async () => {
   const srv = await startPreview();
   const { page, browser } = await openPage(srv.url, { width: 1440, height: 900 });
