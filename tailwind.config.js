@@ -33,7 +33,7 @@ export default {
         xl: ['28px', { lineHeight: '1.35' }],
         '2xl': ['40px', { lineHeight: '1.1' }],
         section: ['clamp(40px, 6vw, 88px)', { lineHeight: '0.95' }],
-        display: ['clamp(48px, 9vw, 120px)', { lineHeight: '0.95' }],
+        hero: ['var(--hero-size)', { lineHeight: '0.88' }],
       },
     },
   },

@@ -21,13 +21,11 @@ export const Hero = () => {
     <section
       id="hero"
       aria-labelledby="hero-title"
-      className="relative min-h-[100svh] w-full flex flex-col justify-end lg:justify-center pointer-events-none px-5 md:px-12 pb-16 lg:pb-0 lg:pl-[56vw] lg:pr-12"
+      className="relative min-h-[100svh] w-full pointer-events-none"
     >
-      <div className="pointer-events-auto">
-        <h1 id="hero-title" className="font-display font-semibold text-display text-text tracking-[-0.045em] lg:w-min">
-          {hero.name}
-        </h1>
-        <p className="text-lg text-text mt-6 max-w-[30rem]">{hero.line}</p>
+      {/* The name is HeroName (the page's h1, under the flower). This block starts below it, on the name's left edge. */}
+      <div className="pointer-events-auto absolute left-0 right-0 px-5 md:px-12 lg:px-0 lg:left-[var(--hero-x,56vw)] lg:right-12 top-[calc(var(--hero-bottom)+24px)]">
+        <p className="text-lg text-text max-w-[30rem]">{hero.line}</p>
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-8">
           <a href="#work" className="inline-flex items-center min-h-12 px-6 bg-bloom text-bg text-base font-medium hover:bg-ember transition-colors">See the work</a>
           <a href="#contact" className="ext-link inline-flex items-center min-h-11 text-base text-text">Contact</a>

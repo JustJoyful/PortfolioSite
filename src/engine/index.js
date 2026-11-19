@@ -6,13 +6,14 @@ import { TIERS, initialTier, createGovernor } from './quality.js';
 import { createPost } from './gl.js';
 import { createParticles } from './particles.js';
 import { sectionState } from './sections.js';
+import { FLOWER_AT, bloomRadius } from './heroLayout.js';
 
 export { sectionState };
 
 const MODE_NAMES = ['ascii', 'dots', 'pixels'];
 const MODE_OF = { dots: 1, pixels: 2, ascii: 0 };
 const SECTION_NAMES = ['hero', 'about', 'work', 'contact'];
-const SAFE_SCALE = 0.82; // flower rect as a fraction of the short viewport side
+const SAFE_SCALE = 0.82; // default flower rect as a fraction of the short viewport side (setLayout `scale` overrides it)
 const GRID_MAX = 20;
 const IGNORE = 'a, button, input, summary';
 
@@ -64,7 +65,8 @@ export function createBloom(canvas, opts = {}) {
   let rafId = 0, destroyed = false;
   let frames = 0, fps = 0, lastScreen = 0, lastBuf = -1e9, lastT = 0;
   let ready = false;
-  let layoutOpts = { falloffX: 0, centerX: null, centerY: null };
+  let layoutOpts = { falloff: false, centerX: null, centerY: null, scale: null, column: null, stem: true };
+  let scrollP = 0; // 0 at the top of the hero, 1 once it has scrolled away
 
   let elIdx = 0, phase = 'growing', phaseT = 0;
   let bloom = 0, bloomT = 0, wilt = 0;
@@ -86,14 +88,21 @@ export function createBloom(canvas, opts = {}) {
 
   const u = {
     rect: new Float32Array(4), glitch: new Float32Array(32), ripples: new Float32Array(16), highlight: new Float32Array(3),
-    grid: 4, mode: 2, prevMode: 2, modeT: 1, glitchCount: 0, glow: 0, time: 0, presence: 1, falloffX: 0, scrim: 0, stars: 1,
+    grid: 4, mode: 2, prevMode: 2, modeT: 1, glitchCount: 0, glow: 0, time: 0, presence: 1, falloffX: 0, scrim: 0,
   };
 
   const isStatic = () => tierName === 'static';
-  const rectSize = () => Math.min(W, H) * SAFE_SCALE;
+  // Hero layout, eased towards the column layout as the hero scrolls away (desktop; the engine owns this move so cells stay crisp).
+  const placement = () => {
+    const L = layoutOpts, hero = { cx: L.centerX ?? W / 2, cy: L.centerY ?? H / 2, sc: L.scale ?? SAFE_SCALE };
+    if (!L.column || scrollP <= 0) return hero;
+    const k = easeInOutCubic(scrollP), c = L.column;
+    return { cx: lerp(hero.cx, c.centerX, k), cy: lerp(hero.cy, c.centerY ?? H / 2, k), sc: lerp(hero.sc, c.scale, k) };
+  };
+  const rectSize = () => Math.min(W, H) * placement().sc;
   const rectOrigin = () => {
-    const s = rectSize();
-    return [(layoutOpts.centerX ?? W / 2) - s / 2 + mInfX, (layoutOpts.centerY ?? H / 2) - s / 2 + mInfY, s];
+    const { cx, cy } = placement(), s = rectSize();
+    return [cx - s / 2 + mInfX, cy - s / 2 + mInfY, s];
   };
 
   // ---- elements
@@ -263,7 +272,7 @@ export function createBloom(canvas, opts = {}) {
     Object.assign(flowerState, {
       bloom, wilt, rotX: autoRotX + mouseRotX * easeInOutCubic(rotEaseIn),
       rotY: autoRotY + mouseRotY * easeInOutCubic(rotEaseIn) + touchRot, rotZ: autoRotZ,
-      brightBoost: glowIntensity, tier: tierName === 'low' ? 1 : 0,
+      brightBoost: glowIntensity, tier: tierName === 'low' ? 1 : 0, stem: layoutOpts.stem,
     });
   }
 
@@ -323,8 +332,8 @@ export function createBloom(canvas, opts = {}) {
     u.grid = Math.max(tier.gridMin, Math.round(grid));
     u.mode = renderMode; u.prevMode = prevMode; u.modeT = modeT;
     u.glow = glowIntensity * (1 + Math.sin(t * 0.47) * 0.12);
-    u.time = t; u.presence = sec.presence; u.scrim = sec.scrim; u.falloffX = layoutOpts.falloffX;
-    u.stars = 1;
+    u.time = t; u.presence = sec.presence; u.scrim = sec.scrim;
+    u.falloffX = layoutOpts.falloff ? ox + s / 2 + 0.4837 * s : 0; // dims towards the content column; scales with the flower
     u.glitchCount = glitchSlices.length;
     glitchSlices.forEach((g, i) => u.glitch.set([g.y, g.h, g.offset, g.shift ? 1 : 0], i * 4));
     u.ripples.fill(0);
@@ -341,8 +350,7 @@ export function createBloom(canvas, opts = {}) {
     lowCanvas.width = lowCanvas.height = n;
     lowCtx.drawImage(bufCanvas, 0, 0, n, n);
     ctx2d.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx2d.fillStyle = '#000';
-    ctx2d.fillRect(0, 0, W, H);
+    ctx2d.clearRect(0, 0, W, H);
     ctx2d.imageSmoothingEnabled = false;
     ctx2d.globalAlpha = sec.presence;
     ctx2d.drawImage(lowCanvas, ox, oy, s, s);
@@ -462,7 +470,7 @@ export function createBloom(canvas, opts = {}) {
   applyTierBuffers();
   px = prevPx = window.innerWidth / 2; py = prevPy = window.innerHeight / 2;
   if (post) { bindPost(); post.uploadAtlas(atlas); }
-  startElement(0);
+  startElement(opts.variant >= 0 && opts.variant < VARIANTS.length ? opts.variant : 0);
   layout();
   if (isStatic()) { renderStatic(); ready = true; queueMicrotask(() => opts.onReady?.()); }
 
@@ -496,15 +504,26 @@ export function createBloom(canvas, opts = {}) {
     triggerGlitch: () => triggerGlitch(),
     setHighlight(id) { highlightId = id; if (isStatic()) renderStatic(); },
     setLayout(l) { layoutOpts = { ...layoutOpts, ...l }; anchorsInit = false; if (isStatic()) renderStatic(); },
+    // p = scrollY / innerHeight. Reduced motion jumps at the end instead of easing.
+    setScroll(p) {
+      const q = mq('(prefers-reduced-motion: reduce)') ? +(p >= 1) : constrain(p, 0, 1);
+      if (q === scrollP) return;
+      scrollP = q; anchorsInit = false;
+      if (isStatic()) renderStatic();
+    },
     getAnchors() {
       if (!anchorsInit) { pickTargets(); updateAnchors(true); }
       return Object.values(anchorPos).map(({ id, x, y, visible }) => ({ id, x, y, visible }));
     },
-    stats: () => ({
+    stats: () => {
+      const [ox, oy, s] = rectOrigin(), r = VARIANTS[elIdx].maxRadius;
+      return {
       backend: post ? post.backend : 'canvas2d', tier: tierName, frames, fps: Math.round(fps),
       mode: post ? MODE_NAMES[renderMode] : 'pixels', phase, width: W, height: H, rect: rectOrigin(), modeT, glitchCount: glitchTotal,
       rotY: autoRotY + mouseRotY * easeInOutCubic(rotEaseIn) + touchRot, presence: sec.presence, bufferFps: bufferFps(),
-    }),
+        maxRadius: r, bloomR: bloomRadius(r, s), centre: [ox + FLOWER_AT[0] * s, oy + FLOWER_AT[1] * s],
+      };
+    },
     destroy() {
       destroyed = true; sync();
       clearTimeout(resizeTimer); clearTimeout(scrollTimer);

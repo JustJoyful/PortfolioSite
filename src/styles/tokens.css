@@ -11,6 +11,9 @@
 @font-face { font-family: 'Geist Fallback'; src: local('Arial'); size-adjust: 109%; ascent-override: 92.2%; descent-override: 27.1%; line-gap-override: 0%; }
 
 :root {
+  --hero-size: clamp(64px, 23vw, 140px); /* the name; two lines at line-height 0.88 */
+  --hero-top: 40svh;
+  --hero-bottom: calc(var(--hero-top) + 1.76 * var(--hero-size)); /* two lines; HeroName overwrites it with the measured value */
   --bg: #000;
   --surface: #0b0a0b;
   --text: rgb(255 255 255 / 0.92);
@@ -21,4 +24,7 @@
   --bloom-deep: #cc7777;
   --stem: #5a8a46;
   --ember: #ffd2eb;
+}
+@media (min-width: 1024px) {
+  :root { --hero-size: clamp(64px, 14vw, 280px); --hero-top: 22vh; }
 }

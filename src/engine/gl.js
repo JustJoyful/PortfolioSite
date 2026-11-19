@@ -2,10 +2,10 @@
 import vert from './post.vert?raw';
 import frag from './post.frag?raw';
 
-const FLOATS = ['grid', 'mode', 'prevMode', 'modeT', 'glitchCount', 'glow', 'time', 'presence', 'falloffX', 'scrim', 'stars'];
+const FLOATS = ['grid', 'mode', 'prevMode', 'modeT', 'glitchCount', 'glow', 'time', 'presence', 'falloffX', 'scrim'];
 
 export function createPost(canvas, { frag: fragSrc = frag } = {}) {
-  const opts = { alpha: false, antialias: false, depth: false, stencil: false, powerPreference: 'high-performance' };
+  const opts = { alpha: true, premultipliedAlpha: true, antialias: false, depth: false, stencil: false, powerPreference: 'high-performance' };
   let gl = canvas.getContext('webgl2', opts);
   let backend = 'webgl2';
   if (!gl) { gl = canvas.getContext('webgl', opts) || canvas.getContext('experimental-webgl', opts); backend = 'webgl'; }
@@ -85,6 +85,8 @@ export function createPost(canvas, { frag: fragSrc = frag } = {}) {
       gl.uniform4fv(uni('glitch[0]'), u.glitch);
       gl.uniform4fv(uni('ripples[0]'), u.ripples);
       for (const n of FLOATS) gl.uniform1f(uni(n), u[n]);
+      gl.clearColor(0, 0, 0, 0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     },
     onLost: (cb) => lostHandlers.push(cb),
