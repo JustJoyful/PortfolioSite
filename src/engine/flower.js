@@ -278,7 +278,7 @@ export const bloomParts = (bl) => {
   return { stemP, flowerBl: constrain((bl - 0.15) / 0.85, 0, 1), bud: constrain((easeOutQuart(stemP) - 0.85) / 0.15, 0, 1) };
 };
 
-// state = { bloom, wilt, rotX, rotY, rotZ, brightBoost, rand, tier? }
+// state = { bloom, wilt, rotX, rotY, rotZ, brightBoost, rand, tier?, stem? }
 export function drawFlower(ctx, variant, state) {
   const size = ctx.canvas.width;
   const wl = state.wilt || 0;
@@ -288,7 +288,7 @@ export function drawFlower(ctx, variant, state) {
   ctx.save();
   ctx.scale(FLOWER_BUFFER_SCALE * size / 400, FLOWER_BUFFER_SCALE * size / 400);
   const cy = 800 * 0.48 + wl * 55;
-  drawStem(ctx, variant, stemP, wl, cy);
+  if (state.stem !== false) drawStem(ctx, variant, stemP, wl, cy); // the mobile hero shows the bloom head alone
   drawPeony3D(ctx, variant, state, flowerBl, wl, 400, cy, bud);
   ctx.restore();
 }

@@ -30,7 +30,7 @@ test('page runs under the vercel.json CSP with no violations', async () => {
     await page.goto(`http://localhost:${server.address().port}/`);
     await page.waitForTimeout(2500);
     assert.equal(await page.evaluate(() => document.documentElement.classList.contains('js')), true, 'inline script ran');
-    assert.ok(await page.locator('main h1').count(), 'module script rendered the app');
+    assert.ok(await page.locator('h1').count(), 'module script rendered the app');
     assert.ok(await page.locator('canvas').count(), 'engine canvas mounted');
     assert.deepEqual(problems, []);
   } finally {

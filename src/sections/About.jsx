@@ -129,7 +129,7 @@ export const About = () => {
               onFocus={() => announce(f.id)}
               onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) announce(null); }}
             >
-              <dt className={`font-display text-xl tracking-[-0.02em] transition-colors ${on === f.id ? 'text-bloom' : 'text-text'}`}>{f.label}</dt>
+              <dt className={`font-display font-medium text-xl tracking-[-0.02em] transition-colors ${on === f.id ? 'text-bloom' : 'text-text'}`}>{f.label}</dt>
               <dd className="text-base text-text mt-2 first-letter:uppercase">{f.text}</dd>
               <dd className="mt-2 flex flex-wrap gap-x-4 text-sm">
                 {f.projects.map((id) => (
@@ -140,7 +140,7 @@ export const About = () => {
           ))}
         </dl>
 
-        <h3 className="font-display text-xl text-text tracking-[-0.02em] mt-24">Toolkit</h3>
+        <h3 className="font-display font-medium text-xl text-text tracking-[-0.02em] mt-24">Toolkit</h3>
         <dl className="mt-6 grid gap-x-8 gap-y-6 sm:grid-cols-2 xl:grid-cols-3">
           {skills.map((g) => (
             <div key={g.label}>

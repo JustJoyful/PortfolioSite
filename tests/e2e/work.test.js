@@ -92,6 +92,9 @@ test('demo plays in view, only for the shown slide, and can be paused', () => ru
   await page.locator(`${live} [data-demo-toggle]`).click();
   assert.ok(await vids.first().evaluate((v) => v.paused));
   await page.locator('[data-tab]').nth(2).click();
+  // The page can drift in scroll while the demo loads (and Playwright scrolls just enough to reach the tab), which would leave the
+  // video below the fold; it only plays while half visible, so put the third slide's media on screen first.
+  await page.locator('[data-media]').nth(2).scrollIntoViewIfNeeded();
   await page.waitForFunction(() => !document.querySelectorAll('[data-slide] video')[2].paused);
   assert.ok(await vids.first().evaluate((v) => v.paused));
 }));

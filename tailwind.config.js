@@ -21,7 +21,7 @@ export default {
         ember: 'var(--ember)',
       },
       fontFamily: {
-        display: ['"Clash Grotesk"', '"Clash Grotesk Fallback"', 'Arial', 'sans-serif'],
+        display: ['"Bricolage Grotesque"', '"Bricolage Grotesque Fallback"', 'Arial', 'sans-serif'],
         sans: ['Geist', '"Geist Fallback"', 'Arial', 'sans-serif'],
         mono: ['"Geist Mono"', 'ui-monospace', 'monospace'],
       },
@@ -33,7 +33,7 @@ export default {
         xl: ['28px', { lineHeight: '1.35' }],
         '2xl': ['40px', { lineHeight: '1.1' }],
         section: ['clamp(40px, 6vw, 88px)', { lineHeight: '0.95' }],
-        display: ['clamp(48px, 9vw, 120px)', { lineHeight: '0.95' }],
+        hero: ['var(--hero-size)', { lineHeight: '0.88' }],
       },
     },
   },

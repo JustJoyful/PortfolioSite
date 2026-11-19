@@ -1,14 +1,19 @@
-@font-face { font-family: 'Clash Grotesk'; font-weight: 400; font-style: normal; font-display: swap; src: url('/fonts/clash-grotesk-400.woff2') format('woff2'); } /* ITF Free Font License, Indian Type Foundry */
+@font-face { font-family: 'Bricolage Grotesque'; font-weight: 600; font-style: normal; font-display: swap; src: url('/fonts/bricolage-600-opsz96.woff2') format('woff2'); } /* SIL OFL 1.1, Mathieu Triay; static instance, opsz 96 (the name) */
+@font-face { font-family: 'Bricolage Grotesque'; font-weight: 500; font-style: normal; font-display: swap; src: url('/fonts/bricolage-500-opsz32.woff2') format('woff2'); } /* static instance, opsz 32 (headings) */
 @font-face { font-family: 'Geist'; font-weight: 400; font-style: normal; font-display: swap; src: url('/fonts/geist-400.woff2') format('woff2'); }
 @font-face { font-family: 'Geist'; font-weight: 500; font-style: normal; font-display: swap; src: url('/fonts/geist-500.woff2') format('woff2'); }
 @font-face {
   font-family: 'Geist Mono'; /* taste-skill-ignore: R2, mono only for ASCII placeholders */ font-weight: 400; font-style: normal; font-display: swap; src: url('/fonts/geist-mono-400.woff2') format('woff2'); }
 
 /* Metric-matched fallbacks: size-adjust = web avg lowercase advance / local avg; overrides = web metric / size-adjust. */
-@font-face { font-family: 'Clash Grotesk Fallback'; src: local('Arial'), local('Liberation Sans'); size-adjust: 102.6%; ascent-override: 86.7%; descent-override: 24.4%; line-gap-override: 8.8%; }
+@font-face { font-family: 'Bricolage Grotesque Fallback'; font-weight: 600; src: local('Arial'), local('Liberation Sans'); size-adjust: 101.6%; ascent-override: 91.5%; descent-override: 26.6%; line-gap-override: 0%; }
+@font-face { font-family: 'Bricolage Grotesque Fallback'; font-weight: 500; src: local('Arial'), local('Liberation Sans'); size-adjust: 108.5%; ascent-override: 85.7%; descent-override: 24.9%; line-gap-override: 0%; }
 @font-face { font-family: 'Geist Fallback'; src: local('Arial'); size-adjust: 109%; ascent-override: 92.2%; descent-override: 27.1%; line-gap-override: 0%; }
 
 :root {
+  --hero-size: clamp(64px, 23vw, 140px); /* the name; two lines at line-height 0.88 */
+  --hero-top: 40svh;
+  --hero-bottom: calc(var(--hero-top) + 1.76 * var(--hero-size)); /* two lines; HeroName overwrites it with the measured value */
   --bg: #000;
   --surface: #0b0a0b;
   --text: rgb(255 255 255 / 0.92);
@@ -19,4 +24,7 @@
   --bloom-deep: #cc7777;
   --stem: #5a8a46;
   --ember: #ffd2eb;
+}
+@media (min-width: 1024px) {
+  :root { --hero-size: clamp(64px, 14vw, 280px); --hero-top: 22vh; }
 }
