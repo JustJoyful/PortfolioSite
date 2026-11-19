@@ -1,5 +1,6 @@
 // Peony geometry ported from the original p5 sketch (removed in Task 1.9) to raw Canvas2D. No DOM at import time.
 import { lerp, map, constrain, easeInOutCubic, easeOutQuart } from './math.js';
+import { triad } from './color.js';
 
 const { sin, cos, PI, atan2, abs, max, min, floor } = Math;
 const TWO_PI = PI * 2, HALF_PI = PI / 2;
@@ -13,7 +14,10 @@ export const VARIANTS = [
 ];
 
 // UI accent: per-channel mean of the variant's two main petal colours.
-export const accentFor = (v) => `rgb(${v.c1.map((x, i) => Math.round((x + v.c2[i]) / 2)).join(' ')})`;
+const mid = (v) => v.c1.map((x, i) => Math.round((x + v.c2[i]) / 2));
+export const accentFor = (v) => `rgb(${mid(v).join(' ')})`;
+// Second accent for facts and data: the triadic partner of the accent (see color.js).
+export const leafFor = (v) => `rgb(${triad(mid(v)).join(' ')})`;
 
 // Outer-layer petals facing the viewer (z <= 0 at zero rotation) in every variant, spread around the bloom.
 // layer is absolute: 13 and 12 are within the outer three layers of all variants.

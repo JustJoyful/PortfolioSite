@@ -63,3 +63,12 @@ test('Testcard result labels the 0.644 baseline and the post-hoc DINOv2 numbers'
   const testcard = projects.find((p) => p.id === 'testcard');
   for (const s of ['ResNet-50', '0.644', 'Post-hoc']) assert.ok(testcard.result.includes(s), s);
 });
+
+test('every project has two figures; Testcard keeps its deployed / post-hoc qualifiers', () => {
+  for (const p of projects) {
+    assert.equal(p.figures?.length, 2, p.id);
+    for (const f of p.figures) assert.ok(f.value && f.label, p.id);
+  }
+  const labels = projects.find((p) => p.id === 'testcard').figures.map((f) => f.label).join('|');
+  assert.ok(labels.includes('(deployed)') && labels.includes('(post-hoc)'));
+});

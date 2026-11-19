@@ -35,7 +35,7 @@ const Typed = ({ text, className }) => {
         {done ? text : (
           <>
             {text.slice(0, n)}
-            <span className="relative"><span className="absolute left-0 top-[0.2em] h-[1.1em] w-[2px] bg-bloom" /></span>
+            <span className="relative"><span className="absolute left-0 top-[0.2em] h-[1.1em] w-[2px] bg-text" /></span>
             <span className="opacity-0">{text.slice(n)}</span>
           </>
         )}
@@ -45,14 +45,14 @@ const Typed = ({ text, className }) => {
 };
 
 // Last 26 weeks of GitHub contributions, one square per day (snapshot from scripts/github-activity.mjs).
-const STRENGTH = [0, 0.3, 0.55, 0.8, 1];
+const STRENGTH = [0, 0.4, 0.65, 0.85, 1];
 const Activity = () => (
   <figure className="m-0">
     <div aria-hidden="true" className="grid gap-[3px]" style={{ gridTemplateColumns: `repeat(${activity.weeks.length}, minmax(0, 1fr))` }}>
       {activity.weeks.flatMap((w, col) => w.map((l, row) => (
         <span
           key={`${col}-${row}`}
-          className={`aspect-square ${l ? 'bg-bloom' : 'bg-surface'}`}
+          className={`aspect-square ${l ? 'bg-leaf' : 'bg-surface'}`}
           style={{ gridColumn: col + 1, gridRow: row + 1, opacity: l ? STRENGTH[l] : 1 }}
         />
       )))}

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ProjectMedia } from './ProjectMedia';
-import { Stack, Links, meta } from './shared';
+import { Stack, Links, Meta } from './shared';
 
 const thumb = (src) => src.replace(/\.webp$/, '-thumb.webp');
 
@@ -46,13 +46,21 @@ export const ProjectSlide = ({ p, active }) => {
       <div className="flex flex-col gap-5 max-w-[40rem]">
         <div>
           <h3 id={`work-${p.id}-title`} data-slide-title className="font-display text-2xl text-text tracking-[-0.02em]">{p.title}</h3>
-          <p className="text-sm text-text-muted tabular-nums mt-2">{meta(p)}</p>
+          <Meta p={p} />
         </div>
         <p className="text-lg text-text">{p.oneLiner}</p>
-        <ul className="flex flex-col gap-3 text-base text-text list-disc pl-5 marker:text-bloom">
+        <dl className="grid grid-cols-2 gap-6">
+          {p.figures.map((f) => (
+            <div key={f.label} className="flex flex-col-reverse justify-end">
+              <dt className="text-sm text-text-muted mt-2">{f.label}</dt>
+              <dd className="font-mono text-xl sm:text-2xl lg:text-xl whitespace-nowrap text-leaf tabular-nums tracking-[-0.02em] leading-none">{f.value}</dd>
+            </div>
+          ))}
+        </dl>
+        <ul className="flex flex-col gap-3 text-base text-text list-disc pl-5 marker:text-text-faint">
           {p.details.map((d) => <li key={d}>{d}</li>)}
         </ul>
-        <p className="text-base text-text">{p.result}</p>
+        <p className="text-base text-text-muted">{p.result}</p>
         <Stack stack={p.stack} data-stack />
         <Links links={p.links} />
       </div>

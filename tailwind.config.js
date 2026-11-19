@@ -15,6 +15,7 @@ export default {
         'text-muted': 'var(--text-muted)',
         'text-faint': 'var(--text-faint)',
         bloom: 'var(--bloom)',
+        leaf: 'var(--leaf)',
         'bloom-deep': 'var(--bloom-deep)',
         stem: 'var(--stem)',
         ember: 'var(--ember)',
