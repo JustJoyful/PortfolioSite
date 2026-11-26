@@ -38,7 +38,7 @@ test('thumbnails swap the viewer', () => run({ width: 1440 }, async (page) => {
   assert.equal(await thumbs.count(), 5);
   await thumbs.nth(2).click();
   assert.equal(await thumbs.nth(2).getAttribute('aria-pressed'), 'true');
-  const img = page.locator(`${live} img[src="/work/ffwd/command.webp"]`);
+  const img = page.locator(`${live} img[src="/work/ffwd/done.webp"]`);
   await img.waitFor();
   assert.ok(await img.evaluate((i) => i.decode().then(() => i.naturalWidth > 0)));
   await thumbs.nth(0).click();
