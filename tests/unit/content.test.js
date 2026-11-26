@@ -13,13 +13,13 @@ test('portrait files exist and are each under 40 KB', () => {
   for (const u of urls) assert.ok(statSync('public' + u).size < 40_000, u);
 });
 
-test('projects are the four ids, in order', () => {
-  assert.deepEqual(projects.map((p) => p.id), ['axiomlm', 'testcard', 'speak', 'vgc-telemetry']);
+test('projects are the five ids, in order', () => {
+  assert.deepEqual(projects.map((p) => p.id), ['ffwd', 'axiomlm', 'testcard', 'vgc-telemetry', 'speak']);
 });
 
-test('one featured project (axiomlm) and one research pin (testcard)', () => {
+test('one featured project (ffwd) and one research pin (testcard)', () => {
   const featured = projects.filter((p) => p.featured);
-  assert.deepEqual(featured.map((p) => p.id), ['axiomlm']);
+  assert.deepEqual(featured.map((p) => p.id), ['ffwd']);
   const pinned = projects.filter((p) => p.pinned === 'research');
   assert.deepEqual(pinned.map((p) => p.id), ['testcard']);
 });
@@ -45,7 +45,7 @@ test('every project has a still and a demo video under public/', () => {
     }
     if (p.figure) assert.ok(existsSync('public' + p.figure.src), p.figure.src);
   }
-  assert.ok(projects[1].figure, 'testcard figure');
+  assert.ok(projects.find((p) => p.id === 'testcard').figure, 'testcard figure');
 });
 
 test('no removed copy or personal contact details', () => {

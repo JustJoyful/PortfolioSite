@@ -42,7 +42,7 @@ export const Work = () => {
                   data-tab
                   aria-current={k === i ? 'true' : undefined}
                   onClick={(e) => { e.preventDefault(); go(k); }}
-                  className={`inline-flex items-center min-h-11 text-base border-b-2 transition-colors ${k === i ? 'text-text border-bloom' : 'text-text-muted border-transparent hover:text-text'}`} /* taste-skill-ignore: current-tab state, not a divider */
+                  className={`inline-flex items-center justify-center min-h-11 min-w-11 text-base border-b-2 transition-colors ${k === i ? 'text-text border-bloom' : 'text-text-muted border-transparent hover:text-text'}`} /* taste-skill-ignore: current-tab state, not a divider */
                 >
                   {p.title}
                 </a>
