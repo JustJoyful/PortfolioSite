@@ -25,9 +25,9 @@ The background is one `requestAnimationFrame` loop in `src/engine/index.js`. The
 
 ## Changing the featured project
 
-Projects are defined in `src/data/content.js` under `PORTFOLIO_DATA.projects`. `Work.jsx` picks the featured card with `featured: true`, and the research card with `pinned: 'research'` on a project that is not featured. Currently AxiomLM has `featured: true` and Testcard has `pinned: 'research'`.
+Projects are defined in `src/data/content.js` under `PORTFOLIO_DATA.projects`. `Work.jsx` picks the featured card with `featured: true`, and the research card with `pinned: 'research'` on a project that is not featured. Currently ffwd has `featured: true` and Testcard has `pinned: 'research'`.
 
-To feature Testcard instead, move the two flags together: set `featured: true` on Testcard and remove it from AxiomLM, then set `pinned: 'research'` on AxiomLM and remove it from Testcard. Then update the assertions in `tests/unit/content.test.js` (the test named "one featured project (axiomlm) and one research pin (testcard)") to match, and run `npm test`.
+To feature Testcard instead, move the two flags together: set `featured: true` on Testcard and remove it from ffwd, then set `pinned: 'research'` on ffwd and remove it from Testcard. Then update the assertions in `tests/unit/content.test.js` (the test named "one featured project (ffwd) and one research pin (testcard)") to match, and run `npm test`.
 
 ## Deployment
 
@@ -38,5 +38,7 @@ Set `VITE_SITE_URL` (for example `https://example.com`, without a trailing slash
 ## Project media
 
 - Project media: each project has a 16:10 still (`public/work/<id>.webp`, 1640 x 1025), a muted demo loop (`public/work/<id>.webm` VP9 plus `.mp4` H.264 fallback, 1440 wide, no audio) and three to five gallery pictures (`public/work/<id>/<name>.webp`, up to 1640 wide). Every still and gallery picture has a 320 x 200 `-thumb.webp` beside it for the thumbnail strip. They are set as `image`, `video` (path without extension) and `gallery` (`{ src, alt }`) in `content.js`. Raw sources live in `media/` (git-ignored). After changing a main still, run `node scripts/ascii-placeholders.mjs` to regenerate `src/data/placeholders.json`. A demo plays only while it is on screen, never under reduced motion or Save-Data, and has a Pause button.
+
+The ffwd demo and stills use a clip from [Tears of Steel](https://mango.blender.org/) (© Blender Foundation, [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/)); `media/ffwd/record.mjs` re-records them against the live site.
 
 Type: Clash Grotesk by [Indian Type Foundry](https://www.fontshare.com/fonts/clash-grotesk) (ITF Free Font License, self-hosted in `public/fonts`) and Geist.

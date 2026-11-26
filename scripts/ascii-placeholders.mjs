@@ -7,6 +7,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 const W = 72;
 const H = 30;
 const SOURCES = {
+  ffwd: 'public/work/ffwd.webp',
   axiomlm: 'public/work/axiomlm.webp',
   testcard: 'public/work/testcard.webp',
   speak: 'public/work/speak.webp',

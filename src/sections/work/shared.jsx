@@ -18,5 +18,6 @@ export const Links = ({ links }) => (
     {links.source && <ExternalLink href={links.source} className="inline-flex items-center min-h-11">Source ↗</ExternalLink>}
     {links.model && <ExternalLink href={links.model} className="inline-flex items-center min-h-11">Model ↗</ExternalLink>}
     {links.demo && <ExternalLink href={links.demo} className="inline-flex items-center min-h-11">Demo ↗</ExternalLink>}
+    {links.app && <ExternalLink href={links.app} className="inline-flex items-center min-h-11">App source ↗</ExternalLink>}
   </p>
 );
